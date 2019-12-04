@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fltAccept"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/default_back"
+    tools:background="@color/default_back">
+
+    <ImageView
+        android:id="@+id/imgAssetPic"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="6dp"
+        android:layout_marginEnd="6dp"
+        android:layout_marginStart="6dp"
+        android:layout_marginTop="6dp"
+        android:adjustViewBounds="true"
+        android:background="@color/colorCompliment"
+        android:scaleType="fitXY"
+        app:layout_constraintBottom_toBottomOf="@id/fltAccept"
+        app:layout_constraintEnd_toEndOf="@id/fltAccept"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintStart_toEndOf="@id/fltAccept"
+        app:layout_constraintStart_toStartOf="@id/fltAccept"
+        app:layout_constraintTop_toTopOf="@id/fltAccept"
+        app:layout_constraintVertical_bias="0.5"
+        tools:ignore="ContentDescription"
+        tools:layout_constraintBottom_creator="1"
+        tools:layout_constraintLeft_creator="1"
+        tools:layout_constraintRight_creator="1"
+        tools:layout_constraintTop_creator="1" />
+
+    <ListView
+        android:id="@+id/listGallery"
+        android:layout_width="75dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="@id/fltAccept"
+        app:layout_constraintStart_toStartOf="@id/fltAccept"
+        app:layout_constraintTop_toTopOf="@id/fltAccept"
+        app:layout_constraintVertical_bias="0.0"
+        tools:layout_constraintBottom_creator="1"
+        tools:layout_constraintTop_creator="1" />
+
+    <TextView
+        android:id="@+id/txtPicName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:alpha="0.0"
+        android:fontFamily="serif"
+        android:text=""
+        android:textColor="@android:color/darker_gray"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/imgAssetPic"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fltNewPicture"
+        android:layout_width="wrap_content"
+        android:layout_height="58dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="4dp"
+        android:alpha="1"
+        android:clickable="true"
+        android:focusable="true"
+        android:theme="@style/AppTheme.NoActionBar"
+        app:backgroundTint="@color/colorPrimary"
+        app:elevation="4dp"
+        app:fabSize="normal"
+        app:layout_constraintLeft_toLeftOf="@+id/fltAcceptPicture"
+        app:layout_constraintRight_toRightOf="@+id/fltAcceptPicture"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@android:drawable/ic_menu_camera"
+        tools:layout_constraintLeft_creator="1"
+        tools:layout_constraintRight_creator="1"
+        tools:layout_constraintTop_creator="1" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fltAcceptPicture"
+        android:layout_width="58dp"
+        android:layout_height="58dp"
+        android:layout_marginEnd="4dp"
+        android:layout_marginBottom="4dp"
+        android:alpha="1"
+        android:clickable="true"
+        android:focusable="true"
+        app:backgroundTint="@color/colorPrimary"
+        app:elevation="4dp"
+        app:fabSize="normal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@android:drawable/ic_menu_upload"
+        tools:layout_constraintBottom_creator="1"
+        tools:layout_constraintRight_creator="1" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

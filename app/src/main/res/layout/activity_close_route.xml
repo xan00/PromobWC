@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/default_back"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical"
+    tools:context="za.co.rdata.r_datamobile.meterReadingModule.CloseRouteActivity">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/room_item"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/imageView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="0dp"
+            android:src="@mipmap/ic__promun_launcher"
+            tools:ignore="ContentDescription" />
+
+        <TextView
+            android:id="@+id/A_close_route_child_Header"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="false"
+            android:layout_alignParentTop="false"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"
+            android:text="@string/close_route"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@color/colorTextLight" />
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/A_close_route_child_RouteNumber"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/roomcolour"
+        android:gravity="center"
+        android:text="@string/route_777"
+        android:textColor="@color/colorTextLight"
+        android:textSize="25sp" />
+
+    <TextView
+        android:id="@+id/A_close_route_child_RouteDescription"
+        android:layout_width="fill_parent"
+        android:layout_height="30dp"
+        android:background="@color/roomcolour"
+        android:gravity="center"
+        android:text="@string/description"
+        android:textColor="@color/colorTextLight"
+        android:textSize="15sp" />
+
+    <TextView
+        android:id="@+id/A_close_route_child_TV_list_view_header"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="@string/meters_not_read"
+        android:textColor="@color/black"
+        android:textSize="18sp" />
+
+    <ListView
+        android:id="@+id/A_close_route_LV_meters"
+        android:layout_width="match_parent"
+        android:layout_height="282dp"
+        android:layout_gravity="center_horizontal" />
+
+    <Space
+        android:layout_width="20dp"
+        android:layout_height="10dp" />
+
+    <TextView
+        android:id="@+id/A_close_route_child_TV_no_access_header"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="@string/no_access"
+        android:textColor="@color/black"
+        android:textSize="18sp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/A_close_route_child_TV_no_access"
+            android:layout_width="fill_parent"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:background="@drawable/textinput_shape"
+            android:clickable="false"
+            android:gravity="start|center"
+            android:text="@string/no_access"
+            android:textColor="@color/colorTextLight"
+            android:textSize="20sp" />
+
+        <Button
+            android:id="@+id/A_close_route_child_B_del_no_access"
+            android:layout_width="fill_parent"
+            android:layout_height="40dp"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="5"
+            android:text="@string/del" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="end"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/A_close_route_child_B_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:text="@string/cancel"
+            tools:ignore="ButtonStyle" />
+
+        <Button
+            android:id="@+id/A_close_route_child_B_close"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:text="@string/close"
+            tools:ignore="ButtonStyle" />
+    </LinearLayout>
+
+</LinearLayout>

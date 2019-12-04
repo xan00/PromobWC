@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="meter_types_array">
+        <item>E</item>
+        <item>W</item>
+    </string-array>
+
+    <string-array name="ip_addresses">
+        <item>196.41.123.51</item>
+        <item>196.41.122.216</item>
+    </string-array>
+
+    <string-array name="months">
+        <item>01</item>
+        <item>02</item>
+        <item>03</item>
+        <item>04</item>
+        <item>05</item>
+        <item>06</item>
+        <item>07</item>
+        <item>08</item>
+        <item>09</item>
+        <item>10</item>
+        <item>11</item>
+        <item>12</item>
+
+    </string-array>
+
+</resources>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3f51b5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="colorHeader">#aaaaaa</color>
+    <color name="colorBody">#3399ff</color>
+    <color name="colorCompliment">#E0E0E0</color>
+    <color name="colorTextLight">#ffffff</color>
+    <color name="colorInputBackground">#991c00</color>
+
+    <color name="NotScanned">#ed7777</color>
+    <color name="AlreadyScanned">#bcdf8a</color>
+    <color name="ManualScanned">#f5f9ad</color>
+    <color name="PreviouslyDisposed">#c4adc9</color>
+    <color name="OutOfLocation">#fad48b</color>
+    <color name="NewScanned">#94c0cc</color>
+    <color name="not_yet_scanned">#f2a3bd</color>
+    <color name="roomcolour">#696c83</color>
+
+    <color name="default_back">#FFFFFF</color>
+    <color name="value_differs">#009900</color>
+    <color name="default_back2">#d2252a2f</color>
+    <color name="black">#000000</color>
+    <color name="new_input_box">#FF4444</color>
+    <color name="unavailableroute">#808080</color>
+
+    <color name="redmeter">#FF4444</color>
+    <color name="yellowmeter">#F5FF6A</color>
+    <color name="greenmeter">#48D048</color>
+
+    <color name="incomplete_room">#393E41</color>
+
+</resources>

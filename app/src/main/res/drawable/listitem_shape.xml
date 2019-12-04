@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+<item>
+    <shape android:shape="rectangle">
+        <solid android:color="@color/NotScanned"/>
+        <corners
+            android:bottomRightRadius="@dimen/cornerround"
+            android:topRightRadius="@dimen/cornerround"
+            android:bottomLeftRadius="@dimen/cornerround"
+            android:topLeftRadius="@dimen/cornerround"
+            />
+    </shape>
+</item>
+
+<item android:top="0dp" android:bottom="0dp" android:left="0dp">
+    <shape
+        android:shape="rectangle">
+        <stroke android:width="@dimen/summ_border" android:color="@color/roomcolour" />
+        <solid android:color="#00000000" />
+        <corners
+            android:bottomRightRadius="@dimen/cornerround"
+            android:topRightRadius="@dimen/cornerround"
+            android:bottomLeftRadius="@dimen/cornerround"
+            android:topLeftRadius="@dimen/cornerround"
+            />
+    </shape>
+</item>
+
+</layer-list>

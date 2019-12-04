@@ -1,0 +1,133 @@
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/linearLayout10"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/default_back"
+    android:fitsSystemWindows="true"
+    tools:context="za.co.rdata.r_datamobile.meterReadingModule.MeterSearchActivity">
+
+    <TextView
+        android:id="@+id/A_meter_search_header"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@color/colorHeader"
+        android:gravity="center"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:text="@string/find_a_meter"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/colorTextLight"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <EditText
+        android:id="@+id/A_meter_search_ACTV_Address_Name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/textinput_shape"
+        android:hint="@string/street_name"
+        android:paddingStart="8dp"
+        android:paddingTop="8dp"
+        android:paddingEnd="0dp"
+        android:paddingBottom="8dp"
+        android:textColor="@color/black"
+        android:textColorHint="@color/default_back2"
+        app:layout_constraintEnd_toStartOf="@+id/A_meter_search_B_Clear"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/A_meter_search_header" />
+
+    <EditText
+        android:id="@+id/A_meter_search_ACTV_Street_Number"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/textinput_shape"
+        android:hint="@string/street_number"
+        android:paddingStart="8dp"
+        android:paddingTop="8dp"
+        android:paddingEnd="0dp"
+        android:paddingBottom="8dp"
+        android:textColor="@color/black"
+        android:textColorHint="@color/default_back2"
+        app:layout_constraintEnd_toStartOf="@+id/btn_streetnumbersearch_clear"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/A_meter_search_ACTV_Address_Name"
+        tools:ignore="Autofill" />
+
+    <EditText
+        android:id="@+id/A_meter_search_ACTV_Meter_Number"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/textinput_shape"
+        android:hint="@string/meter_number"
+        android:paddingStart="8dp"
+        android:paddingTop="8dp"
+        android:paddingEnd="0dp"
+        android:paddingBottom="8dp"
+        android:textColor="@color/black"
+        android:textColorHint="@color/default_back2"
+        app:layout_constraintEnd_toStartOf="@+id/btn_meternumber_clear"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/A_meter_search_ACTV_Street_Number"
+        tools:ignore="Autofill" />
+
+    <Button
+        android:id="@+id/A_meter_search_B_Clear"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:nestedScrollingEnabled="false"
+        android:text="@string/clear_selections"
+        app:layout_constraintBaseline_toBaselineOf="@+id/A_meter_search_ACTV_Address_Name"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+
+    <Button
+        android:id="@+id/btn_streetnumbersearch_clear"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:text="@string/clear_selections"
+        app:layout_constraintBaseline_toBaselineOf="@+id/A_meter_search_ACTV_Street_Number"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:text="@string/clear_selections" />
+
+    <Button
+        android:id="@+id/btn_meternumber_clear"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:text="@string/clear_selections"
+        app:layout_constraintBaseline_toBaselineOf="@+id/A_meter_search_ACTV_Meter_Number"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rcv_metersearchlist"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:scrollbarAlwaysDrawVerticalTrack="true"
+        android:scrollbarSize="8dp"
+        android:scrollbarStyle="outsideOverlay"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/A_meter_search_ACTV_Meter_Number" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+

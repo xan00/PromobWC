@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/select_asset_view_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:shape="rectangle"
+    android:bottomRightRadius="7dp"
+    android:bottomLeftRadius="7dp"
+    android:topLeftRadius="7dp"
+    android:topRightRadius="7dp"
+    tools:clickable="true"
+    android:paddingBottom="10dp"
+    android:paddingTop="10dp"
+    android:background="@drawable/listitem_shape">
+
+    <TextView
+        android:id="@+id/txtWarehouse"
+        android:layout_width="42dp"
+        android:layout_height="16dp"
+        android:layout_marginStart="8dp"
+        android:gravity="top|left"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@android:color/white"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:layout_constraintBaseline_toBaselineOf="@+id/textView6"
+        app:layout_constraintLeft_toRightOf="@+id/textView6"
+        android:layout_marginLeft="8dp" />
+
+    <TextView
+        android:id="@+id/txtWarehouseDes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:gravity="left"
+        android:paddingBottom="2dp"
+        android:text="Asset Description"
+        android:textColor="@android:color/white"
+        app:layout_constraintBaseline_toBaselineOf="@+id/txtWarehouse"
+        app:layout_constraintHorizontal_bias="0.49"
+        app:layout_constraintLeft_toRightOf="@+id/Asset_reg_barcode"
+        app:layout_constraintRight_toRightOf="parent"
+        tools:layout_constraintLeft_creator="1"
+        tools:layout_constraintRight_creator="1" />
+
+    <TextView
+        android:id="@+id/textView6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:text="Warehouse:"
+        android:textColor="@color/colorTextLight"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/linlay"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/default_back"
+    tools:context="za.co.rdata.r_datamobile.meterReadingModule.MeterReadingActivity">
+
+
+    <TextView
+        android:id="@+id/activity_meter_reading_tv_RouteNumber"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@color/roomcolour"
+        android:gravity="center"
+        android:text="@string/route_777"
+        android:textColor="@color/colorTextLight"
+        android:textSize="25sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/activity_meter_reading_tv_RouteDescription"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@color/roomcolour"
+        android:gravity="center"
+        android:maxLines="1"
+        android:nestedScrollingEnabled="false"
+        android:text="@string/this_is_a_very_long_route_description"
+        android:textColor="@color/colorTextLight"
+        android:textSize="15sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/activity_meter_reading_tv_RouteNumber"
+        tools:ignore="UnusedAttribute" />
+
+
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/view_pager"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/A_meter_reading_TV_Status1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/activity_meter_reading_tv_RouteDescription" />
+
+    <TextView
+        android:id="@+id/A_meter_reading_TV_Status1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@color/roomcolour"
+
+        android:gravity="start"
+        android:paddingStart="5dp"
+        android:paddingEnd="0dp"
+        android:paddingBottom="3dp"
+        android:text="@string/test"
+        android:textColor="@color/colorTextLight"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@+id/A_meter_reading_TV_Status2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/A_meter_reading_TV_Status2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@color/roomcolour"
+        android:gravity="start"
+        android:paddingStart="5dp"
+        android:paddingEnd="0dp"
+        android:paddingBottom="3dp"
+        android:text="@string/test"
+        android:textColor="@color/colorTextLight"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/linearLayout7" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabToMap"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:clickable="true"
+        android:focusable="true"
+        app:backgroundTint="@color/new_input_box"
+        app:elevation="5dp"
+        app:fabSize="auto"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@android:drawable/ic_menu_add" />
+
+    <LinearLayout
+        android:id="@+id/linearLayout7"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <TextView
+            android:id="@+id/A_meter_reading_TV_Status3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:background="@color/roomcolour"
+            android:gravity="start"
+            android:paddingStart="5dp"
+            android:paddingEnd="0dp"
+            android:paddingBottom="1dp"
+            android:text="@string/test"
+            android:textColor="@color/colorTextLight"
+            android:textSize="18sp"
+            tools:layout_editor_absoluteX="99dp"
+            tools:layout_editor_absoluteY="352dp" />
+
+        <TextView
+            android:id="@+id/A_meter_reading_TV_Status4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:background="@color/roomcolour"
+            android:gravity="center_horizontal"
+            android:paddingBottom="3dp"
+            android:text="@string/test"
+            android:textAlignment="viewStart"
+            android:textColor="@color/colorTextLight"
+            android:textSize="18sp"
+            tools:layout_editor_absoluteX="253dp"
+            tools:layout_editor_absoluteY="541dp"
+            tools:ignore="RtlCompat" />
+    </LinearLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

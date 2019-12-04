@@ -1,0 +1,30 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/default_back"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/activity_select_note_tv_header"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@color/roomcolour"
+        android:gravity="center"
+        android:text="@string/select_note"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/colorTextLight" />
+
+    <ListView
+        android:id="@+id/activity_select_note_listView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="8dp"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="10.0sp" />
+
+</LinearLayout>
