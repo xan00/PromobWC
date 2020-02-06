@@ -43,6 +43,7 @@ import java.util.Calendar;
 import za.co.rdata.r_datamobile.DBHelpers.SymmetricDS_Helper;
 
 import static org.jumpmind.symmetric.common.ParameterConstants.ENGINE_NAME;
+import static za.co.rdata.r_datamobile.FTPUsage.getfiles;
 import static za.co.rdata.r_datamobile.stringTools.MakeDate.GetDate;
 
 /**
@@ -171,6 +172,15 @@ public class SettingsActivity extends AppCompatActivity {
     View.OnClickListener reloadnode = view -> engine.reloadNode(MainActivity.NODE_ID,MainActivity.NODE_ID);
     View.OnClickListener setupdb = view -> engine.setupDatabase(true);
 
+    View.OnClickListener checkforupdates = view -> {
+        TextView txtNext = findViewById(R.id.txtNewVersion);
+        String[] args = { "test"};
+
+        try {
+            getfiles(args);
+        } catch (IOException ignore) {}
+    };
+
     @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -238,8 +248,9 @@ public class SettingsActivity extends AppCompatActivity {
         TextView lastsync = findViewById(R.id.txtLastSync);
         lastsync.setText(String.valueOf(engine.getLastRestartTime()));
 
-        TextView version = findViewById(R.id.txtVersion);
-        version.setText(BuildConfig.VERSION_NAME);
+        TextView version = findViewById(R.id.txtPreviousversion);
+        za.co.rdata.r_datamobile.BuildConfig buildConfig = new za.co.rdata.r_datamobile.BuildConfig();
+        version.setText("Current: "+buildConfig.VERSION_NAME);
 
         FloatingActionButton settingsback = findViewById(R.id.flbSettingsBack);
         settingsback.setOnClickListener(view -> onBackPressed());
@@ -295,6 +306,9 @@ public class SettingsActivity extends AppCompatActivity {
 
         Button btnSendDB = findViewById(R.id.btnSendDB);
         btnSendDB.setOnClickListener(senddb);
+
+        Button btnCheckforupdates = findViewById(R.id.btnCheckforupdates);
+        btnCheckforupdates.setOnClickListener(checkforupdates);
 
     }
 

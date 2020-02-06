@@ -206,5 +206,8 @@
     <string name="route_summary">Route Summary</string>
     <string name="enable_pictures">Enable Pictures</string>
     <string name="on_device">On Device</string>
+    <string name="check_for_updates">Check For Updates</string>
+    <string name="current">Current:</string>
+    <string name="latest">Latest:</string>
 
 </resources>

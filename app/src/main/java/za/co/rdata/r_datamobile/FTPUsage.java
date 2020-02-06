@@ -1,5 +1,6 @@
 package za.co.rdata.r_datamobile;
 
+import android.os.AsyncTask;
 import android.os.Environment;
 import android.util.Log;
 
@@ -21,17 +22,28 @@ public class FTPUsage {
     static private String user = "james";
     static private String password = "Crunchie926";
 
-    private static boolean connecttoserver() throws IOException {
+    private static boolean connecttoserver()  {
 
-        ftpClient.connect(server);
-        //ftpClient.login(user, password);
-        if (ftpClient.login(user, password)) {
-            ftpClient.enterLocalPassiveMode(); // important!
-            ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
-            return true;
-        }
-        return false;
+
+        new AsyncTask<Void,Void,Boolean>(){
+            @Override
+            protected Boolean doInBackground(Void... params) {
+                try {
+                    ftpClient.connect(server);
+                    //ftpClient.login(user, password);
+                    if (ftpClient.login(user, password)) {
+                        ftpClient.enterLocalPassiveMode(); // important!
+                        ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
+                        return true;
+                    }
+                } catch (Exception ignore) {}
+                return false;
+            }
+
+            }
+        }.execute();
     }
+
 
     public static void getfiles(String[] args) throws IOException {
 
