@@ -29,6 +29,8 @@ import za.co.rdata.r_datamobile.Models.model_pro_mr_notes;
 import za.co.rdata.r_datamobile.Models.model_pro_mr_route_rows;
 import za.co.rdata.r_datamobile.R;
 import za.co.rdata.r_datamobile.locationTools.CalculateCoordinateDistance;
+import za.co.rdata.r_datamobile.locationTools.DeviceLocationService;
+import za.co.rdata.r_datamobile.locationTools.GetLocation;
 import za.co.rdata.r_datamobile.meterReadingModule.InputReadingActivity;
 import za.co.rdata.r_datamobile.meterReadingModule.MeterReaderController;
 import za.co.rdata.r_datamobile.meterReadingModule.MeterReadingActivity;
@@ -195,23 +197,30 @@ public class fragment_meterReading extends Fragment {
                 //@SuppressLint("SimpleDateFormat") DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
                 this.route_row.setReading_date(MakeDate.GetDateBackWards("-"));
-                this.route_row.setGps_read_lat(MeterReadingActivity.longitude);
-                this.route_row.setGps_read_long(MeterReadingActivity.longitude);
+
+                Cursor cursorLoc = MainActivity.sqliteDbHelper.getWritableDatabase().rawQuery("SELECT device_current_lat, device_current_long FROM pro_sys_devices",null);
+                cursorLoc.moveToFirst();
+
+                this.route_row.setGps_read_lat(cursorLoc.getDouble(0));
+                this.route_row.setGps_read_long(cursorLoc.getDouble(1));
+
+                cursorLoc.close();
 
                 try {
                     if (MeterReadingActivity.latitude != null && MeterReadingActivity.longitude != null) {
                         Location preLocation = new Location("");
                         Location currentLocation = new Location("");
+
                         preLocation.setLatitude(this.route_row.getGps_master_lat());
                         preLocation.setLongitude(this.route_row.getGps_master_long());
-/*
-                        Double[] coordinates = new Double[]{0d, 0d};
-                        GetLocation gps = new GetLocation(getActivity().getApplicationContext());
-                        if (gps.canGetLocation()) {
-                            coordinates[0] = gps.getLatitude();
-                            coordinates[1] = gps.getLongitude();
-                        }
-*/
+
+                        //Double[] coordinates = new Double[]{0d, 0d};
+                        //GetLocation gps = new GetLocation(getActivity().getApplicationContext());
+                        //if (gps.canGetLocation()) {
+                        //    coordinates[0] = gps.getLatitude();
+                        //    coordinates[1] = gps.getLongitude();
+                        //}
+
                         currentLocation.setLatitude(this.route_row.getGps_read_lat());
                         currentLocation.setLongitude(this.route_row.getGps_read_long());
                         float distanceInMeters = preLocation.distanceTo(currentLocation);
@@ -266,8 +275,8 @@ public class fragment_meterReading extends Fragment {
                         gotogallery.putExtra("PIC REQUIRED", true);
                         String sql = "SELECT meter_reading, gps_read_lat, gps_read_long, meter_number FROM pro_mr_route_rows WHERE walk_sequence = '" + route_row.getWalk_sequence() + "' and meter_id='"+route_row.getMeter_id()+"' order by reading_date desc";
                         gotogallery.putExtra("PIC TEXT SQL STRING", sql);
-                        gotogallery.putExtra("DETAIL1 TITLE", strDetailName);
-                        gotogallery.putExtra("DETAIL2 TITLE", strDetailName2);
+                        gotogallery.putExtra("DETAIL1 TITLE", strDetailName2);
+                        gotogallery.putExtra("DETAIL2 TITLE", strDetailName);
 
                         startActivity(gotogallery);
                     }}
@@ -299,8 +308,8 @@ public class fragment_meterReading extends Fragment {
                             gotogallery.putExtra("PIC REQUIRED", true);
                             String sql = "SELECT meter_reading, gps_read_lat, gps_read_long, meter_number FROM pro_mr_route_rows WHERE walk_sequence = '" + route_row.getWalk_sequence() + "' and meter_id='"+route_row.getMeter_id()+"' order by reading_date desc";
                             gotogallery.putExtra("PIC TEXT SQL STRING", sql);
-                            gotogallery.putExtra("DETAIL1 TITLE", strDetailName);
-                            gotogallery.putExtra("DETAIL2 TITLE", strDetailName2);
+                            gotogallery.putExtra("DETAIL1 TITLE", strDetailName2);
+                            gotogallery.putExtra("DETAIL2 TITLE", strDetailName);
 
                             startActivity(gotogallery);
                         }
@@ -334,10 +343,15 @@ public class fragment_meterReading extends Fragment {
                             coordinates[1] = gps.getLongitude();
                         }
 */
-                        this.route_row.setGps_read_lat(MeterReadingActivity.latitude);
-                        this.route_row.setGps_read_long(MeterReadingActivity.longitude);
-                        textViewNoteDescription.setText(resultNoteDescription);
-                        row_changed = true;
+                        Cursor cursorLoc = MainActivity.sqliteDbHelper.getWritableDatabase().rawQuery("SELECT device_current_lat, device_current_long FROM pro_sys_devices",null);
+                        cursorLoc.moveToFirst();
+
+                        this.route_row.setGps_read_lat(cursorLoc.getDouble(0));
+                        this.route_row.setGps_read_long(cursorLoc.getDouble(1));
+                        //textViewNoteDescription.setText(resultNoteDescription);
+                        //row_changed = true;
+
+                        cursorLoc.close();
 
                         Cursor notereqpics = MainActivity.sqliteDbHelper.getReadableDatabase().rawQuery("SELECT notes_reqpic FROM pro_mr_notes",null);
                         if (notereqpics.getString(0).equals("1")) {
@@ -361,8 +375,15 @@ public class fragment_meterReading extends Fragment {
                     String resultNoAccessDescription = data.getStringExtra("no_access_code_description");
                     if (resultNoAccess != null && resultNoAccessDescription != null) {
                         this.route_row.setNa_code(resultNoAccess);
-                        this.route_row.setGps_read_lat(MeterReadingActivity.latitude);
-                        this.route_row.setGps_read_long(MeterReadingActivity.longitude);
+                        Cursor cursorLoc = MainActivity.sqliteDbHelper.getWritableDatabase().rawQuery("SELECT device_current_lat, device_current_long FROM pro_sys_devices",null);
+                        cursorLoc.moveToFirst();
+
+                        this.route_row.setGps_read_lat(cursorLoc.getDouble(0));
+                        this.route_row.setGps_read_long(cursorLoc.getDouble(1));
+                        //textViewNoteDescription.setText(resultNoteDescription);
+                        //row_changed = true;
+
+                        cursorLoc.close();
                         this.route_row.setReading_date(MakeDate.GetDateBackWards("-"));
 /*
                         Double[] coordinates = new Double[]{0d, 0d};

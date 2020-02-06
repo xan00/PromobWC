@@ -58,7 +58,7 @@ public class SelectRoute extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        SymmetricDS_Helper.Start_SymmetricDS(this.getApplicationContext(), false);
+        //SymmetricDS_Helper.Start_SymmetricDS(this.getApplicationContext(), false);
         //startService(new Intent(this,DeviceLocationService.class));
         setContentView(R.layout.activity_select_route);
 

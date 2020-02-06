@@ -44,18 +44,21 @@ public class RoomSummaryActivity extends AppCompatActivity {
     protected static int scanneditemsCount;
     protected static int notyetscannedCount;         //FUCHSIA   7
 
+    static public sqliteDBHelper sqliteDb;
+
     public RoomSummaryActivity() {
 
     }
 
     public RoomSummaryActivity(Context context) {
         this.mContext = context;
-        //this.strCurrentRoom = strCurrentRoom;
+        sqliteDb = sqliteDBHelper.getInstance(mContext);
     }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
     }
 
     @Override
@@ -69,13 +72,8 @@ public class RoomSummaryActivity extends AppCompatActivity {
 
     public ArrayList<model_pro_ar_asset_headers> GetMissing() {
 
-        //ArrayList<model_pro_ar_asset_headers> arrNotYetScannedCount = new ArrayList<>();
-
-        //DataCursorLoaders dataCursorLoaders = new DataCursorLoaders(mContext, "SELECT * FROM pro_ar_register LEFT JOIN pro_ar_scan ON pro_ar_register.reg_barcode = pro_ar_scan.scan_barcode WHERE pro_ar_scan.scan_barcode is null and pro_ar_register.reg_location_code='" + strCurrentRoom + "' order by pro_ar_register.reg_barcode");
-        //Cursor missingassets = dataCursorLoaders.loadInBackground();
-
         Cursor missingassets;
-        missingassets = MainActivity.sqliteDbHelper.getReadableDatabase().rawQuery("SELECT reg_location_code,reg_dept_code,reg_barcode,reg_asset_serial_nr,reg_asset_desc,reg_condition_code," +
+        missingassets = sqliteDb.getReadableDatabase().rawQuery("SELECT reg_location_code,reg_dept_code,reg_barcode,reg_asset_serial_nr,reg_asset_desc,reg_condition_code," +
                 "reg_comments1,reg_useful_life,reg_useful_remainder FROM pro_ar_register LEFT JOIN pro_ar_scan ON pro_ar_register.reg_barcode = pro_ar_scan.scan_barcode WHERE pro_ar_scan.scan_barcode is null and pro_ar_register.reg_location_code like '" + strCurrentRoom + "' and pro_ar_register.reg_isactive = 1 order by pro_ar_register.reg_barcode", null);
 
         missingassets.moveToFirst();
@@ -100,14 +98,9 @@ public class RoomSummaryActivity extends AppCompatActivity {
 
     public ArrayList<model_pro_ar_asset_headers> GetAlready() {
 
-        //ArrayList<model_pro_ar_asset_headers> arrAlreadycount = new ArrayList<>();
-
-        //DataCursorLoaders dataCursorLoaders = new DataCursorLoaders(mContext, "SELECT * FROM pro_ar_register JOIN pro_ar_scan ON pro_ar_register.reg_barcode = pro_ar_scan.scan_barcode WHERE pro_ar_scan.scan_location_entry = '" + strCurrentRoom + "' order by pro_ar_register.reg_barcode");
-        //Cursor alreadyassets = dataCursorLoaders.loadInBackground();
-
         Cursor alreadyassets = null;
         try {
-            alreadyassets = MainActivity.sqliteDbHelper.getReadableDatabase().rawQuery("SELECT reg_location_code,reg_dept_code,reg_barcode,reg_asset_serial_nr,reg_asset_desc,reg_condition_code," +
+            alreadyassets = sqliteDb.getReadableDatabase().rawQuery("SELECT reg_location_code,reg_dept_code,reg_barcode,reg_asset_serial_nr,reg_asset_desc,reg_condition_code," +
                     "reg_comments1,reg_useful_life,reg_useful_remainder FROM pro_ar_register LEFT JOIN pro_ar_scan ON pro_ar_register.reg_barcode = pro_ar_scan.scan_barcode " +
                     "WHERE pro_ar_scan.scan_location_entry like '" + strCurrentRoom + "' order by pro_ar_register.reg_barcode", null);
         } catch (SQLException ex) {
@@ -129,22 +122,15 @@ public class RoomSummaryActivity extends AppCompatActivity {
                     alreadyassets.getInt(alreadyassets.getColumnIndex(meta.pro_ar_register.reg_useful_remainder))));
             alreadyassets.moveToNext();
         }
-       // alreadyscannedCount = arrAlreadycount.size();
-        // db.close();
+
         alreadyassets.close();
         return arrAlreadycount;
     }
 
     public ArrayList<model_pro_ar_asset_headers> GetOutofLocation() {
 
-        //ArrayList<model_pro_ar_asset_headers> arrWrongLocaCount = new ArrayList<>();
-        //SQLiteDatabase db = MainActivity.sqliteDbHelper.getReadableDatabase();
-
         Cursor outoflocationassets;
-        outoflocationassets = MainActivity.sqliteDbHelper.getReadableDatabase().rawQuery("SELECT * FROM pro_ar_register JOIN pro_ar_scan ON pro_ar_register.reg_barcode = pro_ar_scan.scan_barcode WHERE pro_ar_scan.scan_location_entry not like '" + strCurrentRoom + "' AND pro_ar_scan.scan_location like '" + strCurrentRoom + "' AND pro_ar_scan.scan_location_entry not like 'R0000' order by pro_ar_register.reg_barcode", null);
-
-        //DataCursorLoaders dataCursorLoaders = new DataCursorLoaders(mContext, "SELECT * FROM pro_ar_register JOIN pro_ar_scan ON pro_ar_register.reg_barcode = pro_ar_scan.scan_barcode WHERE pro_ar_scan.scan_location_entry != '" + strCurrentRoom + "' AND pro_ar_scan.scan_location = '" + strCurrentRoom + "' AND pro_ar_scan.scan_location_entry != 'R0000' order by pro_ar_register.reg_barcode");
-        //Cursor outoflocationassets = dataCursorLoaders.loadInBackground();
+        outoflocationassets = sqliteDb.getReadableDatabase().rawQuery("SELECT * FROM pro_ar_register JOIN pro_ar_scan ON pro_ar_register.reg_barcode = pro_ar_scan.scan_barcode WHERE pro_ar_scan.scan_location_entry not like '" + strCurrentRoom + "' AND pro_ar_scan.scan_location like '" + strCurrentRoom + "' AND pro_ar_scan.scan_location_entry not like 'R0000' order by pro_ar_register.reg_barcode", null);
 
         outoflocationassets.moveToFirst();
         arrWrongLocaCount.clear();
@@ -190,24 +176,14 @@ public class RoomSummaryActivity extends AppCompatActivity {
 
     public ArrayList<model_pro_ar_asset_headers> GetNotinRegister() {
 
-       // ArrayList<model_pro_ar_asset_headers> arrMissingcount = new ArrayList<>();
+        Cursor notregisteredassetsmain =  sqliteDb.getReadableDatabase().rawQuery("SELECT * FROM pro_ar_register WHERE pro_ar_register.reg_location_code like '" + strCurrentRoom + "'", null);
+        Cursor notregisteredassets = sqliteDb.getReadableDatabase().rawQuery("SELECT * FROM pro_ar_scan WHERE pro_ar_scan.scan_location_entry = 'R0000' AND pro_ar_scan.scan_location like '" + strCurrentRoom + "' order by pro_ar_scan.scan_barcode", null);
 
-        Cursor notregisteredassetsmain =  MainActivity.sqliteDbHelper.getReadableDatabase().rawQuery("SELECT * FROM pro_ar_register WHERE pro_ar_register.reg_location_code like '" + strCurrentRoom + "'", null);
-        Cursor notregisteredassets = MainActivity.sqliteDbHelper.getReadableDatabase().rawQuery("SELECT * FROM pro_ar_scan WHERE pro_ar_scan.scan_location_entry = 'R0000' AND pro_ar_scan.scan_location like '" + strCurrentRoom + "' order by pro_ar_scan.scan_barcode", null);
-
-        //DataCursorLoaders dataCursorLoaders1 = new DataCursorLoaders(mContext, "SELECT * FROM pro_ar_scan WHERE pro_ar_scan.scan_location_entry = 'R0000' AND pro_ar_scan.scan_location = '" + strCurrentRoom + "' order by pro_ar_scan.scan_barcode");
-        //Cursor notregisteredassets = dataCursorLoaders1.loadInBackground();
         notregisteredassets.moveToFirst();
 
-        //SQLiteDatabase dba = MainActivity.sqliteDbHelper.getReadableDatabase();
-
-        //DataCursorLoaders dataCursorLoaders2 = new DataCursorLoaders(mContext, "SELECT * FROM pro_ar_locations WHERE loc_code = '" + strCurrentRoom + "'");
-       // Cursor missinglocale = dataCursorLoaders2.loadInBackground();
-
-        Cursor missinglocale = MainActivity.sqliteDbHelper.getReadableDatabase().rawQuery("SELECT * FROM pro_ar_locations WHERE loc_code like '" + strCurrentRoom + "'", null);
+        Cursor missinglocale = sqliteDb.getReadableDatabase().rawQuery("SELECT * FROM pro_ar_locations WHERE loc_code like '" + strCurrentRoom + "'", null);
         missinglocale.moveToFirst();
-        /*
-         */
+
         arrMissingcount.clear();
 
         try {
@@ -242,14 +218,9 @@ public class RoomSummaryActivity extends AppCompatActivity {
 
     public ArrayList<model_pro_ar_asset_headers> GetManual() {
 
-        //ArrayList<model_pro_ar_asset_headers> arrManualCount = new ArrayList<>();
-
-        //SQLiteDatabase db = MainActivity.sqliteDbHelper.getReadableDatabase();
         Cursor manualassets;
-        manualassets = MainActivity.sqliteDbHelper.getReadableDatabase().rawQuery("SELECT * FROM pro_ar_register WHERE reg_ismanual = 1 AND reg_location_code like '"+strCurrentRoom+"' order by pro_ar_register.reg_barcode" , null);
+        manualassets = sqliteDb.getReadableDatabase().rawQuery("SELECT * FROM pro_ar_register WHERE reg_ismanual = 1 AND reg_location_code like '"+strCurrentRoom+"' order by pro_ar_register.reg_barcode" , null);
 
-        //DataCursorLoaders dataCursorLoaders = new DataCursorLoaders(mContext, "SELECT * FROM pro_ar_register WHERE reg_ismanual = 1 AND reg_location_code = '"+strCurrentRoom+"' order by pro_ar_register.reg_barcode");
-        //Cursor manualassets = dataCursorLoaders.loadInBackground();
         manualassets.moveToFirst();
 
         arrManualCount.clear();
@@ -274,12 +245,8 @@ public class RoomSummaryActivity extends AppCompatActivity {
 
     public ArrayList<model_pro_ar_asset_headers> GetPreviouslyDisposed() {
 
-        //SQLiteDatabase db = MainActivity.sqliteDbHelper.getReadableDatabase();
         Cursor disposedassets;
-        disposedassets = MainActivity.sqliteDbHelper.getReadableDatabase().rawQuery("SELECT * FROM pro_ar_register WHERE reg_isactive=0 AND reg_location_code like '"+strCurrentRoom+"' order by pro_ar_register.reg_barcode" , null);
-
-        //DataCursorLoaders dataCursorLoaders = new DataCursorLoaders(mContext, "SELECT * FROM pro_ar_register WHERE reg_isactive=0 AND reg_location_code = '"+strCurrentRoom+"' order by pro_ar_register.reg_barcode");
-        //Cursor disposedassets = dataCursorLoaders.loadInBackground();
+        disposedassets = sqliteDb.getReadableDatabase().rawQuery("SELECT * FROM pro_ar_register WHERE reg_isactive=0 AND reg_location_code like '"+strCurrentRoom+"' order by pro_ar_register.reg_barcode" , null);
 
         disposedassets.moveToFirst();
         arrPrevDispCount.clear();
@@ -304,14 +271,8 @@ public class RoomSummaryActivity extends AppCompatActivity {
 
     public ArrayList<model_pro_ar_asset_headers> GetOtherLocation() {
 
-        //ArrayList<model_pro_ar_asset_headers> arrWrongLocaCount = new ArrayList<>();
-        //SQLiteDatabase db = MainActivity.sqliteDbHelper.getReadableDatabase();
-
         Cursor outoflocationassets;
-        outoflocationassets = MainActivity.sqliteDbHelper.getReadableDatabase().rawQuery("SELECT scan_location,reg_dept_code,reg_barcode,reg_asset_serial_nr,reg_asset_desc,reg_condition_code,reg_comments1,reg_useful_life,reg_useful_remainder FROM pro_ar_register JOIN pro_ar_scan ON pro_ar_register.reg_barcode = pro_ar_scan.scan_barcode WHERE pro_ar_scan.scan_location_entry like '" + strCurrentRoom + "' AND pro_ar_scan.scan_location not like '" + strCurrentRoom + "' AND pro_ar_scan.scan_location_entry not like 'R0000' order by pro_ar_register.reg_barcode", null);
-
-        //DataCursorLoaders dataCursorLoaders = new DataCursorLoaders(mContext, "SELECT * FROM pro_ar_register JOIN pro_ar_scan ON pro_ar_register.reg_barcode = pro_ar_scan.scan_barcode WHERE pro_ar_scan.scan_location_entry != '" + strCurrentRoom + "' AND pro_ar_scan.scan_location = '" + strCurrentRoom + "' AND pro_ar_scan.scan_location_entry != 'R0000' order by pro_ar_register.reg_barcode");
-        //Cursor outoflocationassets = dataCursorLoaders.loadInBackground();
+        outoflocationassets = sqliteDb.getReadableDatabase().rawQuery("SELECT scan_location,reg_dept_code,reg_barcode,reg_asset_serial_nr,reg_asset_desc,reg_condition_code,reg_comments1,reg_useful_life,reg_useful_remainder FROM pro_ar_register JOIN pro_ar_scan ON pro_ar_register.reg_barcode = pro_ar_scan.scan_barcode WHERE pro_ar_scan.scan_location_entry like '" + strCurrentRoom + "' AND pro_ar_scan.scan_location not like '" + strCurrentRoom + "' AND pro_ar_scan.scan_location_entry not like 'R0000' order by pro_ar_register.reg_barcode", null);
 
         outoflocationassets.moveToFirst();
         arrNewCount.clear();

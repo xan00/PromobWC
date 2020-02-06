@@ -91,6 +91,7 @@ public class PopulateRoomActivity extends AppCompatActivity {
     model_pro_ar_asset_rows data;
 
     private static SQLiteDatabase db;
+    private static sqliteDBHelper sqliteDb;
 
     ArrayList<fragment_MakeAssetViewContent> listAssetFragments;
     private String newbarcodevalue = "";
@@ -104,7 +105,8 @@ public class PopulateRoomActivity extends AppCompatActivity {
         setContentView(R.layout.activity_asset_holder);
         viewPager = findViewById(R.id.pgRoomAssets);
         currentlayout = 0;
-        db = MainActivity.sqliteDbHelper.getReadableDatabase();
+        sqliteDb = sqliteDBHelper.getInstance(mContext);
+        db = sqliteDb.getReadableDatabase();
 
         Intent iPoproom = getIntent();
         Bundle bSaved = iPoproom.getExtras();
@@ -421,7 +423,7 @@ public class PopulateRoomActivity extends AppCompatActivity {
                     scan.setScan_quan_retries(resultRetries);
                     //refreshFrameData(false, "M");
                     try {
-                        MainActivity.sqliteDbHelper.getWritableDatabase().execSQL("UPDATE pro_ar_scan SET scan_quantity=" + resultReading + ", scan_quan_retries=" + resultRetries + ",scan_type_barcode='M' WHERE scan_barcode='" + listAssetFragments.get(intPagePosition).getAssetdata().getReg_barcode() + "'");
+                        sqliteDb.getWritableDatabase().execSQL("UPDATE pro_ar_scan SET scan_quantity=" + resultReading + ", scan_quan_retries=" + resultRetries + ",scan_type_barcode='M' WHERE scan_barcode='" + listAssetFragments.get(intPagePosition).getAssetdata().getReg_barcode() + "'");
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -568,7 +570,7 @@ public class PopulateRoomActivity extends AppCompatActivity {
             String input_value;
             input_value = input.getText().toString().toUpperCase();
 
-            Cursor assets = MainActivity.sqliteDbHelper.getReadableDatabase().rawQuery("SELECT reg_barcode, reg_location_code FROM pro_ar_register WHERE reg_barcode = '" + input_value + "'",null);
+            Cursor assets = sqliteDb.getReadableDatabase().rawQuery("SELECT reg_barcode, reg_location_code FROM pro_ar_register WHERE reg_barcode = '" + input_value + "'",null);
             assets.moveToFirst();
 
             if (assets.getCount() !=0) {
@@ -578,7 +580,7 @@ public class PopulateRoomActivity extends AppCompatActivity {
                 roomintent.putExtra("CYCLE", scancycle);
                 roomintent.putExtra("LOCATION SCAN TYPE", "k");
 
-                Cursor location = MainActivity.sqliteDbHelper.getReadableDatabase().rawQuery("SELECT loc_name, loc_person FROM pro_ar_locations WHERE loc_code = '"+assets.getString(1)+"'",null);
+                Cursor location = sqliteDb.getReadableDatabase().rawQuery("SELECT loc_name, loc_person FROM pro_ar_locations WHERE loc_code = '"+assets.getString(1)+"'",null);
                 location.moveToFirst();
 
                 roomintent.putExtra("LOCATION NAME", location.getString(0));
@@ -625,7 +627,7 @@ public class PopulateRoomActivity extends AppCompatActivity {
         super.onCreateContextMenu(menu, v, menuInfo);
 
         String sqlstring = "select parm_value from pro_sys_parms where parm = 'manual_scanning' or parm='mark_invest' or parm='dispose/undispose' or parm = 'camera_active' order by parm";
-        Cursor moreoptionsparms = MainActivity.sqliteDbHelper.getReadableDatabase().rawQuery(sqlstring,null);
+        Cursor moreoptionsparms = sqliteDb.getReadableDatabase().rawQuery(sqlstring,null);
         moreoptionsparms.moveToFirst();
 
         menu.add(0, v.getId(), 0, "Go To Asset");
@@ -669,7 +671,7 @@ public class PopulateRoomActivity extends AppCompatActivity {
     private int GetCycle() {
         int cycle;
         try {
-            Cursor getcycle = MainActivity.sqliteDbHelper.getReadableDatabase().rawQuery("SELECT ar_cycle FROM pro_sys_company", null);
+            Cursor getcycle = sqliteDb.getReadableDatabase().rawQuery("SELECT ar_cycle FROM pro_sys_company", null);
             getcycle.moveToLast();
             cycle = getcycle.getInt(getcycle.getColumnIndex(meta.pro_sys_company.ar_cycle));
             getcycle.close();
@@ -728,7 +730,7 @@ public class PopulateRoomActivity extends AppCompatActivity {
                 Cursor currentexists =  db.rawQuery("SELECT scan_barcode FROM pro_ar_scan WHERE scan_barcode = '" + barcode + "'", null);
 
                 if (currentexists.getCount()>0) {
-                    MainActivity.sqliteDbHelper.getWritableDatabase().execSQL("DELETE FROM pro_ar_scan WHERE scan_barcode = '" + barcode + "'");
+                    sqliteDb.getWritableDatabase().execSQL("DELETE FROM pro_ar_scan WHERE scan_barcode = '" + barcode + "'");
 
 
                     Cursor curAssetsinroom = db.rawQuery("SELECT reg_barcode FROM pro_ar_register WHERE reg_location_code = '" + strSelectedRoom + "'", null);
@@ -855,7 +857,7 @@ public class PopulateRoomActivity extends AppCompatActivity {
                             scannedmanual.getScan_barcode() + "')";
 
                     try {
-                        MainActivity.sqliteDbHelper.getWritableDatabase().execSQL(sqlstring);
+                        sqliteDb.getWritableDatabase().execSQL(sqlstring);
                     } catch (Exception e) {
                         e.printStackTrace();
                         Log.d("INSERT MANUAL","");
@@ -864,7 +866,7 @@ public class PopulateRoomActivity extends AppCompatActivity {
 
 
                     String sqlstringquantity = "select parm_value from pro_sys_parms where parm = 'manual_quantity'";
-                    Cursor curQuantity = MainActivity.sqliteDbHelper.getReadableDatabase().rawQuery(sqlstringquantity,null);
+                    Cursor curQuantity = sqliteDb.getReadableDatabase().rawQuery(sqlstringquantity,null);
                     curQuantity.moveToFirst();
 
 
@@ -1028,8 +1030,9 @@ public class PopulateRoomActivity extends AppCompatActivity {
 
         String sql = "SELECT scan_location, scan_lattitude, scan_longitude FROM pro_ar_scan WHERE scan_barcode = '"+barcode+"'";
         gotogallery.putExtra("PIC TEXT SQL STRING",sql);
-        gotogallery.putExtra("DETAIL1 TITLE",strDetailName);
-        gotogallery.putExtra("DETAIL2 TITLE",strDetailName2);
+        gotogallery.putExtra("DETAIL1 TITLE",strDetailName2);
+        gotogallery.putExtra("DETAIL2 TITLE",strDetailName);
+        gotogallery.putExtra("PICTURE TYPE","A");
         startActivity(gotogallery);
     }
 

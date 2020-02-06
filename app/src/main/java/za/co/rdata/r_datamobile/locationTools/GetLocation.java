@@ -32,6 +32,12 @@ public class GetLocation extends Service implements LocationListener {
         getLocation();
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+    }
+
     @SuppressLint("MissingPermission")
     public Location getLocation() {
         try {

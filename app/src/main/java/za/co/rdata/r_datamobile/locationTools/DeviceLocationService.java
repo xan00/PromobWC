@@ -22,12 +22,12 @@ public class DeviceLocationService extends Service {
 
     private static final String TAG = "GPS";
     private LocationManager mLocationManager = null;
-    private static final int LOCATION_INTERVAL = 25000;
+    private static final int LOCATION_INTERVAL = 12;
     private static final float LOCATION_DISTANCE = 10;
-    Location mLastLocation;
+    private static Location mLastLocation;
     ActivityLogger activityLogger;
 
-    public Location getmLastLocation() {
+    public static Location getmLastLocation() {
         return mLastLocation;
     }
 

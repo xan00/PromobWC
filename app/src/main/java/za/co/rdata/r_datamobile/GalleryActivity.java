@@ -49,6 +49,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import rapid.decoder.BitmapDecoder;
+import za.co.rdata.r_datamobile.DBHelpers.sqliteDBHelper;
 import za.co.rdata.r_datamobile.locationTools.GetLocation;
 
 /**
@@ -79,9 +80,13 @@ public class GalleryActivity extends AppCompatActivity {
     private String strSQL = "";
     private String strDetail1Name;
     private String strDetail2name;
+    private String imagetype;
+
+    private static sqliteDBHelper sqliteDb;
+
     View.OnClickListener takepictureclick = v -> {
 
-        Cursor camerausage = MainActivity.sqliteDbHelper.getReadableDatabase().rawQuery("SELECT parm_value FROM pro_sys_parms WHERE parm='camera_usage'",null);
+        Cursor camerausage = sqliteDb.getReadableDatabase().rawQuery("SELECT parm_value FROM pro_sys_parms WHERE parm='camera_usage'",null);
         camerausage.moveToFirst();
         String camerausagevalue;
 
@@ -107,7 +112,10 @@ public class GalleryActivity extends AppCompatActivity {
 
         Intent iPhoto = getIntent();
         Bundle bSaved = iPhoto.getExtras();
-        //idvalue = bSaved.getString("PHOTO ID");
+
+        try {
+            imagetype = bSaved.getString("PICTURE TYPE");
+        } catch (Exception ignore) {}
 
         try {
             assert bSaved != null;
@@ -117,7 +125,8 @@ public class GalleryActivity extends AppCompatActivity {
         strSQL = bSaved.getString("PIC TEXT SQL STRING");
         strDetail1Name = bSaved.getString("DETAIL1 TITLE");
 
-        Cursor picturedata = MainActivity.sqliteDbHelper.getReadableDatabase().rawQuery(strSQL,null);
+        sqliteDb = sqliteDBHelper.getInstance(this.getApplicationContext());
+        Cursor picturedata = sqliteDb.getReadableDatabase().rawQuery(strSQL,null);
         picturedata.moveToFirst();
         try {
             idvalue = String.valueOf(picturedata.getString(3));
@@ -160,7 +169,7 @@ public class GalleryActivity extends AppCompatActivity {
         //if (!MainActivity.NODE_ID.startsWith(String.valueOf(6))) {
             if (requestCode == 1011) {
 
-                Cursor picturedata = MainActivity.sqliteDbHelper.getReadableDatabase().rawQuery(strSQL, null);
+                Cursor picturedata = sqliteDb.getReadableDatabase().rawQuery(strSQL, null);
                 picturedata.moveToFirst();
 
                 setLat(String.valueOf(picturedata.getDouble(1)));
@@ -191,7 +200,7 @@ public class GalleryActivity extends AppCompatActivity {
                 //String strPictureText = strDetail1Name+": det 1";
 
                 //ExifUtil exifUtil = new ExifUtil();
-                Cursor camerausage = MainActivity.sqliteDbHelper.getReadableDatabase().rawQuery("SELECT parm_value FROM pro_sys_parms WHERE parm='camera_usage'",null);
+                Cursor camerausage =sqliteDb.getReadableDatabase().rawQuery("SELECT parm_value FROM pro_sys_parms WHERE parm='camera_usage'",null);
                 camerausage.moveToFirst();
                 String camerausagevalue = camerausage.getString(0);
 
@@ -242,7 +251,7 @@ public class GalleryActivity extends AppCompatActivity {
         captureintent.putExtra("PHOTO ID",idvalue);
         captureintent.putExtra("PIC TEXT SQL STRING",strSQL);
 
-        Cursor picturedata = MainActivity.sqliteDbHelper.getReadableDatabase().rawQuery(strSQL,null);
+        Cursor picturedata = sqliteDb.getReadableDatabase().rawQuery(strSQL,null);
         picturedata.moveToFirst();
         lat = String.valueOf(picturedata.getDouble(1));
         lng = String.valueOf(picturedata.getDouble(2));
@@ -315,7 +324,7 @@ public class GalleryActivity extends AppCompatActivity {
         @SuppressLint("SimpleDateFormat") String timeStamp = new SimpleDateFormat("ddMMyy_HHmmss").format(new Date());
         File dir = new File(Environment.getExternalStorageDirectory().toString() + "/filesync/Images/");
         int folderlength = dir.list().length + 1;
-        imageFileName = barcode + "_" + folderlength + "_" + timeStamp;
+        imageFileName =  imagetype + "_" + barcode + "_" + folderlength + "_" + timeStamp;
         File image = File.createTempFile(
                 imageFileName,  // prefix
                 ".jpg",         // suffix
@@ -369,7 +378,7 @@ public class GalleryActivity extends AppCompatActivity {
             //noinspection ConstantConditions
             arrGallery = new ArrayList<>(Arrays.asList(dir.listFiles(pathname -> {
                 Log.d("Picture Name", pathname.getName());
-                return pathname.getName().toUpperCase().startsWith(barcode+"_")
+                return pathname.getName().toUpperCase().startsWith(imagetype+"_"+barcode+"_")
                         & pathname.getName().toLowerCase().endsWith(".jpg");
 
             })));
@@ -427,33 +436,6 @@ public class GalleryActivity extends AppCompatActivity {
         acceptpicture.setOnClickListener(acceptpictureclick);
         newpicture.setOnClickListener(takepictureclick);
     }
-/*
-    private void imageOrientationValidator(String path) {
-
-        ExifInterface ei;
-        try {
-            ei = new ExifInterface(path);
-            //Toast.makeText(getBaseContext(), "Rotation is:"+ei.getRotationDegrees(), Toast.LENGTH_SHORT).show();
-            /*
-            int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION,
-                    ExifInterface.ORIENTATION_NORMAL);
-            switch (orientation) {
-                case ExifInterface.ORIENTATION_ROTATE_90:
-                    bitmap = rotateImage(bitmap, 90);
-                    break;
-                case ExifInterface.ORIENTATION_ROTATE_180:
-                    bitmap = rotateImage(bitmap, 180);
-                    break;
-                case ExifInterface.ORIENTATION_ROTATE_270:
-                    bitmap = rotateImage(bitmap, 270);
-                    break;
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-*/
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {

@@ -30,6 +30,7 @@ import za.co.rdata.r_datamobile.assetModule.PopulateRoomActivity;
 import za.co.rdata.r_datamobile.stringTools.SelectCondition;
 import za.co.rdata.r_datamobile.stringTools.SelectDescriptionActivity;
 import za.co.rdata.r_datamobile.stringTools.SelectNoteActivity;
+import za.co.rdata.r_datamobile.DBHelpers.sqliteDBHelper;
 
 /**
  * Created by James de Scande on 25/10/2017 at 14:16.
@@ -53,6 +54,9 @@ public class fragment_MakeAssetViewContent extends Fragment {
 
     private model_pro_ar_asset_rows assetdata;
     private model_pro_ar_scanasset scannedassetdata;
+
+    private sqliteDBHelper sqlliteDBHelper = new sqliteDBHelper(getContext());
+
     private View.OnClickListener addonclear = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -85,6 +89,7 @@ public class fragment_MakeAssetViewContent extends Fragment {
         startActivityForResult(intent, GET_DESC_CODE);      ///////Starts Instance Of Condition Value in Registry
         return true;
     };
+
 
     private SQLiteDatabase db = MainActivity.sqliteDbHelper.getReadableDatabase();
 

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -103,16 +104,17 @@ public class SettingsActivity extends AppCompatActivity {
         return 0;
     }
 */
-    View.OnClickListener uploadimages = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            SymmetricDS_Helper.Stop_SymmetricDS(SettingsActivity.this);
-            SymmetricDS_Helper.Start_SymmetricDS(SettingsActivity.this,true );
-            refreshfile = () -> {
-                handlerfiles.postDelayed(refreshfile, 1000);
-            };
-            handlerfiles.post(refreshfile);
-        }
+    View.OnClickListener uploadimages = view -> {
+
+        Intent intent = new Intent(this,ImageUploadActivity.class);
+        startActivity(intent);
+
+        //SymmetricDS_Helper.Start_SymmetricDS(SettingsActivity.this,true );
+        //SymmetricDS_Helper.Stop_SymmetricDS(SettingsActivity.this);
+        //refreshfile = () -> {
+        //    handlerfiles.postDelayed(refreshfile, 1000);
+        //};
+        //handlerfiles.post(refreshfile);
     };
     View.OnClickListener senddb = view -> {
 
@@ -268,7 +270,7 @@ public class SettingsActivity extends AppCompatActivity {
         });
 
         Button uploadimage = findViewById(R.id.btnUploadImages);
-        uploadimage.setOnClickListener(sendtraces);
+        uploadimage.setOnClickListener(uploadimages);
 
         TextView txtNode = findViewById(R.id.txtNode);
         txtNode.setText(MainActivity.NODE_ID);

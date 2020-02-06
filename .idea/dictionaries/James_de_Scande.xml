@@ -6,6 +6,8 @@
       <w>camefromselectroute</w>
       <w>checkscanroom</w>
       <w>completerooms</w>
+      <w>connecttoserver</w>
+      <w>constraintmain</w>
       <w>currentexists</w>
       <w>datamobile</w>
       <w>datebefore</w>
@@ -18,6 +20,7 @@
       <w>gotonewroomscanning</w>
       <w>gotoroom</w>
       <w>gotoroommainsummary</w>
+      <w>imgupload</w>
       <w>incompleterooms</w>
       <w>inputbox</w>
       <w>logcontent</w>
@@ -28,6 +31,8 @@
       <w>mobnode</w>
       <w>modelpromrrouterows</w>
       <w>moreoptionsparms</w>
+      <w>nameoffile</w>
+      <w>pathtosave</w>
       <w>poproom</w>
       <w>rdata</w>
       <w>roomcolour</w>

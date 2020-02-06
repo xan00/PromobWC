@@ -28,11 +28,13 @@ import za.co.rdata.r_datamobile.DBHelpers.DBHelper;
 import za.co.rdata.r_datamobile.DBHelpers.SymmetricDS_Helper;
 import za.co.rdata.r_datamobile.DBHelpers.sqliteDBHelper;
 import za.co.rdata.r_datamobile.DBMeta.meta;
+import za.co.rdata.r_datamobile.fileTools.preference_saving;
 import za.co.rdata.r_datamobile.locationTools.DeviceLocationService;
 
 public class StartUpActivity extends AppCompatActivity implements AsyncResponse {
 
-    private String node_id;
+    //private SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+    private String node_id = "";//sharedPref.getString("node id", "");
     private String serverURL;
     private CheckTables checkTables = new CheckTables();
 

@@ -243,7 +243,7 @@ public class SelectAsset extends AppCompatActivity {
         //SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
 
         SymmetricDS_Helper.Start_SymmetricDS(this.getApplicationContext(), false);
-        startService(new Intent(this,DeviceLocationService.class));
+        //startService(new Intent(this,DeviceLocationService.class));
         sqliteDbHelper = sqliteDBHelper.getInstance(this.getApplicationContext());
 
         Intent iPoproom = getIntent();

@@ -156,6 +156,7 @@
         <activity android:name=".assetModule.ExpandedSummaryOfRoom" />
         <activity android:name=".SelectDebtor" />
         <activity android:name=".meterReadingModule.SummaryRouteActivity" />
+        <activity android:name=".ImageUploadActivity" />
 
         <provider
             android:name="androidx.core.content.FileProvider"

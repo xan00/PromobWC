@@ -205,5 +205,6 @@
     <string name="back">Back</string>
     <string name="route_summary">Route Summary</string>
     <string name="enable_pictures">Enable Pictures</string>
+    <string name="on_device">On Device</string>
 
 </resources>

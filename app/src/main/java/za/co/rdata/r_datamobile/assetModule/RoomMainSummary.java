@@ -598,7 +598,7 @@ public class RoomMainSummary extends AppCompatActivity {
         Button scannewasset = findViewById(R.id.btnScanAssetFromSumm);
         scannewasset.setOnClickListener(listenerscan);
 
-        RoomSummaryActivity roomSummaryActivity = new RoomSummaryActivity();
+        RoomSummaryActivity roomSummaryActivity = new RoomSummaryActivity(mContext);
         roomSummaryActivity.setStrCurrentRoom(strSelectedRoomclicked);
 
         TextView txtnotscancount = findViewById(R.id.txtNotSCannedCount);

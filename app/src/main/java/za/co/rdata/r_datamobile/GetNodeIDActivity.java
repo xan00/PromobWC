@@ -19,6 +19,7 @@ public class GetNodeIDActivity extends AppCompatActivity {
 
         Button bEnter = findViewById(R.id.Get_Node_Benter);
         bEnter.setOnClickListener(Enter_Clicked);
+
     }
 
     private View.OnClickListener Enter_Clicked = v -> {

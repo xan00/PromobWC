@@ -9,23 +9,23 @@ import android.preference.PreferenceManager;
  */
 public class preference_saving {
 
-    private Context mContext;
+    static private Context mContext;
     private String strContent = "";
     private Boolean blContent = true;
     private int intContent = 0;
 
     public preference_saving(Context mContext, String strContent) {
-        this.mContext = mContext;
+        preference_saving.mContext = mContext;
         this.strContent = strContent;
     }
 
     public preference_saving(Context mContext, Boolean blContent) {
-        this.mContext = mContext;
+        preference_saving.mContext = mContext;
         this.blContent = blContent;
     }
 
     public preference_saving(Context mContext, int intContent) {
-        this.mContext = mContext;
+        preference_saving.mContext = mContext;
         this.intContent = intContent;
     }
 
@@ -48,9 +48,9 @@ public class preference_saving {
         editor.apply();
     }
 
-    public String getPreferenceString(String stringname) {
+    public static String getPreferenceString(Context mContext, String stringname) {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(mContext);
-        return sharedPref.getString(stringname,"missing");
+        return sharedPref.getString(stringname,"");
     }
 
     public void setPreferenceInt(String tag, int content) {

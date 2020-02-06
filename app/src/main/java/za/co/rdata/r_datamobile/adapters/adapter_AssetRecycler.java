@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
+import za.co.rdata.r_datamobile.DBHelpers.sqliteDBHelper;
 import za.co.rdata.r_datamobile.DBMeta.meta;
 import za.co.rdata.r_datamobile.MainActivity;
 import za.co.rdata.r_datamobile.Models.model_pro_ar_asset_headers;
@@ -132,7 +133,11 @@ public class adapter_AssetRecycler extends RecyclerView.Adapter<adapter_AssetRec
             cycle = getcycle.getInt(getcycle.getColumnIndex(meta.pro_sys_company.ar_cycle));
             getcycle.close();
         } catch (CursorIndexOutOfBoundsException e) {
-            cycle = 0;
+            sqliteDBHelper sqliteDbHelper = new sqliteDBHelper(this.mContext);
+            Cursor getcycle = sqliteDbHelper.getReadableDatabase().rawQuery("SELECT ar_cycle FROM pro_sys_company", null);
+            getcycle.moveToLast();
+            cycle = getcycle.getInt(getcycle.getColumnIndex(meta.pro_sys_company.ar_cycle));
+            getcycle.close();
         }
         return cycle;
     }
