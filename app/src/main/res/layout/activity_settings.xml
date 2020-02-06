@@ -6,20 +6,6 @@
     android:layout_height="match_parent"
     android:background="@color/colorCompliment">
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/flbSettingsBack"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:background="@color/roomcolour"
-        android:backgroundTint="@color/roomcolour"
-        android:clickable="true"
-        android:focusable="true"
-        app:fabSize="auto"
-        app:borderWidth="0dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@android:drawable/ic_menu_revert" tools:targetApi="lollipop" />
-
     <TextView
         android:id="@+id/textView31"
         android:layout_width="0dp"
@@ -36,6 +22,24 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/flbSettingsBack"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="3dp"
+        android:background="@color/roomcolour"
+        android:backgroundTint="@color/roomcolour"
+        android:clickable="true"
+        android:focusable="true"
+        app:borderWidth="0dp"
+        app:elevation="0dp"
+        app:fabSize="auto"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@android:drawable/ic_menu_revert"
+        tools:targetApi="lollipop" />
+
 
     <TextView
         android:id="@+id/textView55"
@@ -50,21 +54,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView31" />
-
-    <TextView
-        android:id="@+id/textView56"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:background="@color/roomcolour"
-        android:paddingTop="2dp"
-        android:paddingBottom="2dp"
-        android:text="@string/cycle_settings"
-        android:textAlignment="center"
-        android:textColor="@color/colorTextLight"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView55" />
 
     <TextView
         android:id="@+id/textView57"
@@ -201,20 +190,20 @@
     <Switch
         android:id="@+id/swtScanBeep"
         style="@style/SCBSwitch"
-        android:text="@string/scanning_beep"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="24dp"
         android:layout_marginEnd="32dp"
         android:checked="false"
         android:switchPadding="120dp"
+        android:text="@string/scanning_beep"
         android:textColor="@color/black"
         android:textSize="16sp"
         android:theme="@style/SCBSwitch"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView56"
+        app:layout_constraintTop_toBottomOf="@+id/textView55"
         tools:checked="false" />
 
     <TextView
@@ -243,15 +232,14 @@
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:baselineAligned="false"
         android:orientation="horizontal"
         android:weightSum="1"
         app:layout_constraintBottom_toTopOf="@+id/textView66"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/swtScanBeep"
-        app:layout_constraintVertical_bias="1.0"
-        android:baselineAligned="false">
+        app:layout_constraintTop_toBottomOf="@+id/swtEnableImages"
+        app:layout_constraintVertical_bias="1.0">
 
         <LinearLayout
             android:layout_width="match_parent"
