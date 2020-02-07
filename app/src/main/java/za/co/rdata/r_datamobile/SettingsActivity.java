@@ -4,9 +4,11 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.media.Image;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -14,36 +16,31 @@ import android.os.Handler;
 import android.os.StrictMode;
 import android.preference.PreferenceManager;
 import android.view.View;
-import android.view.View.OnLongClickListener;
 import android.widget.Button;
-import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.multidex.BuildConfig;
 
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.net.ftp.FTPFile;
 import org.jumpmind.symmetric.ISymmetricEngine;
 import org.jumpmind.symmetric.android.AndroidSymmetricEngine;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-import za.co.rdata.r_datamobile.DBHelpers.SymmetricDS_Helper;
-
 import static org.jumpmind.symmetric.common.ParameterConstants.ENGINE_NAME;
 import static za.co.rdata.r_datamobile.FTPUsage.getfiles;
+import static za.co.rdata.r_datamobile.FTPUsage.getfilestolog;
 import static za.co.rdata.r_datamobile.stringTools.MakeDate.GetDate;
 
 /**
@@ -54,16 +51,13 @@ public class SettingsActivity extends AppCompatActivity {
 
     final ISymmetricEngine engine = AndroidSymmetricEngine.findEngineByName(ENGINE_NAME);
     Context mContext = this.getBaseContext();
-    Spinner atcycle;
-    Spinner mrcycle;
-    Spinner stcycle;
     Calendar datepicker = Calendar.getInstance();
     int mYear,mMonth,mDay;
     Handler handler = new Handler();
     Runnable refresh;
 
-    Handler handlerfiles = new Handler() ;
-    Runnable refreshfile;
+    static String nextversion = "Latest: ";
+
     View.OnClickListener sendtraces = view -> {
 
         String source = "/data/anr/traces.txt";
@@ -78,44 +72,11 @@ public class SettingsActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     };
-/*
-    private void changecycle(Spinner spinner) {
-
-            String format = "yyyyMM"; //In which you need put here
-            SimpleDateFormat sdf = new SimpleDateFormat(format, Locale.ENGLISH);
-            //atcycle.setText(sdf.format(datepicker.getTime()));
-        //MainActivity.sqliteDbHelper.getWritableDatabase().execSQL("UPDATE pro_sys_company SET "+cyclename+"="+cyclevalue+" WHERE InstNode_id");
-
-    }
-
-    private void changevalue (Spinner spin,String value) {
-
-        //private method of your class
-
-        spin.setSelection(getIndex(spin, value));
-
-    }
-
-    private int getIndex(Spinner spinner, String myString){
-        for (int i=0;i<spinner.getCount();i++){
-            if (spinner.getItemAtPosition(i).toString().equalsIgnoreCase(myString)){
-                return i;
-            }
-        }
-        return 0;
-    }
-*/
     View.OnClickListener uploadimages = view -> {
 
         Intent intent = new Intent(this,ImageUploadActivity.class);
         startActivity(intent);
 
-        //SymmetricDS_Helper.Start_SymmetricDS(SettingsActivity.this,true );
-        //SymmetricDS_Helper.Stop_SymmetricDS(SettingsActivity.this);
-        //refreshfile = () -> {
-        //    handlerfiles.postDelayed(refreshfile, 1000);
-        //};
-        //handlerfiles.post(refreshfile);
     };
     View.OnClickListener senddb = view -> {
 
@@ -171,15 +132,40 @@ public class SettingsActivity extends AppCompatActivity {
     View.OnClickListener clearcontext = view -> MainActivity.sqliteDbHelper.getWritableDatabase().execSQL("delete from sym_context");
     View.OnClickListener reloadnode = view -> engine.reloadNode(MainActivity.NODE_ID,MainActivity.NODE_ID);
     View.OnClickListener setupdb = view -> engine.setupDatabase(true);
-
     View.OnClickListener checkforupdates = view -> {
-        TextView txtNext = findViewById(R.id.txtNewVersion);
-        String[] args = { "test"};
 
-        try {
-            getfiles(args);
-        } catch (IOException ignore) {}
+        String user = "james";
+        String[] args = { "*.apk","/srv/ftp/"+user+"/Version/"};
+        GetFiles getFiles = new GetFiles();
+        getFiles.execute(args);
+
     };
+
+    private static class GetFiles extends AsyncTask<String,Integer,String> {
+
+        FTPFile[] ftpFiles;
+
+        @Override
+        protected String doInBackground(String... strings) {
+            try {
+                ftpFiles = getfiles(strings);
+                return ftpFiles[0].toString();
+            }
+            catch (IOException | NullPointerException e) {
+                e.printStackTrace();
+            }
+            return "Failure";
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            if (!s.equals("Failure"))
+                nextversion = "Latest: " + s;
+        }
+    }
+
+
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -189,17 +175,6 @@ public class SettingsActivity extends AppCompatActivity {
         mYear = datepicker.get(Calendar.YEAR);
         mMonth = datepicker.get(Calendar.MONTH);
         mDay = datepicker.get(Calendar.DAY_OF_MONTH);
-
-        //atcycle = findViewById(R.id.txtATcycleYear);
-
-       // mrcycle = findViewById(R.id.txtMRcycleyear);
-        //stcycle = findViewById(R.id.txtSTcycleyear);
-       // Cursor cycledata = MainActivity.sqliteDbHelper.getReadableDatabase().rawQuery("SELECT ar_cycle, mr_cycle, st_cycle FROM pro_sys_company",null);
-       // cycledata.moveToFirst();
-
-        //int at_cycle=cycledata.getInt(0);
-        //int mr_cycle=cycledata.getInt(1);
-        //int st_cycle=cycledata.getInt(2);
 
         String[] cyclepickermonths = getResources().getStringArray(R.array.months);
         java.util.ArrayList<String> periods = new java.util.ArrayList<>();
@@ -211,46 +186,28 @@ public class SettingsActivity extends AppCompatActivity {
             }
         }
 
-     //   ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(SettingsActivity.this, R.layout.spinner_cycle_layout, periods);
-      //  atcycle.setAdapter(spinnerAdapter);
-     //   mrcycle.setAdapter(spinnerAdapter);
-     //   stcycle.setAdapter(spinnerAdapter);
-
-        //changevalue(atcycle,String.valueOf(at_cycle));
-        //changevalue(mrcycle,String.valueOf(mr_cycle));
-        //changevalue(stcycle,String.valueOf(st_cycle));
-
-        //cycledata.close();
-
         TextView txtIP = findViewById(R.id.txtConnectIP);
 
         TextView txtBatchCount = findViewById(R.id.txtOutStanding);
         TextView txtIncomingBatch = findViewById(R.id.txtIncomingBatches);
         TextView txtDataSync = findViewById(R.id.txtDataSync);
+        TextView lastsync = findViewById(R.id.txtLastSync);
+        TextView txtNext = findViewById(R.id.txtNextVersion);
 
         refresh = () -> {
             txtIP.setText(MainActivity.SYMMETRICDS_REGISTRATION_URL);
+            lastsync.setText(String.valueOf(engine.getLastRestartTime()));
             txtBatchCount.setText(String.valueOf(checkSymmetricDS()));
             txtIncomingBatch.setText(String.valueOf(checkIncomingSymmetricDS()));
             txtDataSync.setText(checkDataLoadSymmetricDS());
-            handler.postDelayed(refresh, 500);
+            txtNext.setText(nextversion);
+            handler.postDelayed(refresh, 200);
         };
         handler.post(refresh);
 
-        /*
-        if (checkDataLoadSymmetricDS()) {
-            txtDataSync.setText("Yes");
-        } else {
-            txtDataSync.setText("No");
-        }
-        */
-
-        TextView lastsync = findViewById(R.id.txtLastSync);
-        lastsync.setText(String.valueOf(engine.getLastRestartTime()));
-
         TextView version = findViewById(R.id.txtPreviousversion);
-        za.co.rdata.r_datamobile.BuildConfig buildConfig = new za.co.rdata.r_datamobile.BuildConfig();
-        version.setText("Current: "+buildConfig.VERSION_NAME);
+
+        version.setText("Current: "+ BuildConfig.VERSION_NAME);
 
         FloatingActionButton settingsback = findViewById(R.id.flbSettingsBack);
         settingsback.setOnClickListener(view -> onBackPressed());

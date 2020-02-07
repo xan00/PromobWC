@@ -20,6 +20,10 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+/**
+ * Created by James de Scande on 02/07/2018 at 14:19.
+ */
+
 public class ImageUploadActivity extends AppCompatActivity {
 
     @Override
@@ -66,7 +70,6 @@ public class ImageUploadActivity extends AppCompatActivity {
 
         LinearLayout linearLayout = findViewById(R.id.lin_image_browser);
         linearLayout.addView(tView.getView());
-
 
     }
 }

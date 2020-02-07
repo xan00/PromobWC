@@ -4,15 +4,20 @@
       <w>autofill</w>
       <w>backtomenu</w>
       <w>camefromselectroute</w>
+      <w>checkforupdates</w>
       <w>checkscanroom</w>
+      <w>clearcontext</w>
       <w>completerooms</w>
       <w>connecttoserver</w>
       <w>constraintmain</w>
       <w>currentexists</w>
+      <w>cyclepickermonths</w>
       <w>datamobile</w>
       <w>datebefore</w>
+      <w>datepicker</w>
       <w>expandedlistforroom</w>
       <w>fileprovider</w>
+      <w>getfiles</w>
       <w>getget</w>
       <w>getm</w>
       <w>gotomainsummary</w>
@@ -21,8 +26,11 @@
       <w>gotoroom</w>
       <w>gotoroommainsummary</w>
       <w>imgupload</w>
+      <w>incomingbatchcount</w>
       <w>incompleterooms</w>
       <w>inputbox</w>
+      <w>lastsync</w>
+      <w>linlay</w>
       <w>logcontent</w>
       <w>logname</w>
       <w>meternumberclear</w>
@@ -32,9 +40,11 @@
       <w>modelpromrrouterows</w>
       <w>moreoptionsparms</w>
       <w>nameoffile</w>
+      <w>nodenamegoeshere</w>
       <w>pathtosave</w>
       <w>poproom</w>
       <w>rdata</w>
+      <w>reloadnode</w>
       <w>roomcolour</w>
       <w>roomorasset</w>
       <w>roomscancount</w>
@@ -42,6 +52,7 @@
       <w>scannedmanual</w>
       <w>selectedroom</w>
       <w>selectroom</w>
+      <w>setupdb</w>
       <w>sqlstringquantity</w>
       <w>statusnot</w>
       <w>streetnameclear</w>

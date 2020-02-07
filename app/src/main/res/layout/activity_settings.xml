@@ -96,7 +96,7 @@
             app:layout_constraintTop_toBottomOf="@+id/swtScanBeep" />
 
         <LinearLayout
-            android:id="@+id/linearLayout2"
+            android:id="@+id/linlay2"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
@@ -226,7 +226,7 @@
             android:textColor="@color/black"
             android:textSize="12sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayout2" />
+            app:layout_constraintTop_toBottomOf="@+id/linlay2" />
 
         <TextView
             android:id="@+id/txtNode"
@@ -396,7 +396,7 @@
                     android:textColor="@color/black" />
 
                 <TextView
-                    android:id="@+id/txtNewVersion"
+                    android:id="@+id/txtNextVersion"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
