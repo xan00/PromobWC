@@ -48,7 +48,7 @@ public class SettingsActivity extends AppCompatActivity {
 
     static String nextversion = "";
     static String user = "james";
-    static String[] args = {"*.apk", "/srv/ftp/" + user + "/Version/"};
+    static String[] args = {"*.apk", "/srv/ftp/" + user + "/Version/","/srv/ftp/" + user + "/Images/","/srv/ftp/" + user + "/Documents/"};
     final ISymmetricEngine engine = AndroidSymmetricEngine.findEngineByName(ENGINE_NAME);
     Context mContext;
     Calendar datepicker = Calendar.getInstance();
@@ -129,6 +129,7 @@ public class SettingsActivity extends AppCompatActivity {
     };
     View.OnClickListener pull = view -> engine.pull();
     View.OnClickListener clearcontext = view -> MainActivity.sqliteDbHelper.getWritableDatabase().execSQL("delete from sym_context");
+
     View.OnClickListener reloadnode = view -> engine.reloadNode(MainActivity.NODE_ID, MainActivity.NODE_ID);
     View.OnClickListener setupdb = view -> engine.setupDatabase(true);
     @SuppressLint("SetTextI18n")
@@ -288,6 +289,8 @@ public class SettingsActivity extends AppCompatActivity {
         Button btnCheckforupdates = findViewById(R.id.btnCheckforupdates);
         btnCheckforupdates.setOnClickListener(checkforupdates);
 
+        Button btnSendTraces = findViewById(R.id.btnSendTraces);
+        btnSendTraces.setOnClickListener(sendtraces);
     }
 
     public synchronized int checkSymmetricDS() {

@@ -209,5 +209,6 @@
     <string name="check_for_updates">Check For Updates</string>
     <string name="current">Current:</string>
     <string name="latest">Latest:</string>
+    <string name="send_traces">Send Traces</string>
 
 </resources>

@@ -351,6 +351,7 @@
             app:layout_constraintStart_toEndOf="@+id/textView60" />
 
         <LinearLayout
+            android:id="@+id/linearLayout14"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="1dp"
@@ -358,7 +359,6 @@
             android:layout_marginEnd="1dp"
             android:gravity="center"
             android:orientation="horizontal"
-            android:paddingBottom="16dp"
             android:weightSum="2"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -406,6 +406,37 @@
                     android:textAlignment="viewStart"
                     android:textColor="@color/black" />
             </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="409dp"
+            android:layout_height="57dp"
+            android:layout_marginStart="1dp"
+            android:layout_marginTop="1dp"
+            android:layout_marginEnd="1dp"
+            android:orientation="horizontal"
+            android:weightSum="1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout14">
+
+            <Button
+                android:id="@+id/btnSendTraces"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="8dp"
+                android:textAlignment="center"
+                android:textColor="@color/black"
+                android:textSize="12sp"
+                android:layout_weight="0.5"
+                android:text="@string/send_traces" />
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5" />
         </LinearLayout>
 
 
