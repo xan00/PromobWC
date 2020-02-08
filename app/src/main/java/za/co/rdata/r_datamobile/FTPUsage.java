@@ -93,24 +93,26 @@ public class FTPUsage {
         }
     }
 
-    public File goforIt(String pathtosave, String nameoffile, String pathtofile) {
+    static void goforIt(String pathtosave, String nameoffile, String pathtofile) {
 
         try {
+
+            String nameonmobile = "promob.apk";
 
               if (connecttoserver(pathtofile)) {
             ftpClient.enterLocalPassiveMode(); // important!
             ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
 
-            OutputStream out = new FileOutputStream(new File(pathtosave + nameoffile));
+            OutputStream out = new FileOutputStream(new File(pathtosave + nameonmobile));
             boolean result = ftpClient.retrieveFile(nameoffile, out);
             out.close();
             if (result) {
                 Log.v("download result", "succeeded");
-                File file = new File(Environment.getExternalStorageDirectory() + pathtosave + nameoffile);
+                File file = new File(Environment.getExternalStorageDirectory() + pathtosave + nameonmobile);
                 FileOutputStream fOut = new FileOutputStream(file);
                 fOut.close();
                 close();
-                return file;
+                //return file;
 
                  }
             }
@@ -119,7 +121,7 @@ public class FTPUsage {
             e.printStackTrace();
 
         }
-        return null;
+        //return null;
     }
 
 }

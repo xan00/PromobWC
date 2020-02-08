@@ -1,11 +1,10 @@
 package za.co.rdata.r_datamobile;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -24,7 +23,6 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.apache.commons.io.FileUtils;
@@ -40,7 +38,6 @@ import java.util.Calendar;
 
 import static org.jumpmind.symmetric.common.ParameterConstants.ENGINE_NAME;
 import static za.co.rdata.r_datamobile.FTPUsage.getfiles;
-import static za.co.rdata.r_datamobile.FTPUsage.getfilestolog;
 import static za.co.rdata.r_datamobile.stringTools.MakeDate.GetDate;
 
 /**
@@ -49,39 +46,41 @@ import static za.co.rdata.r_datamobile.stringTools.MakeDate.GetDate;
 
 public class SettingsActivity extends AppCompatActivity {
 
+    static String nextversion = "";
+    static String user = "james";
+    static String[] args = {"*.apk", "/srv/ftp/" + user + "/Version/"};
     final ISymmetricEngine engine = AndroidSymmetricEngine.findEngineByName(ENGINE_NAME);
-    Context mContext = this.getBaseContext();
+    Context mContext;
     Calendar datepicker = Calendar.getInstance();
-    int mYear,mMonth,mDay;
+    int mYear, mMonth, mDay;
     Handler handler = new Handler();
     Runnable refresh;
-
-    static String nextversion = "Latest: ";
-
+    Handler hanVersioncheck = new Handler();
+    Runnable runVersioncheck;
     View.OnClickListener sendtraces = view -> {
 
         String source = "/data/anr/traces.txt";
         File srcDir = new File(source);
 
-        String destination = Environment.getExternalStorageDirectory().getPath()+"/filesync/Traces/traces_"+GetDate("_")+".txt";
+        String destination = Environment.getExternalStorageDirectory().getPath() + "/filesync/Traces/traces_" + GetDate("_") + ".txt";
         File destDir = new File(destination);
 
         try {
-            FileUtils.copyFile(srcDir, destDir,true);
+            FileUtils.copyFile(srcDir, destDir, true);
         } catch (IOException e) {
             e.printStackTrace();
         }
     };
     View.OnClickListener uploadimages = view -> {
 
-        Intent intent = new Intent(this,ImageUploadActivity.class);
+        Intent intent = new Intent(this, ImageUploadActivity.class);
         startActivity(intent);
 
     };
     View.OnClickListener senddb = view -> {
 
         try {
-            FileUtils.copyFileToDirectory(this.getDatabasePath("mdata"), new File(Environment.getExternalStorageDirectory().getPath()+"/filesync/Backup/mdata_"+MainActivity.NODE_ID),true);
+            FileUtils.copyFileToDirectory(this.getDatabasePath("mdata"), new File(Environment.getExternalStorageDirectory().getPath() + "/filesync/Backup/mdata_" + MainActivity.NODE_ID), true);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -91,7 +90,7 @@ public class SettingsActivity extends AppCompatActivity {
         i.putExtra(Intent.EXTRA_EMAIL, new String[]{""});
         i.putExtra(Intent.EXTRA_SUBJECT, "Device Backup");
 
-        i.putExtra(Intent.EXTRA_TEXT, "This is a backup of all data on device "+MainActivity.USER+".");
+        i.putExtra(Intent.EXTRA_TEXT, "This is a backup of all data on device " + MainActivity.USER + ".");
 
         ArrayList<Uri> uris = new ArrayList<>();
 
@@ -130,61 +129,85 @@ public class SettingsActivity extends AppCompatActivity {
     };
     View.OnClickListener pull = view -> engine.pull();
     View.OnClickListener clearcontext = view -> MainActivity.sqliteDbHelper.getWritableDatabase().execSQL("delete from sym_context");
-    View.OnClickListener reloadnode = view -> engine.reloadNode(MainActivity.NODE_ID,MainActivity.NODE_ID);
+    View.OnClickListener reloadnode = view -> engine.reloadNode(MainActivity.NODE_ID, MainActivity.NODE_ID);
     View.OnClickListener setupdb = view -> engine.setupDatabase(true);
+    @SuppressLint("SetTextI18n")
     View.OnClickListener checkforupdates = view -> {
 
-        String user = "james";
-        String[] args = { "*.apk","/srv/ftp/"+user+"/Version/"};
-        GetFiles getFiles = new GetFiles();
+        TextView txtNext = findViewById(R.id.txtNextVersion);
+        //mContext = this;
+        //final boolean[] keeprunning = {true};
+        runVersioncheck = () -> {
+
+            int next = 0;
+            try {
+                String strtoconv = nextversion.substring((nextversion.indexOf('(') + 1), nextversion.indexOf(')'));
+                next = Integer.parseInt(strtoconv);
+            } catch (NumberFormatException | StringIndexOutOfBoundsException ignore) {
+            }
+            int prev = Integer.parseInt(BuildConfig.VERSION_NAME.substring((BuildConfig.VERSION_NAME.indexOf('(') + 1), BuildConfig.VERSION_NAME.indexOf(')')));
+            if (nextversion != null && !nextversion.isEmpty()) {
+                txtNext.setText("Latest:  " + nextversion.substring(0, nextversion.indexOf('.')));
+            }
+
+            if (next > prev) {
+                //keeprunning[0] = false;
+                AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+
+                builder.setTitle("New Version Found");
+                builder.setMessage("Do you want to download it now?");
+                builder.setPositiveButton("YES", (dialog, which) -> {
+                    DownloadFile downloadFile = new DownloadFile(mContext);
+                    downloadFile.execute(args);
+                    dialog.dismiss();
+                });
+                builder.setNegativeButton("Maybe Later", (dialog, which) -> dialog.dismiss());
+
+                builder.show();
+            } else if (next <= prev && next != 0) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+
+                builder.setTitle("New Version Found");
+                builder.setMessage("Do you want to download it now?");
+                builder.setPositiveButton("YES", (dialog, which) -> {
+                    DownloadFile downloadFile = new DownloadFile(mContext);
+                    downloadFile.execute(args);
+                    dialog.dismiss();
+                });
+                builder.setNegativeButton("Maybe Later", (dialog, which) -> dialog.dismiss());
+
+                builder.show();
+                Toast.makeText(mContext, "No new version available.", Toast.LENGTH_SHORT).show();
+            } else {
+                hanVersioncheck.postDelayed(runVersioncheck, 200);
+            }
+        };
+        hanVersioncheck.post(runVersioncheck);
+
+        GetFiles getFiles = new GetFiles(mContext);
         getFiles.execute(args);
 
     };
-
-    private static class GetFiles extends AsyncTask<String,Integer,String> {
-
-        FTPFile[] ftpFiles;
-
-        @Override
-        protected String doInBackground(String... strings) {
-            try {
-                ftpFiles = getfiles(strings);
-                return ftpFiles[0].toString();
-            }
-            catch (IOException | NullPointerException e) {
-                e.printStackTrace();
-            }
-            return "Failure";
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
-            if (!s.equals("Failure"))
-                nextversion = "Latest: " + s;
-        }
-    }
-
-
 
     @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
+        mContext = this;
         mYear = datepicker.get(Calendar.YEAR);
         mMonth = datepicker.get(Calendar.MONTH);
         mDay = datepicker.get(Calendar.DAY_OF_MONTH);
 
-        String[] cyclepickermonths = getResources().getStringArray(R.array.months);
+        /*String[] cyclepickermonths = getResources().getStringArray(R.array.months);
         java.util.ArrayList<String> periods = new java.util.ArrayList<>();
 
         for (int i = -1; i < 2; i++) {
             for (int j = 0; j < 12; j++) {
-                String cycle = (mYear + i) +cyclepickermonths[j];
+                String cycle = (mYear + i) + cyclepickermonths[j];
                 periods.add(cycle);
             }
-        }
+        }*/
 
         TextView txtIP = findViewById(R.id.txtConnectIP);
 
@@ -192,7 +215,6 @@ public class SettingsActivity extends AppCompatActivity {
         TextView txtIncomingBatch = findViewById(R.id.txtIncomingBatches);
         TextView txtDataSync = findViewById(R.id.txtDataSync);
         TextView lastsync = findViewById(R.id.txtLastSync);
-        TextView txtNext = findViewById(R.id.txtNextVersion);
 
         refresh = () -> {
             txtIP.setText(MainActivity.SYMMETRICDS_REGISTRATION_URL);
@@ -200,14 +222,13 @@ public class SettingsActivity extends AppCompatActivity {
             txtBatchCount.setText(String.valueOf(checkSymmetricDS()));
             txtIncomingBatch.setText(String.valueOf(checkIncomingSymmetricDS()));
             txtDataSync.setText(checkDataLoadSymmetricDS());
-            txtNext.setText(nextversion);
             handler.postDelayed(refresh, 200);
         };
         handler.post(refresh);
 
         TextView version = findViewById(R.id.txtPreviousversion);
 
-        version.setText("Current: "+ BuildConfig.VERSION_NAME);
+        version.setText("Current: " + BuildConfig.VERSION_NAME);
 
         FloatingActionButton settingsback = findViewById(R.id.flbSettingsBack);
         settingsback.setOnClickListener(view -> onBackPressed());
@@ -215,25 +236,25 @@ public class SettingsActivity extends AppCompatActivity {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         Switch swtScanBeep = findViewById(R.id.swtScanBeep);
 
-        swtScanBeep.setChecked(sharedPref.getBoolean("scan_beep",false));
+        swtScanBeep.setChecked(sharedPref.getBoolean("scan_beep", false));
 
         swtScanBeep.setOnCheckedChangeListener((compoundButton, b) -> {
             SharedPreferences.Editor edit = sharedPref.edit();
-            edit.putBoolean("scan_beep",swtScanBeep.isChecked());
+            edit.putBoolean("scan_beep", swtScanBeep.isChecked());
             edit.apply();
         });
 
         Switch swtEnablePictures = findViewById(R.id.swtEnableImages);
 
-        swtEnablePictures.setChecked(sharedPref.getBoolean("enable_pictures",false));
+        swtEnablePictures.setChecked(sharedPref.getBoolean("enable_pictures", false));
 
         swtEnablePictures.setOnCheckedChangeListener((compoundButton, b) -> {
             SharedPreferences.Editor edit = sharedPref.edit();
-            edit.putBoolean("enable_pictures",swtEnablePictures.isChecked());
+            edit.putBoolean("enable_pictures", swtEnablePictures.isChecked());
             edit.apply();
-            int isSwitched = sharedPref.getBoolean("enable_pictures",false) ? 1 : 0;
+            int isSwitched = sharedPref.getBoolean("enable_pictures", false) ? 1 : 0;
             MainActivity.sqliteDbHelper.getWritableDatabase().execSQL("UPDATE pro_sys_parms SET parm_value = '"
-                    + isSwitched +"' WHERE parm = 'camera_active'");
+                    + isSwitched + "' WHERE parm = 'camera_active'");
 
         });
 
@@ -274,7 +295,7 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     public synchronized int checkIncomingSymmetricDS() {
-        Cursor incomingbatchcount = MainActivity.sqliteDbHelper.getReadableDatabase().rawQuery("SELECT count(status) FROM `sym_incoming_batch` where `status`='LD';",null);
+        Cursor incomingbatchcount = MainActivity.sqliteDbHelper.getReadableDatabase().rawQuery("SELECT count(status) FROM `sym_incoming_batch` where `status`='LD';", null);
         incomingbatchcount.moveToFirst();
         int batchcount = incomingbatchcount.getInt(0);
         incomingbatchcount.close();
@@ -287,6 +308,70 @@ public class SettingsActivity extends AppCompatActivity {
 
     public void onBackPressed() {
         super.onBackPressed();
+    }
+
+    private static class GetFiles extends AsyncTask<String, Integer, String> {
+
+        FTPFile[] ftpFiles;
+        @SuppressLint("StaticFieldLeak")
+        Context context;
+
+        GetFiles(Context context) {
+            this.context = context;
+        }
+
+        @Override
+        protected String doInBackground(String... strings) {
+            try {
+                ftpFiles = getfiles(strings);
+                return ftpFiles[0].getName();
+            } catch (IOException | NullPointerException e) {
+                e.printStackTrace();
+            }
+            return "Failure";
+        }
+
+        @Override
+        protected void onPostExecute(String s) {            //If version in ftp is newer, ask if user wants to update.
+            super.onPostExecute(s);
+            if (!s.equals("Failure")) {
+                nextversion = s;
+
+            }
+        }
+    }
+
+    private static class DownloadFile extends AsyncTask<String, Integer, String> {
+
+        //FTPFile[] ftpFiles;
+        @SuppressLint("StaticFieldLeak")
+        Context context;
+
+        DownloadFile(Context context) {
+            this.context = context;
+        }
+
+        @Override
+        protected String doInBackground(String... strings) {
+
+            File fileold = new File(Environment.getExternalStorageDirectory() + "/filesync/Version/", "promob-old.apk");
+            if (fileold.exists())
+                fileold.delete();
+
+            File file = new File(Environment.getExternalStorageDirectory() + "/filesync/Version/", "promob.apk");
+            if (file.exists())
+                file.renameTo(fileold);
+
+            FTPUsage.goforIt(Environment.getExternalStorageDirectory() + "/filesync/Version/", nextversion, args[1]);
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            Toast.makeText(context, "Download complete. Please restart to install.", Toast.LENGTH_SHORT).show();
+        }
     }
 
 }

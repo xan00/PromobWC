@@ -7,13 +7,21 @@ android {
         applicationId "za.co.rdata.r_datamobile"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 52
-        versionName ""
+        versionCode = 43
+        versionName = 'Guilliman'+'('+versionCode+')'
         multiDexEnabled true
         android.defaultConfig.vectorDrawables.useSupportLibrary = true
-
+        //versionNameSuffix = ""
+        archivesBaseName = versionName
     }
 
+    applicationVariants.all { variant ->
+        variant.outputs.all { output ->
+            def newApkName = versionName + ".apk"
+
+            outputFileName = new File(newApkName)
+        }
+    }
 
     afterEvaluate {
         tasks.matching {
@@ -31,11 +39,13 @@ android {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            versionNameSuffix = versionname
+            //versionNameSuffix = '('+versionCode+')'
         }
         debug {
-            versionNameSuffix = versionname
+
+            //versionNameSuffix = '('+versionCode+')'
         }
+
     }
     packagingOptions {
         exclude 'META-INF/DEPENDENCIES'
