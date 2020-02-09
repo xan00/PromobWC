@@ -261,13 +261,13 @@ public class LoginActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= 23) {
             if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
                     == PackageManager.PERMISSION_GRANTED) {
-                final PackageManager pm = getPackageManager();
+                /*final PackageManager pm = getPackageManager();
                 String fullPath = Environment.getExternalStorageDirectory()+"/filesync/Version/promob.apk";
                 PackageInfo info = pm.getPackageArchiveInfo(fullPath, 0);
                 Toast.makeText(this, "VersionCode : " + info.versionCode + ", VersionName : " + info.versionName , Toast.LENGTH_LONG).show();
-                String versionName = BuildConfig.VERSION_NAME;
+                String versionName = BuildConfig.VERSION_NAME;*/
 
-                if (Build.VERSION.SDK_INT >= 24) {
+                /*if (Build.VERSION.SDK_INT >= 24) {
                     try {
                         Method m = StrictMode.class.getMethod("disableDeathOnFileUriExposure");
                         m.invoke(null);
@@ -278,15 +278,17 @@ public class LoginActivity extends AppCompatActivity {
 
                 if (info.versionCode > BuildConfig.VERSION_CODE){
                     Intent intent = new Intent(Intent.ACTION_VIEW);
-                    intent.setDataAndType(Uri.fromFile(new File(Environment.getExternalStorageDirectory() + "/filesync/Version/promob.apk")), "application/vnd.android.package-archive");
+                    intent.setDataAndType(Uri.fromFile(new File(getExternalFilesDir(null).getPath() + "/promob.apk")), "application/vnd.android.package-archive");
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
-                }
+                }*/
             } else {
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
                 }
         }}
-        catch (NullPointerException ignore) {}
+        catch (NullPointerException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

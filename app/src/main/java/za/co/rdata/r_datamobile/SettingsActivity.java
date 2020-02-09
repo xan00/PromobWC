@@ -24,6 +24,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.jakewharton.processphoenix.ProcessPhoenix;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.net.ftp.FTPFile;
@@ -156,8 +157,8 @@ public class SettingsActivity extends AppCompatActivity {
                 AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
 
                 builder.setTitle("New Version Found");
-                builder.setMessage("Do you want to download it now?");
-                builder.setPositiveButton("YES", (dialog, which) -> {
+                builder.setMessage("Do you want to download and install it now?");
+                builder.setPositiveButton("Yes", (dialog, which) -> {
                     DownloadFile downloadFile = new DownloadFile(mContext);
                     downloadFile.execute(args);
                     dialog.dismiss();
@@ -199,16 +200,6 @@ public class SettingsActivity extends AppCompatActivity {
         mYear = datepicker.get(Calendar.YEAR);
         mMonth = datepicker.get(Calendar.MONTH);
         mDay = datepicker.get(Calendar.DAY_OF_MONTH);
-
-        /*String[] cyclepickermonths = getResources().getStringArray(R.array.months);
-        java.util.ArrayList<String> periods = new java.util.ArrayList<>();
-
-        for (int i = -1; i < 2; i++) {
-            for (int j = 0; j < 12; j++) {
-                String cycle = (mYear + i) + cyclepickermonths[j];
-                periods.add(cycle);
-            }
-        }*/
 
         TextView txtIP = findViewById(R.id.txtConnectIP);
 
@@ -349,6 +340,8 @@ public class SettingsActivity extends AppCompatActivity {
         //FTPFile[] ftpFiles;
         @SuppressLint("StaticFieldLeak")
         Context context;
+        File fileold = new File(Environment.getExternalStorageDirectory() + "/filesync/Version/", "promob-old.apk");
+        File file = new File(Environment.getExternalStorageDirectory() + "/filesync/Version/", "promob.apk");
 
         DownloadFile(Context context) {
             this.context = context;
@@ -357,11 +350,9 @@ public class SettingsActivity extends AppCompatActivity {
         @Override
         protected String doInBackground(String... strings) {
 
-            File fileold = new File(Environment.getExternalStorageDirectory() + "/filesync/Version/", "promob-old.apk");
             if (fileold.exists())
                 fileold.delete();
 
-            File file = new File(Environment.getExternalStorageDirectory() + "/filesync/Version/", "promob.apk");
             if (file.exists())
                 file.renameTo(fileold);
 
@@ -374,6 +365,14 @@ public class SettingsActivity extends AppCompatActivity {
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
             Toast.makeText(context, "Download complete. Please restart to install.", Toast.LENGTH_SHORT).show();
+            try {
+                wait(3000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            Intent gotologin = new Intent(context, LoginActivity.class);
+            ProcessPhoenix.triggerRebirth(context,gotologin);
+
         }
     }
 

@@ -210,5 +210,7 @@
     <string name="current">Current:</string>
     <string name="latest">Latest:</string>
     <string name="send_traces">Send Traces</string>
+    <string name="thumbnail">Thumbnail</string>
+    <string name="filename">filename</string>
 
 </resources>

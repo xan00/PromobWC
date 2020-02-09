@@ -1,24 +1,28 @@
 package za.co.rdata.r_datamobile;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
-import com.google.android.material.tabs.TabItem;
-import com.google.android.material.tabs.TabLayout;
 import com.unnamed.b.atv.model.TreeNode;
 import com.unnamed.b.atv.view.AndroidTreeView;
 
 import java.io.File;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
+
+import za.co.rdata.r_datamobile.fileTools.IconTreeItemHolder;
+
+import static com.unnamed.b.atv.model.TreeNode.*;
 
 /**
  * Created by James de Scande on 02/07/2018 at 14:19.
@@ -26,15 +30,28 @@ import java.util.Arrays;
 
 public class ImageUploadActivity extends AppCompatActivity {
 
+    private TreeNode root = root();
+    private AndroidTreeView treeView;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_upload);
 
-        TreeNode root = TreeNode.root();
+        ConstraintLayout managerView;
+        managerView = (ConstraintLayout) this.getLayoutInflater().inflate(R.layout.activity_image_upload, null);
 
-        TreeNode parent = new TreeNode("Images");
-        root.addChild(parent);
+        Context context = this;
+        treeView = new AndroidTreeView(this, root);
+        treeView.setDefaultAnimation(true);
+        treeView.setDefaultContainerStyle(0);
+        treeView.setUse2dScroll(true);
+        treeView.setSelectionModeEnabled(true);
+        treeView.setDefaultViewHolder(IconTreeItemHolder.class);
+
+        TreeNode images = new TreeNode("Images");
+
+        root.addChild(images);
 
         File dir = null;
         ArrayList<File> arrGallery = new ArrayList<>();
@@ -63,13 +80,39 @@ public class ImageUploadActivity extends AppCompatActivity {
         }
 
         for (File f : arrGallery)
-        parent.addChildren(new TreeNode(f.getName()));
+            images.addChildren(new TreeNode(f.getName()));
 
-        AndroidTreeView tView = new AndroidTreeView(this, root);
-        tView.expandAll();
+        LinearLayout contentView = managerView.findViewById(R.id.lin_image_browser);
+        //contentView.removeView(tView.getView());
+        int i = contentView.getChildCount();
 
-        LinearLayout linearLayout = findViewById(R.id.lin_image_browser);
-        linearLayout.addView(tView.getView());
+        try {
+            contentView.addView(treeView.getView());
+            treeView.expandAll();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
+
+    private class TreeViewHolder extends TreeNode.BaseNodeViewHolder<IconTreeItemHolder.IconTreeItem> {
+
+        Context mContext;
+        //String mTree;
+
+        TreeViewHolder(Context context) {
+            super(context);
+        }
+
+
+        @Override
+        public View createNodeView(TreeNode node, IconTreeItemHolder.IconTreeItem value) {
+            final LayoutInflater inflater = LayoutInflater.from(mContext);
+            final View view = inflater.inflate(R.layout.treeviewnode, null, false);
+            TextView txtFileName = view.findViewById(R.id.txtTreeFileName);
+            txtFileName.setText(node.getValue().toString());
+            return view;
+        }
+    }
+
 }

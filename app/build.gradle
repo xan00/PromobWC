@@ -92,4 +92,5 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'commons-net:commons-net:20030805.205232'
     implementation 'com.github.bmelnychuk:atv:1.2.9'
+    implementation 'com.jakewharton:process-phoenix:2.0.0'
 }
