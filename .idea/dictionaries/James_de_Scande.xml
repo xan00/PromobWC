@@ -17,6 +17,7 @@
       <w>datepicker</w>
       <w>expandedlistforroom</w>
       <w>fileprovider</w>
+      <w>filetoupload</w>
       <w>getfiles</w>
       <w>getget</w>
       <w>getm</w>
@@ -25,10 +26,16 @@
       <w>gotonewroomscanning</w>
       <w>gotoroom</w>
       <w>gotoroommainsummary</w>
+      <w>greencloud</w>
+      <w>greenfolder</w>
+      <w>grouppos</w>
       <w>imgupload</w>
       <w>incomingbatchcount</w>
       <w>incompleterooms</w>
+      <w>infal</w>
       <w>inputbox</w>
+      <w>isincloud</w>
+      <w>isonphone</w>
       <w>lastsync</w>
       <w>linlay</w>
       <w>logcontent</w>

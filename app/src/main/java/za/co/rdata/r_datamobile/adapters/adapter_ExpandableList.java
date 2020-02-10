@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.HashMap;
@@ -21,7 +22,7 @@ public class adapter_ExpandableList extends BaseExpandableListAdapter {
 	private HashMap<String, List<String>> _listDataChild;
 
 	public adapter_ExpandableList(Context context, List<String> listDataHeader,
-								  HashMap<String, List<String>> listChildData) {
+								 HashMap<String, List<String>> listChildData) {
 		this._context = context;
 		this._listDataHeader = listDataHeader;
 		this._listDataChild = listChildData;
@@ -40,9 +41,11 @@ public class adapter_ExpandableList extends BaseExpandableListAdapter {
 
 	@Override
 	public View getChildView(int groupPosition, final int childPosition,
-			boolean isLastChild, View convertView, ViewGroup parent) {
+							 boolean isLastChild, View convertView, ViewGroup parent) {
 
 		final String childText = (String) getChild(groupPosition, childPosition);
+		boolean isincloud = false;
+		boolean isonphone = false;
 
 		if (convertView == null) {
 			LayoutInflater infalInflater = (LayoutInflater) this._context
@@ -50,7 +53,13 @@ public class adapter_ExpandableList extends BaseExpandableListAdapter {
 			convertView = infalInflater.inflate(R.layout.select_list_item, null);
 		}
 
-		TextView txtListChild = (TextView) convertView
+		ImageView imgCloud = convertView.findViewById(R.id.imgCLoud);
+		ImageView imgFolder = convertView.findViewById(R.id.imgFolder);
+
+		if (!isincloud) imgCloud.setImageResource(R.mipmap.ic_redcloud_foreground);
+		if (!isonphone) imgFolder.setImageResource(R.mipmap.ic_redfolder_foreground);
+
+		TextView txtListChild = convertView
 				.findViewById(R.id.lblListItem);
 
 		txtListChild.setText(childText);
@@ -80,16 +89,16 @@ public class adapter_ExpandableList extends BaseExpandableListAdapter {
 
 	@Override
 	public View getGroupView(int groupPosition, boolean isExpanded,
-			View convertView, ViewGroup parent) {
+							 View convertView, ViewGroup parent) {
 		String headerTitle = (String) getGroup(groupPosition);
+
 		if (convertView == null) {
 			LayoutInflater infalInflater = (LayoutInflater) this._context
 					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			convertView = infalInflater.inflate(R.layout.select_list_group, null);
 		}
 
-		TextView lblListHeader = (TextView) convertView
-				.findViewById(R.id.lblListHeader);
+		TextView lblListHeader = convertView.findViewById(R.id.lblListHeader);
 		lblListHeader.setTypeface(null, Typeface.BOLD);
 		lblListHeader.setText(headerTitle);
 

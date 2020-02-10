@@ -286,6 +286,7 @@ public class MeterReadingActivity extends AppCompatActivity {
 
                     gotogallery.putExtra("DETAIL1 TITLE", strDetailName);
                     gotogallery.putExtra("DETAIL2 TITLE", strDetailName2);
+                    gotogallery.putExtra("PICTURE TYPE","M");
 
                     startActivity(gotogallery);
                 //} else {

@@ -16,7 +16,7 @@
     <color name="OutOfLocation">#fad48b</color>
     <color name="NewScanned">#94C0CC</color>
     <color name="not_yet_scanned">#f2a3bd</color>
-    <color name="roomcolour">#696c83</color>
+    <color name="roomcolour">#696C83</color>
 
     <color name="default_back">#FFFFFF</color>
     <color name="value_differs">#009900</color>

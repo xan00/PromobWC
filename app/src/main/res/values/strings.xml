@@ -213,5 +213,7 @@
     <string name="thumbnail">Thumbnail</string>
     <string name="filename">filename</string>
     <string name="value_goes_here">Value Goes Here</string>
+    <string name="icon_for_sync_status_with_cloud">Icon for sync status with cloud</string>
+    <string name="icons_for_sync_status_with_phone">Icons for sync status with phone</string>
 
 </resources>

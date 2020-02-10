@@ -1,5 +1,8 @@
 package za.co.rdata.r_datamobile;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -10,6 +13,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -43,7 +47,8 @@ public class ImageUploadActivity extends AppCompatActivity {
 
         // setting list adapter
         expListView.setAdapter(listAdapter);
-        expListView.expandGroup(0);
+
+
         // Listview Group click listener
         expListView.setOnGroupClickListener((parent, v, groupPosition, id) -> {
             expListView.expandGroup(groupPosition);
@@ -74,6 +79,12 @@ public class ImageUploadActivity extends AppCompatActivity {
                             listDataHeader.get(groupPosition)).get(
                             childPosition), Toast.LENGTH_SHORT)
                     .show();
+            try {
+                UploadFile uploadFile = new UploadFile(this,listDataHeader,listDataChild,groupPosition,childPosition);
+                uploadFile.execute();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             return false;
         });
     }
@@ -114,6 +125,7 @@ public class ImageUploadActivity extends AppCompatActivity {
 
 
         listDataHeader.add("Documents");
+
         getFileArray(makedir("/filesync/Documents/"),0);
 
         listDataHeader.add("Images");
@@ -143,5 +155,60 @@ public class ImageUploadActivity extends AppCompatActivity {
 
         listDataChild.put(listDataHeader.get(i), filenames);
     }
+
+    private static class UploadFile extends AsyncTask<String, Integer, String> {
+
+        //FTPFile[] ftpFiles;
+        @SuppressLint("StaticFieldLeak")
+        Context context;
+        String user = "james";
+        List<String> listDataHeader;
+        int groupPosition;
+        int childPosition;
+        String pathtosave;
+        File filetoupload;
+        HashMap<String, List<String>> listDataChild;
+
+        UploadFile(Context context, List<String> arrHeaders, HashMap<String, List<String>> listDataChild, int grouppos, int childPosition) {
+            this.context = context;
+            this.groupPosition = grouppos;
+            this.childPosition = childPosition;
+            this.listDataHeader = arrHeaders;
+            this.listDataChild = listDataChild;
+            this.pathtosave = "/srv/ftp/"
+                    + user + "/"
+                    + listDataHeader.get(groupPosition)
+                    + "/";
+//                    + listDataChild.get(
+//                    listDataHeader.get(groupPosition)).get(
+//                    childPosition);
+            this.filetoupload = new File(Environment.getExternalStorageDirectory().toString()
+                    + "/filesync/"
+                    + listDataHeader.get(groupPosition)
+                    + "/"
+                    + listDataChild.get(
+                    listDataHeader.get(groupPosition)).get(
+                    childPosition));
+        }
+
+        @Override
+        protected String doInBackground(String... strings) {
+
+            try {
+                FTPUsage.storefile(filetoupload, pathtosave);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            Toast.makeText(context, "Upload complete.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
 
 }

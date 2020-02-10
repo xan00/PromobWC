@@ -80,14 +80,20 @@ public class FTPUsage {
         return files;
     }
 
-    public void storefile(File file, String pathtosave) throws IOException {
+    public static void storefile(File file, String pathtosave) throws IOException {
 
-        connecttoserver(pathtosave);
+        try {
+            connecttoserver(pathtosave);
+            String filename = file.getName();
 
-        BufferedInputStream buffIn = new BufferedInputStream(new FileInputStream(file));
-        ftpClient.storeFile(file.getName(), buffIn);
-        buffIn.close();
-        close();
+            BufferedInputStream buffIn = new BufferedInputStream(new FileInputStream(file));
+            ftpClient.storeFile(filename, buffIn);
+            showServerReply(ftpClient);
+            buffIn.close();
+            close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public static void close() throws IOException {
