@@ -1,28 +1,21 @@
 package za.co.rdata.r_datamobile;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.LinearLayout;
-import android.widget.TextView;
+import android.widget.ExpandableListAdapter;
+import android.widget.ExpandableListView;
+import android.widget.Toast;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
-
-import com.unnamed.b.atv.model.TreeNode;
-import com.unnamed.b.atv.view.AndroidTreeView;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 
-import za.co.rdata.r_datamobile.fileTools.IconTreeItemHolder;
-
-import static com.unnamed.b.atv.model.TreeNode.*;
+import za.co.rdata.r_datamobile.adapters.adapter_ExpandableList;
 
 /**
  * Created by James de Scande on 02/07/2018 at 14:19.
@@ -30,34 +23,87 @@ import static com.unnamed.b.atv.model.TreeNode.*;
 
 public class ImageUploadActivity extends AppCompatActivity {
 
-    private TreeNode root = root();
-    private AndroidTreeView treeView;
+    ExpandableListAdapter listAdapter;
+    ExpandableListView expListView;
+    List<String> listDataHeader;
+    HashMap<String, List<String>> listDataChild;
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_upload);
 
-        ConstraintLayout managerView;
-        managerView = (ConstraintLayout) this.getLayoutInflater().inflate(R.layout.activity_image_upload, null);
+        // get the listview
+        expListView = findViewById(R.id.lvExp);
 
-        Context context = this;
-        treeView = new AndroidTreeView(this, root);
-        treeView.setDefaultAnimation(true);
-        treeView.setDefaultContainerStyle(0);
-        treeView.setUse2dScroll(true);
-        treeView.setSelectionModeEnabled(true);
-        treeView.setDefaultViewHolder(IconTreeItemHolder.class);
+        // preparing list data
+        prepareListData();
 
-        TreeNode images = new TreeNode("Images");
+        listAdapter = new adapter_ExpandableList(this, listDataHeader, listDataChild);
 
-        root.addChild(images);
+        // setting list adapter
+        expListView.setAdapter(listAdapter);
+        expListView.expandGroup(0);
+        // Listview Group click listener
+        expListView.setOnGroupClickListener((parent, v, groupPosition, id) -> {
+            expListView.expandGroup(groupPosition);
+            Toast.makeText(getApplicationContext(),
+            "Group Clicked " + listDataHeader.get(groupPosition),
+            Toast.LENGTH_SHORT).show();
+            return false;
+        });
 
-        File dir = null;
-        ArrayList<File> arrGallery = new ArrayList<>();
+        // Listview Group expanded listener
+        expListView.setOnGroupExpandListener(groupPosition -> Toast.makeText(getApplicationContext(),
+                listDataHeader.get(groupPosition) + " Expanded",
+                Toast.LENGTH_SHORT).show());
+
+        // Listview Group collasped listener
+        expListView.setOnGroupCollapseListener(groupPosition -> Toast.makeText(getApplicationContext(),
+                listDataHeader.get(groupPosition) + " Collapsed",
+                Toast.LENGTH_SHORT).show());
+
+        // Listview on child click listener
+        expListView.setOnChildClickListener((parent, v, groupPosition, childPosition, id) -> {
+            // TODO Auto-generated method stub
+            Toast.makeText(
+                    getApplicationContext(),
+                    listDataHeader.get(groupPosition)
+                            + " : "
+                            + listDataChild.get(
+                            listDataHeader.get(groupPosition)).get(
+                            childPosition), Toast.LENGTH_SHORT)
+                    .show();
+            return false;
+        });
+    }
+
+    /*
+     * Preparing the list data
+     */
+
+    private File makedir(String filepath) {
+        try {
+            File dir = new File(Environment.getExternalStorageDirectory().toString() + filepath);
+            if (!dir.exists()) {
+                dir.mkdirs();
+            }
+            return dir;
+        }
+        catch(Exception e){
+            Log.w("creating file error", e.toString());
+        }
+        return null;
+    }
+
+    private void prepareListData() {
+        listDataHeader = new ArrayList<>();
+        listDataChild = new HashMap<>();
+
+        File dir;
 
         try {
-            dir = new File(Environment.getExternalStorageDirectory().toString() + "/filesync/Images/");
+            dir = new File(Environment.getExternalStorageDirectory().toString() + "/filesync/");
             if (!dir.exists()) {
                 dir.mkdirs();
             }
@@ -66,12 +112,23 @@ public class ImageUploadActivity extends AppCompatActivity {
             Log.w("creating file error", e.toString());
         }
 
+
+        listDataHeader.add("Documents");
+        getFileArray(makedir("/filesync/Documents/"),0);
+
+        listDataHeader.add("Images");
+        getFileArray(makedir("/filesync/Images/"),1);
+
+    }
+
+    private void getFileArray(File dir, int i) {
+        ArrayList<File> arrFileList = new ArrayList<>();
+
         try {
             //noinspection ConstantConditions
-            arrGallery = new ArrayList<>(Arrays.asList(dir.listFiles(pathname -> {
-                Log.d("Picture Name", pathname.getName());
-                return pathname.getName().toUpperCase().startsWith("")
-                        & pathname.getName().toLowerCase().endsWith(".jpg");
+            arrFileList = new ArrayList<>(Arrays.asList(dir.listFiles(pathname -> {
+                Log.d(dir.getName() + " Name", pathname.getName());
+                return pathname.getName().toUpperCase().startsWith("");
 
             })));
         }
@@ -79,40 +136,12 @@ public class ImageUploadActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        for (File f : arrGallery)
-            images.addChildren(new TreeNode(f.getName()));
 
-        LinearLayout contentView = managerView.findViewById(R.id.lin_image_browser);
-        //contentView.removeView(tView.getView());
-        int i = contentView.getChildCount();
+        ArrayList<String> filenames = new ArrayList<>();
+        for (File f : arrFileList)
+            filenames.add(f.getName());
 
-        try {
-            contentView.addView(treeView.getView());
-            treeView.expandAll();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    private class TreeViewHolder extends TreeNode.BaseNodeViewHolder<IconTreeItemHolder.IconTreeItem> {
-
-        Context mContext;
-        //String mTree;
-
-        TreeViewHolder(Context context) {
-            super(context);
-        }
-
-
-        @Override
-        public View createNodeView(TreeNode node, IconTreeItemHolder.IconTreeItem value) {
-            final LayoutInflater inflater = LayoutInflater.from(mContext);
-            final View view = inflater.inflate(R.layout.treeviewnode, null, false);
-            TextView txtFileName = view.findViewById(R.id.txtTreeFileName);
-            txtFileName.setText(node.getValue().toString());
-            return view;
-        }
+        listDataChild.put(listDataHeader.get(i), filenames);
     }
 
 }

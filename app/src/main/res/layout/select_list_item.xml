@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/linListItem"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/textview_shape"
+    android:orientation="horizontal"
+    android:weightSum="2">
+
+
+    <CheckBox
+        android:id="@+id/chkListItem"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="36dp"
+        android:layout_weight=".1" />
+
+    <TextView
+        android:id="@+id/lblListItem"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1.2"
+        android:paddingStart="?android:attr/expandableListPreferredChildPaddingLeft"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:text="@string/value_goes_here"
+        android:textColor="@color/black"
+        android:textSize="16sp" />
+
+</LinearLayout>

@@ -175,6 +175,8 @@ public class PopulateRoomActivity extends AppCompatActivity {
         assetViewContent.setResponsibleperson(strResponsibleperson);
         assetViewContent.setScannedLightColour(lightcolour);
 
+
+
         try {
             listAssetFragments.add(assetViewContent);
         } catch (NullPointerException ignore) {

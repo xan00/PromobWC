@@ -5,11 +5,13 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -320,8 +322,18 @@ public class fragment_MakeAssetViewContent extends Fragment {
         Log.d("Checking Light Colour", "Entry:" + scannedassetdata.getScan_location_entry() + "   " + "Scanned:" + scannedassetdata.getScan_location());
 
         txtComments.setOnLongClickListener(listen_noteTextView);
+        txtComments.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+
+            }
+        });
+
         txtComments2.setOnLongClickListener(listen_noteTextView2);
         txtCondition.setOnLongClickListener(listen_condTextView);
+        txtCondition.setOnTouchListener(new CustomTouchListener());
+
+
         txtDescription.setOnLongClickListener(listen_descTextView);
         txtAddRemaining.setOnClickListener(addonclear);
         txtAddRemaining.addTextChangedListener(new TextWatcher() {
@@ -358,6 +370,22 @@ public class fragment_MakeAssetViewContent extends Fragment {
         curCurrentScanData.close();
 
         return viewFragment;
+    }
+
+    class CustomTouchListener implements View.OnTouchListener {
+
+        public boolean onTouch(View view, MotionEvent motionEvent) {
+            switch (motionEvent.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    ((TextView) view).setTextColor(0xFFFFFFFF); // white
+                    break;
+                case MotionEvent.ACTION_CANCEL:
+                case MotionEvent.ACTION_UP:
+                    ((TextView) view).setTextColor(getResources().getColor(R.color.new_input_box)); // lightblack
+                    break;
+            }
+            return false;
+        }
     }
 
     @Override

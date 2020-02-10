@@ -39,7 +39,7 @@
             android:focusable="true"
             app:borderWidth="0dp"
             app:elevation="0dp"
-            app:fabSize="auto"
+            app:fabSize="mini"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@android:drawable/ic_menu_revert"

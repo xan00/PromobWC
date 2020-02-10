@@ -212,5 +212,6 @@
     <string name="send_traces">Send Traces</string>
     <string name="thumbnail">Thumbnail</string>
     <string name="filename">filename</string>
+    <string name="value_goes_here">Value Goes Here</string>
 
 </resources>
