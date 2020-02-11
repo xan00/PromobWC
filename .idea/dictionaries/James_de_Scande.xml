@@ -1,8 +1,13 @@
 <component name="ProjectDictionaryState">
   <dictionary name="James de Scande">
     <words>
+      <w>alreadycount</w>
+      <w>alreadyscanned</w>
+      <w>ascsv</w>
+      <w>assetintent</w>
       <w>autofill</w>
       <w>backtomenu</w>
+      <w>barcodescantype</w>
       <w>camefromselectroute</w>
       <w>checkforupdates</w>
       <w>checkscanroom</w>
@@ -10,14 +15,20 @@
       <w>completerooms</w>
       <w>connecttoserver</w>
       <w>constraintmain</w>
+      <w>counthandler</w>
       <w>currentexists</w>
+      <w>currentlayout</w>
+      <w>cyclenew</w>
       <w>cyclepickermonths</w>
       <w>datamobile</w>
       <w>datebefore</w>
       <w>datepicker</w>
+      <w>disp</w>
       <w>expandedlistforroom</w>
       <w>fileprovider</w>
       <w>filetoupload</w>
+      <w>fulldump</w>
+      <w>getcycle</w>
       <w>getfiles</w>
       <w>getget</w>
       <w>getm</w>
@@ -26,6 +37,7 @@
       <w>gotonewroomscanning</w>
       <w>gotoroom</w>
       <w>gotoroommainsummary</w>
+      <w>gotorooms</w>
       <w>greencloud</w>
       <w>greenfolder</w>
       <w>grouppos</w>
@@ -34,39 +46,68 @@
       <w>incompleterooms</w>
       <w>infal</w>
       <w>inputbox</w>
+      <w>inputtitle</w>
+      <w>intentcode</w>
       <w>isincloud</w>
       <w>isonphone</w>
       <w>lastsync</w>
+      <w>lattitude</w>
+      <w>lightcolour</w>
       <w>linlay</w>
+      <w>loca</w>
+      <w>locationname</w>
+      <w>locationscantype</w>
       <w>logcontent</w>
       <w>logname</w>
+      <w>mainmenu</w>
+      <w>manualscanning</w>
       <w>meternumberclear</w>
       <w>meternumbersearch</w>
       <w>metertype</w>
+      <w>missingcount</w>
+      <w>missingfromregistery</w>
       <w>mobnode</w>
       <w>modelpromrrouterows</w>
       <w>moreoptionsparms</w>
       <w>nameoffile</w>
+      <w>newlyscanned</w>
       <w>nodenamegoeshere</w>
+      <w>notyetscanned</w>
       <w>pathtosave</w>
+      <w>pdfscandatabarcodedesc</w>
       <w>poproom</w>
+      <w>previouslydisposedcount</w>
       <w>rdata</w>
       <w>reloadnode</w>
+      <w>roomassetcount</w>
       <w>roomcolour</w>
+      <w>roomcursor</w>
       <w>roomorasset</w>
       <w>roomscancount</w>
+      <w>roomscantype</w>
       <w>routenumbers</w>
+      <w>scannedasset</w>
+      <w>scanneddata</w>
+      <w>scanneditems</w>
       <w>scannedmanual</w>
+      <w>scantype</w>
       <w>selectedroom</w>
       <w>selectroom</w>
+      <w>sendmainclick</w>
       <w>setupdb</w>
+      <w>sqlite</w>
       <w>sqlstringquantity</w>
       <w>statusnot</w>
       <w>streetnameclear</w>
       <w>streetnumberclear</w>
+      <w>tempviewid</w>
       <w>textinput</w>
       <w>textview</w>
       <w>titleextract</w>
+      <w>totalcount</w>
+      <w>txtroomcount</w>
+      <w>txtscannedelsewhere</w>
+      <w>wronglocation</w>
     </words>
   </dictionary>
 </component>

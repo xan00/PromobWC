@@ -34,7 +34,7 @@
         android:typeface="sans"
         app:layout_constraintBottom_toTopOf="@+id/mainActivity_LVmenuItems"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.2"
+        app:layout_constraintHorizontal_bias="0.4"
         app:layout_constraintStart_toEndOf="@+id/imageView2"
         app:layout_constraintTop_toTopOf="parent" />
 

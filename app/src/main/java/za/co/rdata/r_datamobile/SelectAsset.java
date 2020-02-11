@@ -996,7 +996,6 @@ public class SelectAsset extends AppCompatActivity {
                 Intent mainmenu = new Intent(SelectAsset.this, MainActivity.class);
                 finish();
                 startActivity(mainmenu);
-
     }
 
     public void ScanSearchAsset() {               ///////Start Instance Of New Asset Scan without Data Upload
@@ -1019,15 +1018,20 @@ public class SelectAsset extends AppCompatActivity {
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-        menu.add(0, v.getId(), 0, "Scan Detail");
-        menu.add(1, v.getId(), 1, "Full Dump");
+        menu.add(0, v.getId(), 0, "Resend Scans");
+        menu.add(1, v.getId(), 1, "Scan Detail");
+        menu.add(2, v.getId(), 2, "Full Dump");
     }
 
     @SuppressLint("SetTextI18n")
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         //SelectAsset selectAsset = new SelectAsset();
-        if (item.getTitle() == "Scan Detail") {
+        if (item.getTitle() == "Resend Scans") {
+            int cyclenew = GetCycle() + 1;
+            MainActivity.sqliteDbHelper.getReadableDatabase().execSQL("update pro_ar_scan set scan_cycle = '"+cyclenew+"'");
+            Toast.makeText(this, "Scans Reset",Toast.LENGTH_SHORT).show();
+        } else if (item.getTitle() == "Scan Detail") {
             SendEmail(true,"%",2, notyetscannedCount, alreadyscannedCount);
         } else if (item.getTitle() == "Full Dump") {
             SendEmail(true,"%",1, notyetscannedCount, alreadyscannedCount);

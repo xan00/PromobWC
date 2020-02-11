@@ -15,6 +15,7 @@ import android.os.Handler;
 import android.os.StrictMode;
 import android.preference.PreferenceManager;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -116,20 +117,26 @@ public class SettingsActivity extends AppCompatActivity {
         } catch (android.content.ActivityNotFoundException ex) {
             Toast.makeText(this, "There are no email clients installed.", Toast.LENGTH_SHORT).show();
         }
-
     };
+
     View.OnClickListener clearbatches = view -> {
         MainActivity.sqliteDbHelper.getWritableDatabase().execSQL("DELETE from sym_outgoing_batch");
         MainActivity.sqliteDbHelper.getWritableDatabase().execSQL("DELETE from sym_incoming_batch");
         engine.purge();
     };
+
     View.OnClickListener push = view -> {
         engine.push();
         engine.route();
         engine.heartbeat(true);
     };
+
     View.OnClickListener pull = view -> engine.pull();
-    View.OnClickListener clearcontext = view -> MainActivity.sqliteDbHelper.getWritableDatabase().execSQL("delete from sym_context");
+    View.OnClickListener clearcontext = view -> {
+
+        MainActivity.sqliteDbHelper.getWritableDatabase().execSQL("delete from sym_context");
+        Toast.makeText(this, "Context was Cleared.",Toast.LENGTH_SHORT).show();
+    };
 
     View.OnClickListener reloadnode = view -> engine.reloadNode(MainActivity.NODE_ID, MainActivity.NODE_ID);
     View.OnClickListener setupdb = view -> engine.setupDatabase(true);
@@ -208,6 +215,13 @@ public class SettingsActivity extends AppCompatActivity {
         TextView txtDataSync = findViewById(R.id.txtDataSync);
         TextView lastsync = findViewById(R.id.txtLastSync);
 
+        View view = this.getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_IMPLICIT_ONLY
+            );
+        }
+
         refresh = () -> {
             txtIP.setText(MainActivity.SYMMETRICDS_REGISTRATION_URL);
             lastsync.setText(String.valueOf(engine.getLastRestartTime()));
@@ -223,7 +237,7 @@ public class SettingsActivity extends AppCompatActivity {
         version.setText("Current: " + BuildConfig.VERSION_NAME);
 
         FloatingActionButton settingsback = findViewById(R.id.flbSettingsBack);
-        settingsback.setOnClickListener(view -> onBackPressed());
+        settingsback.setOnClickListener(view2 -> onBackPressed());
 
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         Switch swtScanBeep = findViewById(R.id.swtScanBeep);
