@@ -157,6 +157,7 @@
         <activity android:name=".SelectDebtor" />
         <activity android:name=".meterReadingModule.SummaryRouteActivity" />
         <activity android:name=".ImageUploadActivity" />
+        <activity android:name=".SelectJob" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
