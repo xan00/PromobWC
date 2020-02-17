@@ -277,7 +277,7 @@ public class fragment_meterReading extends Fragment {
                         gotogallery.putExtra("PIC TEXT SQL STRING", sql);
                         gotogallery.putExtra("DETAIL1 TITLE", strDetailName2);
                         gotogallery.putExtra("DETAIL2 TITLE", strDetailName);
-
+                        gotogallery.putExtra("PICTURE TYPE","M");
                         startActivity(gotogallery);
                     }}
 
@@ -310,7 +310,7 @@ public class fragment_meterReading extends Fragment {
                             gotogallery.putExtra("PIC TEXT SQL STRING", sql);
                             gotogallery.putExtra("DETAIL1 TITLE", strDetailName2);
                             gotogallery.putExtra("DETAIL2 TITLE", strDetailName);
-
+                            gotogallery.putExtra("PICTURE TYPE","M");
                             startActivity(gotogallery);
                         }
                     } catch (CursorIndexOutOfBoundsException e) {
@@ -343,15 +343,17 @@ public class fragment_meterReading extends Fragment {
                             coordinates[1] = gps.getLongitude();
                         }
 */
+/*
                         Cursor cursorLoc = MainActivity.sqliteDbHelper.getWritableDatabase().rawQuery("SELECT device_current_lat, device_current_long FROM pro_sys_devices",null);
                         cursorLoc.moveToFirst();
 
                         this.route_row.setGps_read_lat(cursorLoc.getDouble(0));
                         this.route_row.setGps_read_long(cursorLoc.getDouble(1));
-                        //textViewNoteDescription.setText(resultNoteDescription);
+                        */
+                        textViewNoteDescription.setText(resultNoteDescription);
                         //row_changed = true;
 
-                        cursorLoc.close();
+  //                      cursorLoc.close();
 
                         Cursor notereqpics = MainActivity.sqliteDbHelper.getReadableDatabase().rawQuery("SELECT notes_reqpic FROM pro_mr_notes",null);
                         if (notereqpics.getString(0).equals("1")) {

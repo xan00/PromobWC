@@ -26,6 +26,7 @@
 
     <application
         android:name="androidx.multidex.MultiDexApplication"
+        android:requestLegacyExternalStorage="true"
         android:grantUriPermissions="true"
         android:icon="@mipmap/ic__promun_launcher"
         android:label="@string/app_name"

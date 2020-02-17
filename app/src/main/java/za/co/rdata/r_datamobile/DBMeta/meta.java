@@ -292,5 +292,23 @@ public class meta {
         public static String mr_cycle = "mr_cycle";
     }
 
+    public static class pro_fo_jobs {
+        public static String TableName = "pro_fo_jobs";
+        public static String InstNode_id = "InstNode_id";
+        public static String mobnode_id = "mobnode_id";
+        public static String pro_fo_job_no = "pro_fo_job_no";
+        public static String pro_fo_job_type = "pro_fo_job_type";
+        public static String pro_fo_status = "pro_fo_status";
+        public static String pro_fo_action_date = "pro_fo_action_date";
+        public static String pro_fo_prop_detail = "pro_fo_prop_detail";
+        public static String pro_fo_meter_no = "pro_fo_meter_no";
+        public static String pro_fo_reading = "pro_fo_reading";
+        public static String pro_fo_meter_type = "pro_fo_meter_type";
+        public static String pro_fo_width = "pro_fo_width";
+        public static String pro_fo_phase = "pro_fo_phase";
+        public static String pro_fo_amps = "pro_fo_amps";
+        public static String pro_fo_longitude = "pro_fo_longitude";
+        public static String pro_fo_latitude = "pro_fo_latitude";
+    }
 
 }

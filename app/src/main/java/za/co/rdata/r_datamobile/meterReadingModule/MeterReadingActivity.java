@@ -284,8 +284,8 @@ public class MeterReadingActivity extends AppCompatActivity {
                     String sql = "SELECT meter_reading, gps_read_lat, gps_read_long, meter_number FROM pro_mr_route_rows WHERE walk_sequence = '" + MeterReaderController.route_row_keys.get(intCurrentMeter).getWalk_sequence() + "' and meter_id='" + MeterReaderController.route_row_keys.get(intCurrentMeter).meter_id + "' order by reading_date desc";
                     gotogallery.putExtra("PIC TEXT SQL STRING", sql);
 
-                    gotogallery.putExtra("DETAIL1 TITLE", strDetailName);
-                    gotogallery.putExtra("DETAIL2 TITLE", strDetailName2);
+                    gotogallery.putExtra("DETAIL1 TITLE", strDetailName2);
+                    gotogallery.putExtra("DETAIL2 TITLE", strDetailName);
                     gotogallery.putExtra("PICTURE TYPE","M");
 
                     startActivity(gotogallery);
@@ -451,7 +451,7 @@ public class MeterReadingActivity extends AppCompatActivity {
     }
 
     private void GoToMaps() {
-        Cursor curCoords = MainActivity.sqliteDbHelper.getReadableDatabase().rawQuery("SELECT meter_number,gps_master_long,gps_master_lat,gps_read_long,gps_read_lat FROM pro_mr_route_rows WHERE walk_sequence = '" + MeterReaderController.route_row_keys.get(intCurrentMeter).getWalk_sequence() + "' and gps_read_lat != 0", null);
+        Cursor curCoords = MainActivity.sqliteDbHelper.getReadableDatabase().rawQuery("SELECT meter_number,gps_master_long,gps_master_lat,gps_read_long,gps_read_lat FROM pro_mr_route_rows WHERE walk_sequence = '" + MeterReaderController.route_row_keys.get(intCurrentMeter).getWalk_sequence() + "'", null);
         curCoords.moveToFirst();
         double[] dblCoords = {0, 0};
 
@@ -600,8 +600,9 @@ public class MeterReadingActivity extends AppCompatActivity {
             gotogallery.putExtra("PHOTO ID", String.valueOf(MeterReaderController.route_row_keys.get(intCurrentMeter).getMeter_id()));
             String sql = "SELECT meter_reading, gps_read_lat, gps_read_long, meter_number FROM pro_mr_route_rows WHERE walk_sequence = '" + MeterReaderController.route_row_keys.get(intCurrentMeter).getWalk_sequence() + "' and meter_id='" + MeterReaderController.route_row_keys.get(intCurrentMeter).meter_id + "' order by reading_date desc";
             gotogallery.putExtra("PIC TEXT SQL STRING", sql);
-            gotogallery.putExtra("DETAIL1 TITLE", strDetailName);
-            gotogallery.putExtra("DETAIL2 TITLE", strDetailName2);
+            gotogallery.putExtra("DETAIL1 TITLE", strDetailName2);
+            gotogallery.putExtra("DETAIL2 TITLE", strDetailName);
+            gotogallery.putExtra("PICTURE TYPE","M");
             startActivity(gotogallery);
         //} else {
           //  Toast.makeText(getBaseContext(), "This Feature Has Been Disabled",

@@ -95,7 +95,7 @@
             android:layout_marginEnd="8dp"
             android:background="@drawable/textinput_shape"
             android:ems="10"
-            android:hint="@string/search"
+            android:hint="Enter Job Number"
             android:imeOptions="actionDone"
             android:importantForAutofill="no"
             android:inputType="textPersonName"

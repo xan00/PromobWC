@@ -50,6 +50,8 @@ import androidx.core.app.ActivityCompat;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import org.apache.commons.lang.ObjectUtils;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -496,7 +498,9 @@ public class CameraActivity extends Activity {
 
             try {
                 file = createImageFile(idvalue);
-            } catch (IOException ignore) {}
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
             ImageReader.OnImageAvailableListener readerListener = new ImageReader.OnImageAvailableListener() {
                 @Override
@@ -682,7 +686,13 @@ public class CameraActivity extends Activity {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("ddMMyy_HHmmss").format(new Date());
         File dir = new File(Environment.getExternalStorageDirectory().toString() + "/filesync/Images/");
-        int folderlength = dir.list().length + 1;
+        int folderlength = 0;
+        try {
+            folderlength = dir.list().length + 1;
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+            folderlength=0;
+        }
         imageFileName = barcode + "_" + folderlength + "_" + timeStamp;
         File image = File.createTempFile(
                 imageFileName,  // prefix

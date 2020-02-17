@@ -2,6 +2,7 @@ package za.co.rdata.r_datamobile.adapters;
 
 import android.content.Context;
 
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 import za.co.rdata.r_datamobile.Models.model_pro_jb_jobcard;
+import za.co.rdata.r_datamobile.assetModule.PopulateRoomActivity;
+import za.co.rdata.r_datamobile.jobModule.activity_job_card_holder;
 
 
 public class adapter_JobRecycler extends RecyclerView.Adapter<adapter_JobRecycler.GenericViewHolder>
@@ -138,7 +141,7 @@ public class adapter_JobRecycler extends RecyclerView.Adapter<adapter_JobRecycle
     public adapter_JobRecycler.GenericViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(recyclerViewID, parent, false);
-        //itemView.setOnClickListener(gotoroom);
+        itemView.setOnClickListener(gotojob);
         return new GenericViewHolder(itemView, retjobnumber, retjobdesc, retjobdepartment, retjobaddress, retframe);
     }
 
@@ -154,31 +157,14 @@ public class adapter_JobRecycler extends RecyclerView.Adapter<adapter_JobRecycle
         } catch (NullPointerException ignore) {}
     }
 
-    private boolean isRoomCompleted(String expression){
+        @Override
+        public int getItemCount() {
+            return 0;
+        }
 
-        String delim = "/";
-        String[] stringTokens = expression.split(delim);
-        return stringTokens[0].equals(stringTokens[1]);
+        private View.OnClickListener gotojob = view -> {
+            Intent jobintent = new Intent(mContext, activity_job_card_holder.class);
 
-    }
-
-    @Override
-    public int getItemCount() {
-        return arrayList.size();
-    }
-
-//    private View.OnClickListener gotoroom = new View.OnClickListener() {
-//        @Override
-//        public void onClick(View view) {
-//            //int itemPosition = recyclerView.getChildLayoutPosition(view);
-//            TextView textView = view.findViewById(retbarcode);
-//            strSelectedRoom = textView.getText().toString();
-//            //Toast.makeText(mContext, strSelectedRoom, Toast.LENGTH_LONG).show();
-//            //nextPass(getApplicationContext());
-//            Intent gotomainsummary = new Intent(mContext, RoomMainSummary.class);
-//            gotomainsummary.putExtra("ROOM SCAN",strSelectedRoom);
-//            mContext.startActivity(gotomainsummary);
-//        }
-//    };
-
+            mContext.startActivity(jobintent);
+        };
 }

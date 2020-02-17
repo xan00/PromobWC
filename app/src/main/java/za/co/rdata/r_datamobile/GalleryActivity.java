@@ -323,7 +323,14 @@ public class GalleryActivity extends AppCompatActivity {
         // Create an image file name
         @SuppressLint("SimpleDateFormat") String timeStamp = new SimpleDateFormat("ddMMyy_HHmmss").format(new Date());
         File dir = new File(Environment.getExternalStorageDirectory().toString() + "/filesync/Images/");
-        int folderlength = dir.list().length + 1;
+        File dir2 = new File(Environment.getDataDirectory().toString() + "/filesync/Images/");
+        int folderlength = 0;
+        try {
+            folderlength = dir.list().length + 1;
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+            folderlength = 0;
+        }
         imageFileName =  imagetype + "_" + barcode + "_" + folderlength + "_" + timeStamp;
         File image = File.createTempFile(
                 imageFileName,  // prefix
@@ -414,6 +421,7 @@ public class GalleryActivity extends AppCompatActivity {
         } catch (ArrayIndexOutOfBoundsException | NullPointerException ignore) {
         }
 
+        try {
         if (arrGallery.size()>0) {
             try {
                 mainpicdisplay mainpicdisplay = new mainpicdisplay();
@@ -424,11 +432,22 @@ public class GalleryActivity extends AppCompatActivity {
         }   else {
             Toast.makeText(getBaseContext(), "There Are No Images For This Gallery", Toast.LENGTH_SHORT).show();
         }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
+        try {
+            if (arrGallery.size()>0) {
         ArrayAdapter<File> adapter = new picdetails_ListAdapter();
         ListView lstGallery = findViewById(R.id.listGallery);
         piclistpopulate piclistpopulate = new piclistpopulate(adapter,lstGallery);
         piclistpopulate.execute();
+            }   else {
+                Toast.makeText(getBaseContext(), "There Are No Images For This Gallery", Toast.LENGTH_SHORT).show();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         FloatingActionButton acceptpicture = findViewById(R.id.fltAcceptPicture);
         FloatingActionButton newpicture = findViewById(R.id.fltNewPicture);
@@ -566,7 +585,9 @@ public class GalleryActivity extends AppCompatActivity {
 
             try {
                 lstGallery.setAdapter(adapter);
-            } catch (Exception ignore) {}
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             return null;
         }
     }
