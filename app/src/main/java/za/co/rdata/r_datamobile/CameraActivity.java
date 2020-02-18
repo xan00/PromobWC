@@ -156,6 +156,7 @@ public class CameraActivity extends Activity {
     private String sql;
     private String strDetail1Name;
     private String strDetail2name;
+    private String picturetype;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private static Size chooseOptimalSize(Size[] choices, int textureViewWidth, int textureViewHeight, int maxWidth, int maxHeight, Size aspectRatio) {
@@ -206,6 +207,10 @@ public class CameraActivity extends Activity {
             strDetail2name = bSaved.getString("DETAIL2 TITLE");
         } catch (Exception ignore) {}
 
+        try {
+            picturetype = bSaved.getString("PICTURE TYPE");
+        } catch (Exception ignore) {}
+        
         setContentView(R.layout.activity_image_capture);
         textureView = findViewById(R.id.texture);
         assert textureView != null;
@@ -549,8 +554,15 @@ public class CameraActivity extends Activity {
                         }
                     }
 
+
                     ExifUtil exifUtil = new ExifUtil();
                     Bitmap bmp;
+
+                    try {
+                        Bitmap tempbit = BitmapDecoder.from(file.getAbsolutePath()).decode();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
 
                     if (!MainActivity.NODE_ID.startsWith(String.valueOf(601)) || !MainActivity.NODE_ID.startsWith(String.valueOf(602)) || !MainActivity.NODE_ID.startsWith(String.valueOf(603)) || !MainActivity.NODE_ID.startsWith(String.valueOf(604))) {
                         bmp = drawMultilineTextToBitmap(getBaseContext(), ExifUtil.rotateBitmap(file.getAbsolutePath(), BitmapDecoder.from(file.getAbsolutePath()).decode()), strPictureText + "\nDate: " + timeStamp);
@@ -656,7 +668,7 @@ public class CameraActivity extends Activity {
         // text color - #3D3D3D
         paint.setColor(Color.DKGRAY);
         // text size in pixels
-        paint.setTextSize((int) (20 * scale));
+        paint.setTextSize((int) (10 * scale));
         // text shadow
         paint.setShadowLayer(1f, 0f, 1f, Color.WHITE);
 
@@ -693,7 +705,7 @@ public class CameraActivity extends Activity {
             e.printStackTrace();
             folderlength=0;
         }
-        imageFileName = barcode + "_" + folderlength + "_" + timeStamp;
+        imageFileName = picturetype + "_" + barcode + "_" + folderlength + "_" + timeStamp;
         File image = File.createTempFile(
                 imageFileName,  // prefix
                 ".jpg",         // suffix
@@ -711,7 +723,7 @@ public class CameraActivity extends Activity {
         gotogallery.putExtra("PHOTO ID",idvalue);
         gotogallery.putExtra("PIC TEXT SQL STRING",sql);
         gotogallery.putExtra("DETAIL1 TITLE",strDetail1Name);
-
+        gotogallery.putExtra("PICTURE TYPE",picturetype);
         try {
             gotogallery.putExtra("DETAIL2 TITLE",strDetail2name);
         } catch (Exception ignore) {}

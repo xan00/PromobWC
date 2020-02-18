@@ -112,15 +112,8 @@ public class MeterReadingActivity extends AppCompatActivity {
         try {
             if (bSaved != null && bSaved.getBoolean("came_from_adapter")) {
                 RouteNumber = bSaved.getString("route_number");
-                //onActivityResult(RESULT_CODE_SEARCH, Activity.RESULT_OK, iPoproom);
-                //finish();
-
-                //String street_name;
-                // String street_number;
                 String meter_number;
                 try {
-                    //street_name = iPoproom.getStringExtra("street_name");
-                    //street_number = iPoproom.getStringExtra("street_number");
                     meter_number = iPoproom.getStringExtra("meter_number");
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -157,7 +150,6 @@ public class MeterReadingActivity extends AppCompatActivity {
         } catch (NullPointerException ignore) {
         }
 
-        //findViewById(R.id.A_meter_reading_B_Search).setOnClickListener(buttonClicked);
         NumberOfRows = DBHelper.pro_mr_route_rows.getNumberOfRows(InstNode, MobNode, Cycle, RouteNumber);
 
         for (int i = 0; i < MeterReaderController.route_row_keys.size(); i++) {
@@ -239,9 +231,6 @@ public class MeterReadingActivity extends AppCompatActivity {
             }
         }
 
-        //ImageButton A_meter_reading_B_Filter = findViewById(R.id.A_meter_reading_B_Filter);
-        //A_meter_reading_B_Filter.setOnClickListener(togallery);
-
         final FloatingActionButton floatingActionButton = findViewById(R.id.fabToMap);
         registerForContextMenu(floatingActionButton);
         floatingActionButton.setOnClickListener(view -> openContextMenu(floatingActionButton));
@@ -271,21 +260,13 @@ public class MeterReadingActivity extends AppCompatActivity {
                     ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 99);
                 }
 
-                //Cursor usingcamera = MainActivity.sqliteDbHelper.getReadableDatabase().rawQuery("SELECT parm_value FROM pro_sys_parms WHERE parm = 'camera_active'", null);
-                //usingcamera.moveToFirst();
-
-                //Boolean blusingcamera;
-                //boolean blusingcamera = usingcamera.getString(0).equals("1");
-                //usingcamera.close();
-
-                //if (blusingcamera) {
                     Intent gotogallery = new Intent(MeterReadingActivity.this, GalleryActivity.class);
                     gotogallery.putExtra("PHOTO ID", String.valueOf(MeterReaderController.route_row_keys.get(intCurrentMeter).getMeter_id()));
                     String sql = "SELECT meter_reading, gps_read_lat, gps_read_long, meter_number FROM pro_mr_route_rows WHERE walk_sequence = '" + MeterReaderController.route_row_keys.get(intCurrentMeter).getWalk_sequence() + "' and meter_id='" + MeterReaderController.route_row_keys.get(intCurrentMeter).meter_id + "' order by reading_date desc";
                     gotogallery.putExtra("PIC TEXT SQL STRING", sql);
 
-                    gotogallery.putExtra("DETAIL1 TITLE", strDetailName2);
-                    gotogallery.putExtra("DETAIL2 TITLE", strDetailName);
+                    gotogallery.putExtra("DETAIL1 TITLE", strDetailName);
+                    gotogallery.putExtra("DETAIL2 TITLE", strDetailName2);
                     gotogallery.putExtra("PICTURE TYPE","M");
 
                     startActivity(gotogallery);
@@ -418,11 +399,7 @@ public class MeterReadingActivity extends AppCompatActivity {
         MeterReaderController.route_row_keys.add(new MeterReaderController.Keys(
                 new_meter.getCycle(), new_meter.getInstNode_id(), new_meter.getMeter_id(), new_meter.getMobnode_id(), new_meter.getRoute_number(), new_meter.getWalk_sequence())
         );
-        //}
 
-        //Integer index = viewPager.getCurrentItem();
-        //adapter_MeterReading adapter = (adapter_MeterReading) viewPager.getAdapter();
-        //MeterReaderController.Keys key = adapter.getFragment(index);
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         SharedPreferences.Editor editor = sharedPref.edit();
         Set keySet;
@@ -509,14 +486,6 @@ public class MeterReadingActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        //if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//
-  //          return;
-    //    }
-      //  try {
-        //    locationManager.removeUpdates(MeterReadingActivity.this);
-        //} catch (NullPointerException ignore) {
-        //}
         super.onDestroy();
     }
 
@@ -537,78 +506,6 @@ public class MeterReadingActivity extends AppCompatActivity {
         }
         super.onBackPressed();
     }
-
-/*    @Override
-    public void onLocationChanged(Location location) {
-//        String msg = "New Latitude: " + location.getLatitude()
-//                + "New Longitude: " + location.getLongitude();
-//
-//        Toast.makeText(getBaseContext(), msg, Toast.LENGTH_LONG).show();
-        GetLocation gps = new GetLocation(this);
-        Location location1 = gps.getLocation();
-        double lat = location1.getLatitude();
-        double lng = location1.getLongitude();
-
-        Log.d("Coords", lat + "      " + lng);
-
-        latitude = location.getLatitude();
-        longitude = location.getLongitude();
-    }
-
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-
-    }
-
-    @Override
-    public void onProviderEnabled(String provider) {
-        Toast.makeText(getBaseContext(), "Gps is turned on!! ",
-                Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onProviderDisabled(String provider) {
-        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-        startActivity(intent);
-        Toast.makeText(getBaseContext(), "Gps is turned off!! ",
-                Toast.LENGTH_SHORT).show();
-    }*/
-/*
-    private View.OnClickListener buttonClicked = v -> {
-        switch (v.getId()) {
-            case R.id.A_meter_reading_B_Search:
-                try {
-                    Intent intent = new Intent(MeterReadingActivity.this, MeterSearchActivity.class);
-                    startActivityForResult(intent, RESULT_CODE_SEARCH);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                break;
-        }
-    };
-*/
-    View.OnClickListener togallery = v -> {
-
-        Cursor usingcamera = MainActivity.sqliteDbHelper.getReadableDatabase().rawQuery("SELECT parm_value FROM pro_sys_parms WHERE parm = 'camera_active'", null);
-        usingcamera.moveToFirst();
-
-        //Boolean blusingcamera;
-        Boolean blusingcamera = usingcamera.getString(0).equals("1");
-
-        //if (blusingcamera) {
-            Intent gotogallery = new Intent(MeterReadingActivity.this, GalleryActivity.class);
-            gotogallery.putExtra("PHOTO ID", String.valueOf(MeterReaderController.route_row_keys.get(intCurrentMeter).getMeter_id()));
-            String sql = "SELECT meter_reading, gps_read_lat, gps_read_long, meter_number FROM pro_mr_route_rows WHERE walk_sequence = '" + MeterReaderController.route_row_keys.get(intCurrentMeter).getWalk_sequence() + "' and meter_id='" + MeterReaderController.route_row_keys.get(intCurrentMeter).meter_id + "' order by reading_date desc";
-            gotogallery.putExtra("PIC TEXT SQL STRING", sql);
-            gotogallery.putExtra("DETAIL1 TITLE", strDetailName2);
-            gotogallery.putExtra("DETAIL2 TITLE", strDetailName);
-            gotogallery.putExtra("PICTURE TYPE","M");
-            startActivity(gotogallery);
-        //} else {
-          //  Toast.makeText(getBaseContext(), "This Feature Has Been Disabled",
-            //        Toast.LENGTH_SHORT).show();
-        //}
-    };
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

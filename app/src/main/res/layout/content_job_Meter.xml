@@ -1,0 +1,382 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/linearLayout11"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="4dp"
+    android:background="@color/default_back"
+    tools:context="za.co.rdata.r_datamobile.jobModule.activity_job_card_holder">
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="40dp"
+        android:text="@string/address"
+        android:textAlignment="viewEnd"
+        android:textColor="@color/black"
+        android:textSize="14sp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/textViewAddress"
+        app:layout_constraintEnd_toStartOf="@+id/textViewAddress"
+        app:layout_constraintHorizontal_bias="0.49"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/textViewAddress"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:autoSizeTextType="uniform"
+        android:background="@drawable/textinput_shape_blue"
+        android:paddingStart="14dp"
+        android:paddingEnd="2dp"
+        android:paddingBottom="0dp"
+        android:text="@string/address"
+        android:textColor="@color/black"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/textView"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:targetApi="o" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="9dp"
+        android:text="@string/name"
+        android:textAlignment="viewEnd"
+        android:textColor="@color/black"
+        android:textSize="14sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+    <TextView
+        android:id="@+id/F_meter_reading_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:autoSizeTextType="uniform"
+        android:background="@drawable/textinput_shape_blue"
+        android:paddingStart="14dp"
+        android:paddingEnd="2dp"
+        android:paddingBottom="2dp"
+        android:text="@string/name"
+        android:textColor="@color/black"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/textView"
+        app:layout_constraintTop_toBottomOf="@+id/textViewAddress"
+        tools:targetApi="o" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="9dp"
+        android:layout_weight="2"
+        android:text="@string/erf"
+        android:textAlignment="viewEnd"
+        android:textColor="@color/black"
+        android:textSize="14sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView2" />
+
+    <TextView
+        android:id="@+id/F_meter_reading_TV_erf_number"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_weight="1"
+        android:autoSizeTextType="uniform"
+        android:background="@drawable/textinput_shape_blue"
+        android:paddingStart="14dp"
+        android:paddingEnd="2dp"
+        android:paddingBottom="2dp"
+        android:text="@string/erf"
+        android:textColor="@color/black"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/textView"
+        app:layout_constraintTop_toBottomOf="@+id/F_meter_reading_name"
+        tools:targetApi="o" />
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="8dp"
+        android:layout_weight="2"
+        android:paddingBottom="2dp"
+        android:text="@string/description"
+        android:textAlignment="viewEnd"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        android:visibility="invisible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView3"
+        tools:ignore="Suspicious0dp" />
+
+    <TextView
+        android:id="@+id/F_meter_reading_TV_description"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_weight="1"
+        android:autoSizeTextType="uniform"
+        android:background="@drawable/textinput_shape_blue"
+        android:paddingStart="14dp"
+        android:paddingEnd="2dp"
+        android:paddingBottom="2dp"
+        android:text="@string/description"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/textView"
+        app:layout_constraintTop_toBottomOf="@+id/F_meter_reading_TV_erf_number"
+        tools:ignore="Suspicious0dp"
+        tools:targetApi="o" />
+
+    <TextView
+        android:id="@+id/textView9"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="@color/roomcolour"
+        android:gravity="center"
+        android:text="@string/notes_amp_access"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textSize="15sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/F_meter_reading_TV_description" />
+
+    <TextView
+        android:id="@+id/textView12"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="4dp"
+        android:text="@string/note"
+        android:textColor="@color/black"
+        android:textSize="15sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView9" />
+
+    <LinearLayout
+        android:id="@+id/linearLayout12"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="2dp"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView12">
+
+        <TextView
+            android:id="@+id/textViewNote"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/textinput_shape"
+            android:paddingStart="8dp"
+            android:paddingTop="6dp"
+            android:paddingEnd="2dp"
+            android:paddingBottom="6dp"
+            android:text="@string/note"
+            android:textColor="@color/colorTextLight"
+            android:textSize="18sp" />
+
+        <Button
+            android:id="@+id/btnDeleteNote"
+            android:layout_width="fill_parent"
+            android:layout_height="28dp"
+            android:layout_gravity="center"
+            android:layout_weight="5"
+            android:paddingTop="2dp"
+            android:paddingBottom="2dp"
+            android:text="@string/del"
+            android:textSize="8sp"
+            tools:ignore="SmallSp" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/textView10"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="4dp"
+        android:text="@string/no_access"
+        android:textColor="@color/black"
+        android:textSize="15sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout12" />
+
+    <LinearLayout
+        android:id="@+id/linearLayout13"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="2dp"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView10">
+
+        <TextView
+            android:id="@+id/textViewNoAccess"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:layout_weight="1"
+            android:background="@drawable/textinput_shape"
+            android:clickable="false"
+            android:paddingStart="8dp"
+            android:paddingTop="6dp"
+            android:paddingEnd="2dp"
+            android:paddingBottom="6dp"
+            android:text="@string/no_access"
+            android:textColor="@color/colorTextLight"
+            android:textSize="18sp" />
+
+        <Button
+            android:id="@+id/btnDeleteNoAccess"
+            android:layout_width="fill_parent"
+            android:layout_height="28dp"
+            android:layout_gravity="center"
+            android:layout_weight="5"
+            android:paddingTop="2dp"
+            android:paddingBottom="2dp"
+            android:text="@string/del"
+            android:textSize="8sp"
+            tools:ignore="SmallSp" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/textView8"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/room_item"
+        android:gravity="center"
+        android:text="@string/meter_data"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textSize="15sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout13" />
+
+    <TextView
+        android:id="@+id/textView7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/meter"
+        android:textColor="@color/black"
+        android:textSize="14sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView8" />
+
+    <TextView
+        android:id="@+id/textViewMeterType"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:paddingStart="5dp"
+        android:paddingEnd="5dp"
+        android:text="@string/e"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/textView7"
+        app:layout_constraintStart_toEndOf="@+id/textView7" />
+
+    <TextView
+        android:id="@+id/textViewMeterNumber"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:autoSizeTextType="uniform"
+        android:background="@drawable/textinput_shape_blue"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        android:text="@string/_123456"
+        android:textColor="@color/black"
+        android:textSize="14sp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/textView7"
+        app:layout_constraintStart_toEndOf="@+id/textViewMeterType"
+        tools:targetApi="o" />
+
+    <TextView
+        android:id="@+id/textView5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp"
+        android:text="@string/reading"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView7" />
+
+    <TextView
+        android:id="@+id/F_TV_LED"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:background="@drawable/textview_shape"
+        android:gravity="end"
+        android:paddingStart="10dp"
+        android:paddingEnd="15dp"
+        android:textColor="@color/colorTextLight"
+        android:textSize="18sp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/textView5"
+        app:layout_constraintStart_toEndOf="@+id/textView5" />
+
+    <TextView
+        android:id="@+id/textViewReading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:background="@drawable/textinput_shape"
+        android:paddingStart="25dp"
+        android:paddingTop="4dp"
+        android:paddingEnd="25dp"
+        android:paddingBottom="4dp"
+        android:text="@string/_12345"
+        android:textColor="@color/colorTextLight"
+        android:textSize="18sp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/textView5"
+        app:layout_constraintStart_toEndOf="@+id/F_TV_LED" />
+
+    <Button
+        android:id="@+id/F_Meter_Reading_B_DeleteReading"
+        android:layout_width="50dp"
+        android:layout_height="28dp"
+        android:layout_marginStart="16dp"
+        android:paddingTop="2dp"
+        android:paddingBottom="2dp"
+        android:text="@string/del"
+        android:textSize="8sp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/textView5"
+        app:layout_constraintStart_toEndOf="@+id/textViewReading"
+        tools:ignore="SmallSp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

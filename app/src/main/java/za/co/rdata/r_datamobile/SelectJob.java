@@ -22,7 +22,6 @@ import za.co.rdata.r_datamobile.DBHelpers.SymmetricDS_Helper;
 import za.co.rdata.r_datamobile.DBHelpers.sqliteDBHelper;
 import za.co.rdata.r_datamobile.DBMeta.meta;
 import za.co.rdata.r_datamobile.Models.model_pro_ar_asset_room;
-import za.co.rdata.r_datamobile.Models.model_pro_jb_jobcard;
 import za.co.rdata.r_datamobile.adapters.adapter_JobRecycler;
 import za.co.rdata.r_datamobile.adapters.adapter_RoomRecycler;
 
@@ -30,21 +29,18 @@ public class SelectJob extends AppCompatActivity {
 
     private static final String TAG = "Checking";
     public static String scanContent = "R0000";
-
+    static public sqliteDBHelper sqliteDbHelper;
+    static String strSelectedRoom;
+    static Cursor roomcursor;
     String strBarcodescantype;
     String strLocationscantype;
-    static String strSelectedRoom;
     String inputtitle;
     String roomscantype;
-    static Cursor roomcursor;
     RecyclerView recyclerView;
-    adapter_RoomRecycler adapter_roomRecycler;
     Context mContext;
     Activity mActivity;
-
-    String[] a = {"$","%","?","/","\\\\","*","-","+","(",")","=","+","!","@","#","^",};
-
-    static public sqliteDBHelper sqliteDbHelper;
+    adapter_JobRecycler adapter_roomRecycler;
+    String[] a = {"$", "%", "?", "/", "\\\\", "*", "-", "+", "(", ")", "=", "+", "!", "@", "#", "^",};
 
     public SelectJob() {
         super();
@@ -61,24 +57,25 @@ public class SelectJob extends AppCompatActivity {
         Bundle bSaved = iPopJob.getExtras();
         scanContent = "00000";
 
-        ArrayList<model_pro_jb_jobcard> arrtoshow = new ArrayList<>();
+        //ArrayList<model_pro_jb_jobcard> arrtoshow = new ArrayList<>();
+        ArrayList<model_pro_ar_asset_room> arrtoshow = new ArrayList<>();
 
         Cursor jobcards;
         jobcards = sqliteDbHelper.getReadableDatabase().rawQuery("SELECT pro_fo_job_no" +
                 ",pro_fo_prop_detail" +
                 ",pro_fo_status" +
                 ",pro_fo_prop_detail" +
-                ",pro_fo_meter_type from " +
+                ",pro_fo_job_type from " +
                 "pro_fo_jobs", null);
         jobcards.moveToFirst();
 
         try {
             do {
-                arrtoshow.add(new model_pro_jb_jobcard(jobcards.getString(jobcards.getColumnIndex(meta.pro_fo_jobs.pro_fo_job_no)),
+                arrtoshow.add(new model_pro_ar_asset_room(jobcards.getString(jobcards.getColumnIndex(meta.pro_fo_jobs.pro_fo_job_no)),
                         jobcards.getString(jobcards.getColumnIndex(meta.pro_fo_jobs.pro_fo_prop_detail)),
                         jobcards.getString(jobcards.getColumnIndex(meta.pro_fo_jobs.pro_fo_status)),
                         jobcards.getString(jobcards.getColumnIndex(meta.pro_fo_jobs.pro_fo_prop_detail)),
-                        jobcards.getString(jobcards.getColumnIndex(meta.pro_fo_jobs.pro_fo_meter_type))));
+                        jobcards.getString(jobcards.getColumnIndex(meta.pro_fo_jobs.pro_fo_job_type))));
                 jobcards.moveToNext();
             }
             while (!jobcards.isAfterLast());
@@ -92,13 +89,13 @@ public class SelectJob extends AppCompatActivity {
         setContentView(R.layout.activity_select_job);
         recyclerView = findViewById(R.id.activity_job_list_listView);
 
-        adapter_JobRecycler adapter_jobRecycler = new adapter_JobRecycler(arrtoshow, R.layout.select_job_item);
+        adapter_roomRecycler = new adapter_JobRecycler(arrtoshow, R.layout.select_job_item);
         //adapter_roomRecycler.setRecyclerViewID(R.id.activity_room_list_listView);
-        adapter_jobRecycler.setRetjobnumber(R.id.txtJobnumber);
-        adapter_jobRecycler.setRetjobdesc(R.id.txtJobaddress);
-        adapter_jobRecycler.setRetjobdepartment(R.id.txtJobtype);
-        adapter_jobRecycler.setRetframe(R.id.conJobframe);
-        adapter_jobRecycler.setmContext(this);
+        adapter_roomRecycler.setRetbarcode(R.id.txtJobnumber);
+        adapter_roomRecycler.setRetdept(R.id.txtJobtype);
+        adapter_roomRecycler.setRetdesc(R.id.txtJobaddress);
+        adapter_roomRecycler.setRetframe(R.id.conJobframe);
+        adapter_roomRecycler.setmContext(this);
 
         //recyclerView.addItemDecoration(new DividerItemDecoration(this,DividerItemDecoration.VERTICAL));
 
@@ -109,7 +106,7 @@ public class SelectJob extends AppCompatActivity {
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setAdapter(adapter_jobRecycler);
+        recyclerView.setAdapter(adapter_roomRecycler);
     }
 
     public void onBackPressed() {

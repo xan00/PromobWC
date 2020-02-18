@@ -250,7 +250,7 @@ public class GalleryActivity extends AppCompatActivity {
         Intent captureintent = new Intent(GalleryActivity.this,CameraActivity.class);
         captureintent.putExtra("PHOTO ID",idvalue);
         captureintent.putExtra("PIC TEXT SQL STRING",strSQL);
-
+        captureintent.putExtra("PICTURE TYPE",imagetype);
         Cursor picturedata = sqliteDb.getReadableDatabase().rawQuery(strSQL,null);
         picturedata.moveToFirst();
         lat = String.valueOf(picturedata.getDouble(1));

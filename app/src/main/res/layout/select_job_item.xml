@@ -34,25 +34,29 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginBottom="16dp"
         android:fontFamily="sans-serif"
         android:text="Address:"
         android:textColor="@color/black"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView56" />
+        app:layout_constraintBaseline_toBaselineOf="@+id/txtJobaddress"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/txtJobaddress"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:ellipsize="end"
         android:fontFamily="sans-serif"
+        android:maxLines="2"
         android:text="TextView"
         android:textColor="@color/black"
-        app:layout_constraintBaseline_toBaselineOf="@+id/textView67"
-        app:layout_constraintStart_toEndOf="@+id/textView67" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/textView67"
+        app:layout_constraintTop_toBottomOf="@+id/txtJobnumber" />
 
     <TextView
         android:id="@+id/textView69"
