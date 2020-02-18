@@ -613,11 +613,7 @@ public class PopulateRoomActivity extends AppCompatActivity {
 
     public void ScanToSearch() {
         intentcode = 1;
-        //Intent selectAsset = new Intent(PopulateRoomActivity.this, SelectAsset.class);
-        //selectAsset.putExtra("TO ROOMS",4);
-        //selectAsset.putExtra("SAVE SCAN",false);
-        //selectAsset.putExtra("ROOM SCAN",strSelectedRoom);
-        //startActivity(selectAsset);
+
         SelectAsset selectAsset = new SelectAsset(mContext,mActivity);
         selectAsset.ScanSearchAsset();
     }
@@ -716,15 +712,7 @@ public class PopulateRoomActivity extends AppCompatActivity {
             roomintent.putExtra("ROOM SCAN", strSelectedRoom);
             roomintent.putExtra("SUMMARY VALUE",itemviewid);
             startActivity(roomintent);
-/*
-        } else if (item.getTitle() == "Edit Asset") {
 
-            if (listAssetFragments.get(intPagePosition).getAssetdata().getManual()) {
-                Toast.makeText(getBaseContext(), "You Can Now Edit The Description", Toast.LENGTH_SHORT).show();
-                listAssetFragments.get(intPagePosition).setScannedLightColour(R.drawable.room_item_manually_added);
-            } else
-                Toast.makeText(getBaseContext(), "Only Unregistered Assets Can be Editted", Toast.LENGTH_SHORT).show();
-*/
         } else if (item.getTitle() == "Un/Mark as Seen") {
 
             if (listAssetFragments.get(intPagePosition).getAssetdata().getReg_barcode().startsWith((getResources().getString(R.string.manual_tag)))) {
@@ -949,22 +937,6 @@ public class PopulateRoomActivity extends AppCompatActivity {
             return false;
         }
     }
-/*
-    public int SearchArrayListForAssetHeader(Cursor searchdb, String searchterm) {
-
-        searchdb.moveToFirst();
-
-        for (int i = 0; i < searchdb.getCount(); i++) {
-            //fragment_MakeAssetViewContent model = listname.get(i);
-
-            if (searchdb.getString(searchdb.getColumnIndex(meta.pro_ar_register.reg_barcode)).equals(searchterm)) {
-                return i;
-            }
-            searchdb.moveToNext();
-        }
-        return -1;
-    }
-    */
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -974,30 +946,6 @@ public class PopulateRoomActivity extends AppCompatActivity {
         gotomainsummary.putExtra("ROOM SCAN",strSelectedRoom);
         startActivity(gotomainsummary);
 
-        /*
-        switch (backcode) {
-            case 0:
-                Intent scanintent = new Intent(PopulateRoomActivity.this, PopulateRoomActivity.class);
-                scanintent.putExtra("ROOM SCAN", strSelectedRoom);
-                scanintent.putExtra("CYCLE", scancycle);
-                scanintent.putExtra("LOCATION SCAN TYPE", "s");
-                scanintent.putExtra("LOCATION NAME", strLocationdesc);
-                scanintent.putExtra("RESPONSIBLE PERSON", strResponsibleperson);
-                scanintent.putExtra("BARCODE",barcode);
-                scanintent.putExtra("LIGHT COLOUR",lightcolour);
-                scanintent.putExtra("SUMMARY VALUE",itemviewid);
-                startActivity(scanintent);
-                break;
-            case -1:
-                Intent roomintent = new Intent(PopulateRoomActivity.this, SelectAsset.class);
-                roomintent.putExtra("TO ROOMS", 1);
-                roomintent.putExtra("ROOM SCAN", strSelectedRoom);
-                roomintent.putExtra("SUMMARY VALUE", itemviewid);
-                startActivity(roomintent);
-                //finish();
-                break;
-        }
-*/
     }
 
     public int lightColourChecking(model_pro_ar_asset_rows assetdata, model_pro_ar_scanasset scannedassetdata) {

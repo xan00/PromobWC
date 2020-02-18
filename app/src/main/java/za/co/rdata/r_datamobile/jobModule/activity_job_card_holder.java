@@ -40,22 +40,25 @@ import java.util.Objects;
 import java.util.Set;
 
 import za.co.rdata.r_datamobile.DBHelpers.DBHelper;
+import za.co.rdata.r_datamobile.DBMeta.intentcodes;
 import za.co.rdata.r_datamobile.DBMeta.meta;
 import za.co.rdata.r_datamobile.GalleryActivity;
 import za.co.rdata.r_datamobile.MainActivity;
 import za.co.rdata.r_datamobile.Models.model_pro_mr_route_rows;
 import za.co.rdata.r_datamobile.R;
-import za.co.rdata.r_datamobile.SelectJob;
-import za.co.rdata.r_datamobile.SelectRoute;
+import za.co.rdata.r_datamobile.adapters.adapter_JobPager;
 import za.co.rdata.r_datamobile.adapters.adapter_MeterReading;
+import za.co.rdata.r_datamobile.fragments.fragment_MakeAssetViewContent;
+import za.co.rdata.r_datamobile.fragments.fragment_jobMeter;
 import za.co.rdata.r_datamobile.fragments.fragment_meterReading;
 import za.co.rdata.r_datamobile.locationTools.GetLocation;
 import za.co.rdata.r_datamobile.locationTools.MapsActivity;
 import za.co.rdata.r_datamobile.meterReadingModule.MeterReaderController;
-import za.co.rdata.r_datamobile.meterReadingModule.MeterReadingActivity;
-import za.co.rdata.r_datamobile.meterReadingModule.MeterSearchActivity;
-
 import static za.co.rdata.r_datamobile.DBMeta.meta.pro_mr_route_rows.meter_number;
+
+/**
+ * Created by James de Scande on 18/02/2020 at 16:02.
+ */
 
 public class activity_job_card_holder extends AppCompatActivity {
 
@@ -70,8 +73,7 @@ public class activity_job_card_holder extends AppCompatActivity {
     public static String MobNode;
     public static String Cycle;
     public static String RouteNumber;
-    TextView textViewRoute;
-    TextView textViewRouteDescription;
+
     TextView TV_Status1;
     TextView TV_Status2;
     TextView TV_Status3;
@@ -84,7 +86,7 @@ public class activity_job_card_holder extends AppCompatActivity {
     Integer NotVisited;
     String[] meter_details;
 
-    final List<Fragment> listFragments = new ArrayList<>();
+    ArrayList<fragment_jobMeter> listJobFragments;
     ArrayList<model_pro_mr_route_rows> rows = new ArrayList<>();
 
     @Override
@@ -93,87 +95,24 @@ public class activity_job_card_holder extends AppCompatActivity {
         setContentView(R.layout.activity_job_holder);
 
         viewPager = findViewById(R.id.view_pager);
-        //textViewRoute = findViewById(R.id.activity_meter_reading_tv_RouteNumber);
-        //textViewRouteDescription = findViewById(R.id.activity_meter_reading_tv_RouteDescription);
-        //TV_Status1 = findViewById(R.id.A_meter_reading_TV_Status1);
-        //TV_Status2 = findViewById(R.id.A_meter_reading_TV_Status2);
-        //TV_Status3 = findViewById(R.id.A_meter_reading_TV_Status3);
-        //TV_Status4 = findViewById(R.id.A_meter_reading_TV_Status4);
-        //InstNode = MeterReaderController.route_header.getInstNode_id();
-        //MobNode = MeterReaderController.route_header.getMobnode_id();
-
-        //TV_Status4.setOnLongClickListener(view -> {
-        //    InputboxPage();
-        //    return false;
-        //});
 
         Intent iPoproom = getIntent();
         Bundle bSaved = iPoproom.getExtras();
 
         try {
-            //if (bSaved != null && bSaved.getBoolean("came_from_adapter")) {
-                RouteNumber = bSaved.getString("job_number");
-                //String meter_number;
-               // try {
-                    meter_number = iPoproom.getStringExtra("meter_number");
-               // } catch (Exception e) {
-               //    e.printStackTrace();
-                //    return;
-              //  }
-
-
-//                for (MeterReaderController.Keys rid : MeterReaderController.route_row_keys) {
-//                    rows.add(
-//                            DBHelper.pro_mr_route_rows.getRouteRow(rid.getInstNode_id(),
-//                                    rid.getMobnode_id(),
-//                                    rid.getCycle(),
-//                                    rid.getRoute_number(),
-//                                    rid.getMeter_id(),
-//                                    rid.getWalk_sequence()));
-//                }
-//
-//                //We have a meter number, only on record will have the entry
-//                if (!meter_number.isEmpty()) {
-//                    for (model_pro_mr_route_rows r : rows) {
-//                        if ((r.getMeter_number().compareToIgnoreCase(meter_number) == 0)) {
-//                            setCurrentFragmentView(
-//                                    new MeterReaderController.Keys(r.getCycle(),
-//                                            r.getInstNode_id(),
-//                                            r.getMeter_id(),
-//                                            r.getMobnode_id(),
-//                                            r.getRoute_number(),
-//                                            r.getWalk_sequence()));
-//                            return;
-//                        }
-//                    }
-//                }
+                RouteNumber = bSaved.getString(intentcodes.job_activity.job_number);
+                meter_number = iPoproom.getStringExtra(intentcodes.job_activity.meter_number);
             }
          catch (NullPointerException ignore) {
         }
 
-//        NumberOfRows = DBHelper.pro_mr_route_rows.getNumberOfRows(InstNode, MobNode, Cycle, RouteNumber);
-//
-//        for (int i = 0; i < MeterReaderController.route_row_keys.size(); i++) {
-//            fragment_meterReading frag = new fragment_meterReading();
-//            frag.setRid(MeterReaderController.route_row_keys.get(i));
-//            listFragments.add(frag);
-//        }
-//
-//        try {
-//            textViewRoute.setText(String.format("Route %s", MeterReaderController.route_header.getRoute_number()));
-//        } catch (NullPointerException e) {
-//            Intent backtomenu = new Intent(activity_job_card_holder.this, SelectJob.class);
-//            startActivity(backtomenu);
-//        }
-//        try {
-//            textViewRouteDescription.setText(MeterReaderController.route_header.getDescription());
-//        } catch (NullPointerException e) {
-//            Intent backtomenu = new Intent(activity_job_card_holder.this, SelectJob.class);
-//            startActivity(backtomenu);
-//        }
+            fragment_jobMeter frag = new fragment_jobMeter();
 
-        adapter_MeterReading adapterMeterReading = new adapter_MeterReading(getSupportFragmentManager(), listFragments);
-        viewPager.setAdapter(adapterMeterReading);
+        listJobFragments.add(frag);
+
+
+        adapter_JobPager adapter_jobPager = new adapter_JobPager(getSupportFragmentManager(), listJobFragments);
+        viewPager.setAdapter(adapter_jobPager);
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @SuppressLint("DefaultLocale")
             @Override
@@ -240,7 +179,7 @@ public class activity_job_card_holder extends AppCompatActivity {
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-        String[] menuItems = {"Search For Meter", "Go To Maps", "Go To Gallery", "Go To Page", "Add New Meter"};
+        String[] menuItems = {"Go To Maps", "Go To Gallery"};
         for (int i = 0; i < menuItems.length; i++) {
             menu.add(Menu.NONE, i, i, menuItems[i]);
         }
@@ -252,10 +191,6 @@ public class activity_job_card_holder extends AppCompatActivity {
             case "Go To Maps":
                 GoToMaps();
                 break;
-//            case "Search For Meter":
-//                Intent intent = new Intent(MeterReadingActivity.this, MeterSearchActivity.class);
-//                startActivityForResult(intent, RESULT_CODE_SEARCH);
-//                break;
             case "Go To Gallery":
                 if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                     ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 99);
@@ -275,27 +210,8 @@ public class activity_job_card_holder extends AppCompatActivity {
                 gotogallery.putExtra("PICTURE TYPE","M");
 
                 startActivity(gotogallery);
-                //} else {
-                //  Toast.makeText(getBaseContext(), "This Feature Has Been Disabled",
-                //         Toast.LENGTH_SHORT).show();
-                //}
 
                 break;
-
-            case "Go To Page":
-                InputboxPage();
-                break;
-
-            case "Add New Meter":
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-
-                    meter_details = new String[]{null, null, null, null, null, null};
-
-                    InputboxNewMeter();
-                    //CreateNewMeter();
-                }
-                break;
-
         }
 
         return true;
@@ -481,7 +397,7 @@ public class activity_job_card_holder extends AppCompatActivity {
 
     private void setCurrentFragmentView(MeterReaderController.Keys key) {
         if (key != null) {
-            adapter_MeterReading adapter = (adapter_MeterReading) viewPager.getAdapter();
+            adapter_JobPager adapter = (adapter_JobPager) viewPager.getAdapter();
             assert adapter != null;
             Integer pos = adapter.getKeyPosition(key);
             if (pos != -1)

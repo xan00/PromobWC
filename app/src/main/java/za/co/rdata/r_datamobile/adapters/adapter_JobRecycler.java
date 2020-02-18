@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
+import za.co.rdata.r_datamobile.DBMeta.intentcodes;
 import za.co.rdata.r_datamobile.Models.model_pro_ar_asset_room;
 import za.co.rdata.r_datamobile.R;
 import za.co.rdata.r_datamobile.assetModule.RoomMainSummary;
@@ -27,7 +28,7 @@ public class adapter_JobRecycler extends RecyclerView.Adapter<adapter_JobRecycle
     private String strSelectedRoom;
     private int retdept;
     private int retframe;
-    private View.OnClickListener gotoroom = new View.OnClickListener() {
+    private View.OnClickListener gotojob = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
 
@@ -36,7 +37,7 @@ public class adapter_JobRecycler extends RecyclerView.Adapter<adapter_JobRecycle
             String strJobNumber = textView.getText().toString();
             TextView textViewasset = view.findViewById(retdesc);
             String strSelectedDesc = textViewasset.getText().toString();
-            gotojob.putExtra("job_number",strJobNumber);
+            gotojob.putExtra(intentcodes.job_activity.job_number,strJobNumber);
             gotojob.putExtra("meter_number",strSelectedDesc);
             mContext.startActivity(gotojob);
         }
@@ -91,7 +92,7 @@ public class adapter_JobRecycler extends RecyclerView.Adapter<adapter_JobRecycle
     public adapter_JobRecycler.GenericViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(recyclerViewID, parent, false);
-        itemView.setOnClickListener(gotoroom);
+        itemView.setOnClickListener(gotojob);
         return new adapter_JobRecycler.GenericViewHolder(itemView, retbarcode, retdesc, retdept, retframe);
     }
 
