@@ -81,9 +81,9 @@ public class fragment_jobMeter extends Fragment {
         //textViewReading.setOnClickListener(listen_readingTextView);
         //textViewNoteDescription.setOnLongClickListener(listen_noteTextView);
         //textViewNaAccessDescription.setOnLongClickListener(listen_noAccessTextView);
-        btnDeleteNote.setOnLongClickListener(listen_btnDeleteNote);
-        btnDeleteNoAccess.setOnLongClickListener(listen_btnDeleteNoAccess);
-        btnDeleteReading.setOnLongClickListener(listen_btnDeleteReading);
+       // btnDeleteNote.setOnLongClickListener(listen_btnDeleteNote);
+       // btnDeleteNoAccess.setOnLongClickListener(listen_btnDeleteNoAccess);
+       // btnDeleteReading.setOnLongClickListener(listen_btnDeleteReading);
 
         //GetData getData = new GetData();
         //getData.execute();

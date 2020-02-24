@@ -333,7 +333,7 @@ public class activity_job_card_holder extends AppCompatActivity {
 
         fragment_meterReading frag = new fragment_meterReading();
         frag.setRid(MeterReaderController.route_row_keys.get(MeterReaderController.route_row_keys.size() - 1));
-        listFragments.add(frag);
+        //listFragments.add(frag);
         Objects.requireNonNull(viewPager.getAdapter()).notifyDataSetChanged();
 
         companydetails.close();
@@ -399,9 +399,9 @@ public class activity_job_card_holder extends AppCompatActivity {
         if (key != null) {
             adapter_JobPager adapter = (adapter_JobPager) viewPager.getAdapter();
             assert adapter != null;
-            Integer pos = adapter.getKeyPosition(key);
-            if (pos != -1)
-                viewPager.setCurrentItem(pos, false);
+            //Integer pos = adapter.getKeyPosition(key);
+           // if (pos != -1)
+            //    viewPager.setCurrentItem(pos, false);
         }
     }
 
