@@ -3,6 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="za.co.rdata.r_datamobile">
 
+    <uses-sdk android:targetSdkVersion="29" />
+
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -25,7 +27,7 @@
         android:required="false" />
 
     <application
-        android:name="androidx.multidex.MultiDexApplication"
+
         android:requestLegacyExternalStorage="true"
         android:grantUriPermissions="true"
         android:icon="@mipmap/ic__promun_launcher"
