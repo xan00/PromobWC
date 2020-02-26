@@ -33,7 +33,7 @@ public class adapter_JobPager extends FragmentStatePagerAdapter {
         this.listFragments = listFragments;
     }
 
-    //public model_pro_jb_jobcard getFragment(Integer index) {
-     //   return listFragments.get(index).getRid();
-   // }
+//    public model_pro_jb_jobcard getFragment(Integer index) {
+//        return listFragments.get(index).get;
+//    }
 }
