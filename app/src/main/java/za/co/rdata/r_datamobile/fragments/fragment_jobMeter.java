@@ -47,10 +47,10 @@ public class fragment_jobMeter extends Fragment {
     private MeterReaderController.Keys rid;
     private model_pro_mr_route_rows route_row = null;
     private boolean row_changed = false;
-    private TextView textViewReading;
-    private TextView textViewNoteDescription;
-    private TextView textViewNaAccessDescription;
-    private TextView TV_LED;
+    private TextView txtfragJobNumber;
+    private TextView txtfragJobAddress;
+    private TextView txtfragJobtype;
+    private TextView txtfragJobStatus;
     private Button btnDeleteReading;
     private int GET_READING_REQUEST_CODE = 1;
     private int GET_NOTE_CODE = 2;
@@ -71,12 +71,13 @@ public class fragment_jobMeter extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         viewFragment = inflater.inflate(R.layout.content_job_card_meter, container, false);
 
-        textViewNoteDescription = viewFragment.findViewById(R.id.textViewNote);
-        textViewNaAccessDescription = viewFragment.findViewById(R.id.textViewNoAccess);
-        textViewReading = viewFragment.findViewById(R.id.textViewReading);
-        Button btnDeleteNote = viewFragment.findViewById(R.id.btnDeleteNote);
-        Button btnDeleteNoAccess = viewFragment.findViewById(R.id.btnDeleteNoAccess);
-        btnDeleteReading = viewFragment.findViewById(R.id.F_Meter_Reading_B_DeleteReading);
+        txtfragJobNumber = viewFragment.findViewById(R.id.txtfragJobNumber);
+        txtfragJobtype = viewFragment.findViewById(R.id.txtfragJobtype);
+        txtfragJobStatus = viewFragment.findViewById(R.id.txtfragJobStatus);
+        txtfragJobAddress = viewFragment.findViewById(R.id.txtfragJobAddress);
+//        Button btnDeleteNote = viewFragment.findViewById(R.id.btnDeleteNote);
+//        Button btnDeleteNoAccess = viewFragment.findViewById(R.id.btnDeleteNoAccess);
+//        btnDeleteReading = viewFragment.findViewById(R.id.F_Meter_Reading_B_DeleteReading);
 
         //textViewReading.setOnClickListener(listen_readingTextView);
         //textViewNoteDescription.setOnLongClickListener(listen_noteTextView);

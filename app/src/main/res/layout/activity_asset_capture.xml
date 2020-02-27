@@ -170,10 +170,10 @@
     <TextView
         android:id="@+id/txtCondition"
         android:layout_width="0dp"
-        android:layout_height="18dp"
-        android:layout_marginEnd="14dp"
-
+        android:layout_height="24dp"
         android:layout_marginStart="24dp"
+
+        android:layout_marginEnd="14dp"
         android:background="@drawable/textinput_shape"
         android:longClickable="true"
         android:textAlignment="center"
@@ -187,7 +187,7 @@
     <TextView
         android:id="@+id/txtComments"
         android:layout_width="0dp"
-        android:layout_height="18dp"
+        android:layout_height="24dp"
         android:layout_marginStart="24dp"
         android:layout_marginTop="14dp"
         android:layout_marginEnd="14dp"
@@ -196,11 +196,11 @@
         android:textAlignment="center"
         android:textColor="@color/colorTextLight"
         android:textSize="13sp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/textView26"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/textView26"
-        app:layout_constraintTop_toBottomOf="@+id/txtCondition"
-        app:layout_constraintBaseline_toBaselineOf="@+id/textView26"/>
+        app:layout_constraintTop_toBottomOf="@+id/txtCondition" />
 
     <TextView
         android:id="@+id/txtComments2"
@@ -294,7 +294,7 @@
         android:id="@+id/space"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:background="@color/roomcolour"
         android:text="@string/useful_life_information"
         android:textAlignment="center"
@@ -351,8 +351,9 @@
     <TextView
         android:id="@+id/textView47"
         android:layout_width="150dp"
-        android:layout_height="18dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
+        android:paddingBottom="4dp"
         android:text="@string/add_onto_remaining"
         android:textAlignment="textEnd"
         android:textColor="@color/black"
@@ -376,14 +377,14 @@
         android:topLeftRadius="5dp"
         android:topRightRadius="5dp"
         app:layout_constraintBaseline_toBaselineOf="@+id/textView44"
-        app:layout_constraintStart_toStartOf="@+id/guideline4"
-        app:layout_constraintEnd_toStartOf="@+id/guideline2" />
+        app:layout_constraintEnd_toStartOf="@+id/guideline2"
+        app:layout_constraintStart_toStartOf="@+id/guideline4" />
 
     <TextView
         android:id="@+id/space3"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="14dp"
         android:background="@color/roomcolour"
         android:text="@string/scan_information"
         android:textAlignment="center"
@@ -396,15 +397,17 @@
     <EditText
         android:id="@+id/txtAddontoremaining"
         android:layout_width="0dp"
-        android:layout_height="18dp"
+        android:layout_height="24dp"
         android:background="@drawable/textinput_shape"
         android:bottomLeftRadius="5dp"
         android:bottomRightRadius="5dp"
         android:cursorVisible="false"
         android:digits="0123456789-"
         android:ems="2"
+        android:gravity="center_horizontal"
         android:hint="@string/_0"
         android:imeOptions="actionDone"
+        android:importantForAutofill="no"
         android:inputType="numberSigned"
         android:textAlignment="center"
         android:textColor="@color/colorTextLight"
@@ -412,10 +415,9 @@
         android:topLeftRadius="5dp"
         android:topRightRadius="5dp"
         app:layout_constraintBaseline_toBaselineOf="@+id/textView47"
+        app:layout_constraintEnd_toStartOf="@+id/guideline2"
         app:layout_constraintHorizontal_bias="0.75"
         app:layout_constraintStart_toStartOf="@+id/guideline4"
-        app:layout_constraintEnd_toStartOf="@+id/guideline2"
-        android:importantForAutofill="no"
         tools:ignore="UnusedAttribute" />
 
     <androidx.constraintlayout.widget.Guideline
@@ -431,7 +433,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_begin="174dp" />
+        app:layout_constraintGuide_end="237dp" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline5"

@@ -4,12 +4,14 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
 import android.database.SQLException;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -40,6 +42,7 @@ import java.util.Objects;
 import java.util.Set;
 
 import za.co.rdata.r_datamobile.DBHelpers.DBHelper;
+import za.co.rdata.r_datamobile.DBHelpers.sqliteDBHelper;
 import za.co.rdata.r_datamobile.DBMeta.intentcodes;
 import za.co.rdata.r_datamobile.DBMeta.meta;
 import za.co.rdata.r_datamobile.GalleryActivity;
@@ -74,6 +77,9 @@ public class activity_job_card_holder extends AppCompatActivity {
     public static String Cycle;
     public static String RouteNumber;
 
+    Context mContext = activity_job_card_holder.this;
+    Activity mActivity = (Activity) mContext;
+
     TextView TV_Status1;
     TextView TV_Status2;
     TextView TV_Status3;
@@ -89,6 +95,9 @@ public class activity_job_card_holder extends AppCompatActivity {
     ArrayList<fragment_jobMeter> listJobFragments;
     ArrayList<model_pro_mr_route_rows> rows = new ArrayList<>();
 
+    private static SQLiteDatabase db;
+    private static sqliteDBHelper sqliteDb;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -96,15 +105,22 @@ public class activity_job_card_holder extends AppCompatActivity {
 
         viewPager = findViewById(R.id.view_pager);
 
+        //currentlayout = 0;
+        sqliteDb = sqliteDBHelper.getInstance(mContext);
+        db = sqliteDb.getReadableDatabase();
+
         Intent iPoproom = getIntent();
         Bundle bSaved = iPoproom.getExtras();
+
+        assert bSaved != null;
+        //strSelectedRoom = bSaved.getString("ROOM SCAN");
+        //scancycle = bSaved.getInt("SCAN CYCLE");
+        //strLocationscantype = bSaved.getString("LOCATION SCAN TYPE");
 
         try {
                 RouteNumber = bSaved.getString(intentcodes.job_activity.job_number);
                 meter_number = iPoproom.getStringExtra(intentcodes.job_activity.meter_number);
-            }
-         catch (NullPointerException ignore) {
-        }
+
 
             fragment_jobMeter frag = new fragment_jobMeter();
 
@@ -117,14 +133,6 @@ public class activity_job_card_holder extends AppCompatActivity {
             @SuppressLint("DefaultLocale")
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                NoAccess = DBHelper.pro_mr_route_rows.getNumberOfNoAccessRows(InstNode, MobNode, Cycle, RouteNumber);
-                ReadRows = DBHelper.pro_mr_route_rows.getNumberOfReadRows(InstNode, MobNode, Cycle, RouteNumber);
-                NotVisited = NumberOfRows - NoAccess - ReadRows;
-                intCurrentMeter = position;
-                TV_Status1.setText(String.format("Not visited %s/%s", NotVisited.toString(), NumberOfRows.toString()));
-                TV_Status2.setText(String.format("No Access %s", NoAccess.toString()));
-                TV_Status3.setText(String.format("Read %s", ReadRows.toString()));
-                TV_Status4.setText(String.format("%d/%s", position + 1, NumberOfRows.toString()));
             }
 
             @Override
@@ -137,43 +145,15 @@ public class activity_job_card_holder extends AppCompatActivity {
             }
         });
 
-        try {
-            if (!bSaved.getBoolean("came_from_adapter")) {
-                SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-                Set<String> ks;
-                ks = sharedPref.getStringSet("route-" + MeterReaderController.RouteNumber, null);
-                if (ks != null) {
-                    MeterReaderController.Keys key = MeterReaderController.ConvertSetToKey(ks);
-                    setCurrentFragmentView(key);
-                }
-            } else {
-                MeterReaderController.Keys key = null;
-                for (model_pro_mr_route_rows r : rows) {
-                    if (r.getMeter_number().equals(bSaved.getString("meter_number"))) {
-                        key = new MeterReaderController.Keys(r.getCycle(),
-                                r.getInstNode_id(),
-                                r.getMeter_id(),
-                                r.getMobnode_id(),
-                                r.getRoute_number(),
-                                r.getWalk_sequence());
-                        break;
-                    }
-                }
-                setCurrentFragmentView(key);
-            }
-        } catch (NullPointerException e) {
-            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-            Set<String> ks;
-            ks = sharedPref.getStringSet("route-" + MeterReaderController.RouteNumber, null);
-            if (ks != null) {
-                MeterReaderController.Keys key = MeterReaderController.ConvertSetToKey(ks);
-                setCurrentFragmentView(key);
-            }
+        }
+        catch (NullPointerException e) {
+            e.printStackTrace();
         }
 
-        final FloatingActionButton floatingActionButton = findViewById(R.id.fabToMap);
-        registerForContextMenu(floatingActionButton);
-        floatingActionButton.setOnClickListener(view -> openContextMenu(floatingActionButton));
+        viewPager.setCurrentItem(0);
+//        final FloatingActionButton floatingActionButton = findViewById(R.id.fabToMap);
+//        registerForContextMenu(floatingActionButton);
+//        floatingActionButton.setOnClickListener(view -> openContextMenu(floatingActionButton));
     }
 
     @Override
@@ -217,7 +197,7 @@ public class activity_job_card_holder extends AppCompatActivity {
         return true;
     }
 
-    @SuppressLint("DefaultLocale")
+    /*@SuppressLint("DefaultLocale")
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private void CreateNewMeter() {
 
@@ -347,7 +327,7 @@ public class activity_job_card_holder extends AppCompatActivity {
         viewPager.setCurrentItem(Objects.requireNonNull(viewPager.getAdapter()).getCount() - 1);
         //InputboxNewMeter();
     }
-
+*/
     private void GoToMaps() {
         Cursor curCoords = MainActivity.sqliteDbHelper.getReadableDatabase().rawQuery("SELECT meter_number,gps_master_long,gps_master_lat,gps_read_long,gps_read_lat FROM pro_mr_route_rows WHERE walk_sequence = '" + MeterReaderController.route_row_keys.get(intCurrentMeter).getWalk_sequence() + "'", null);
         curCoords.moveToFirst();
@@ -412,19 +392,6 @@ public class activity_job_card_holder extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        Integer index = viewPager.getCurrentItem();
-        adapter_MeterReading adapter = (adapter_MeterReading) viewPager.getAdapter();
-        assert adapter != null;
-        MeterReaderController.Keys key = adapter.getFragment(index);
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-        SharedPreferences.Editor editor = sharedPref.edit();
-        Set<String> keySet;
-        //noinspection unchecked
-        keySet = MeterReaderController.ConvertKeyToSet(key);
-        if (key != null) {
-            editor.putStringSet("route-" + MeterReaderController.RouteNumber, keySet);
-            editor.apply();
-        }
         super.onBackPressed();
     }
 
@@ -624,7 +591,7 @@ public class activity_job_card_holder extends AppCompatActivity {
             }
 
             if (details_complete) {
-                CreateNewMeter();
+//                CreateNewMeter();
             } else {
                 Toast.makeText(getBaseContext(), "Please Fill In All Details",
                         Toast.LENGTH_SHORT).show();

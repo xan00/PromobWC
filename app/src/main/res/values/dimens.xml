@@ -10,5 +10,7 @@
     <dimen name="asset_start_colour">255dp</dimen>
     <dimen name="asset_end_colour">45dp</dimen>
     <dimen name="fltsize">44dp</dimen>
+    <dimen name="fragment_detail_label">13sp</dimen>
+    <dimen name="fragmet_label_width_small">100dp</dimen>
 
 </resources>
