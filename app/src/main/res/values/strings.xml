@@ -49,7 +49,7 @@
     <string name="department">Department:</string>
     <string name="barcode">Barcode:</string>
     <string name="room_number">Registered To:</string>
-    <string name="description">Description:</string>
+    <string name="description">Description</string>
     <string name="condition">Condition:</string>
     <string name="comments1">Comment 1:</string>
     <string name="comments2">Comment 2:</string>
