@@ -27,6 +27,7 @@ import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.Image;
 import android.media.ImageReader;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -42,6 +43,11 @@ import android.view.Gravity;
 import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -64,8 +70,12 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import rapid.decoder.BitmapDecoder;
+import za.co.rdata.r_datamobile.DBMeta.intentcodes;
+
+import static za.co.rdata.r_datamobile.fileTools.FileActions.createFolder;
 
 /**
  * Created by James de Scande on 13/09/2017 at 10:33.
@@ -74,14 +84,6 @@ import rapid.decoder.BitmapDecoder;
 public class CameraActivity extends Activity {
 
     private static final String TAG = "Camera2";
-    int backcode = -1;
-
-    String mCurrentPhotoPath;
-    String imageFileName;
-    String idvalue;
-
-    private TextureView textureView;
-
     private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
     private static final int REQUEST_CAMERA_PERMISSION = 200;
     private static final int MAX_PREVIEW_WIDTH = 1920;
@@ -93,19 +95,48 @@ public class CameraActivity extends Activity {
         ORIENTATIONS.append(Surface.ROTATION_180, 270);
         ORIENTATIONS.append(Surface.ROTATION_270, 180);
     }
-    private String cameraId;
+
     protected CameraDevice cameraDevice;
     protected CameraCaptureSession cameraCaptureSessions;
     protected CaptureRequest captureRequest;
     protected CaptureRequest.Builder captureRequestBuilder;
+    int backcode = -1;
+    String mCurrentPhotoPath;
+    String imageFileName;
+    String idvalue;
     CameraCharacteristics characteristics;
     StreamConfigurationMap map;
+    private TextureView textureView;
+    private String cameraId;
     private Size imageDimension;
+    TextureView.SurfaceTextureListener textureListener = new TextureView.SurfaceTextureListener() {
+        @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+        @Override
+        public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
+            //open your camera here
+            openCamera(width, height);
+        }
+
+        @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+        @Override
+        public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
+            // Transform you image captured size according to the surface width and height
+            configureTransform(width, height);
+        }
+
+        @Override
+        public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
+            return false;
+        }
+
+        @Override
+        public void onSurfaceTextureUpdated(SurfaceTexture surface) {
+        }
+    };
     private ImageReader imageReader;
     private File file = null;
     private boolean mFlashSupported;
     private Handler mBackgroundHandler;
-
     @SuppressLint("NewAPI")
     private final CameraDevice.StateCallback stateCallback = new CameraDevice.StateCallback() {
         @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -116,47 +147,35 @@ public class CameraActivity extends Activity {
             cameraDevice = camera;
             createCameraPreview();
         }
+
         @Override
         public void onDisconnected(@NonNull CameraDevice camera) {
             cameraDevice.close();
 
         }
+
         @Override
         public void onError(@NonNull CameraDevice camera, int error) {
             cameraDevice.close();
             cameraDevice = null;
         }
     };
-
     private HandlerThread mBackgroundThread;
     private boolean picreq = false;
-
-    TextureView.SurfaceTextureListener textureListener = new TextureView.SurfaceTextureListener() {
-        @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-        @Override
-        public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
-            //open your camera here
-            openCamera(width,height);
-        }
-        @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-        @Override
-        public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
-            // Transform you image captured size according to the surface width and height
-            configureTransform(width, height);
-        }
-        @Override
-        public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
-            return false;
-        }
-        @Override
-        public void onSurfaceTextureUpdated(SurfaceTexture surface) {
-        }
-    };
     private String strPictureText = "";
     private String sql;
     private String strDetail1Name;
     private String strDetail2name;
     private String picturetype;
+    private String strDetail1Value;
+
+    private String strCurrentRoom;
+    private String strSelectedRoom;
+
+    ArrayAdapter<File> adapter = new picdetails_ListAdapter();
+    static ArrayList<File> arrGallery;
+
+    private ArrayList<Toast> toasts;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private static Size chooseOptimalSize(Size[] choices, int textureViewWidth, int textureViewHeight, int maxWidth, int maxHeight, Size aspectRatio) {
@@ -196,21 +215,27 @@ public class CameraActivity extends Activity {
         Intent iPhoto = getIntent();
         Bundle bSaved = iPhoto.getExtras();
         idvalue = bSaved.getString("PHOTO ID");
+        strCurrentRoom = bSaved.getString(intentcodes.asset_activity.current_room);
+        strSelectedRoom =  bSaved.getString("ROOM SCAN");
+        strDetail1Value =  bSaved.getString(intentcodes.asset_activity.asset_barcode);
         sql = bSaved.getString("PIC TEXT SQL STRING");
         try {
-            strPictureText=bSaved.getString("PICTURE TEXT");
-        } catch (NullPointerException ignore) {}
+            strPictureText = bSaved.getString("PICTURE TEXT");
+        } catch (NullPointerException ignore) {
+        }
 
         strDetail1Name = bSaved.getString("DETAIL1 TITLE");
 
         try {
             strDetail2name = bSaved.getString("DETAIL2 TITLE");
-        } catch (Exception ignore) {}
+        } catch (Exception ignore) {
+        }
 
         try {
             picturetype = bSaved.getString("PICTURE TYPE");
-        } catch (Exception ignore) {}
-        
+        } catch (Exception ignore) {
+        }
+
         setContentView(R.layout.activity_image_capture);
         textureView = findViewById(R.id.texture);
         assert textureView != null;
@@ -224,6 +249,84 @@ public class CameraActivity extends Activity {
                 takePicture();
             }
         });
+
+        try {
+            arrGallery = null;
+        } catch (NullPointerException ignore) {
+        }
+
+        File dir = createFolder(this.getBaseContext(), "/filesync/Images/");
+
+        try {
+            //noinspection ConstantConditions
+            arrGallery = new ArrayList<>(Arrays.asList(dir.listFiles(pathname -> {
+                Log.d("Picture Name", pathname.getName());
+                return pathname.getName().toUpperCase().startsWith(picturetype+"_"+strDetail1Value+"_")
+                        & pathname.getName().toLowerCase().endsWith(".jpg");
+
+            })));
+
+
+            for (File d: arrGallery
+            ) {
+                if (d.getTotalSpace()<10) d.delete();
+            }
+        }
+        catch (NullPointerException e) {
+            e.printStackTrace();
+        }
+        //}
+
+        try {
+            if (!arrGallery.get(0).getName().endsWith(".jpg")) {
+                arrGallery.remove(0);
+            }
+        } catch (NullPointerException | IndexOutOfBoundsException ignore) {
+        }
+
+        try {
+            if (arrGallery.get(0).getName().equals("Version")) {
+                arrGallery.remove(0);
+            }
+        } catch (IndexOutOfBoundsException | NullPointerException ignore) {
+        }
+
+        try {
+            if (arrGallery.size()>0) {
+
+                ListView lstGallery = findViewById(R.id.listGallery);
+                piclistpopulate piclistpopulate = new piclistpopulate(adapter,lstGallery);
+                piclistpopulate.execute();
+            }   else {
+                Toast.makeText(getBaseContext(), "There Are No Images For This Gallery", Toast.LENGTH_SHORT).show();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    protected class piclistpopulate extends AsyncTask<Void,String, Boolean> {
+
+        ArrayAdapter<File> adapter;
+        ListView lstGallery;
+
+        piclistpopulate(ArrayAdapter<File> adap, ListView lst) {
+            this.adapter = adap;
+            this.lstGallery = lst;
+            //adapter = new picdetails_ListAdapter();
+            //ListView lstGallery = findViewById(R.id.listGallery);
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+
+            try {
+                lstGallery.setAdapter(adapter);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -259,7 +362,7 @@ public class CameraActivity extends Activity {
             captureRequestBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
             captureRequestBuilder.addTarget(surface);
 
-            cameraDevice.createCaptureSession(Collections.singletonList(surface), new CameraCaptureSession.StateCallback(){
+            cameraDevice.createCaptureSession(Collections.singletonList(surface), new CameraCaptureSession.StateCallback() {
                 @Override
                 public void onConfigured(@NonNull CameraCaptureSession cameraCaptureSession) {
                     //The camera is already closed
@@ -270,6 +373,7 @@ public class CameraActivity extends Activity {
                     cameraCaptureSessions = cameraCaptureSession;
                     updatePreview();
                 }
+
                 @Override
                 public void onConfigureFailed(@NonNull CameraCaptureSession cameraCaptureSession) {
                     Toast.makeText(CameraActivity.this, "Configuration change", Toast.LENGTH_SHORT).show();
@@ -359,7 +463,7 @@ public class CameraActivity extends Activity {
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     protected void updatePreview() {
-        if(null == cameraDevice) {
+        if (null == cameraDevice) {
             Log.e(TAG, "updatePreview error, return");
         }
         captureRequestBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
@@ -380,6 +484,7 @@ public class CameraActivity extends Activity {
             imageReader = null;
         }
     }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == REQUEST_CAMERA_PERMISSION) {
@@ -399,7 +504,7 @@ public class CameraActivity extends Activity {
         Log.e(TAG, "onResume");
         startBackgroundThread();
         if (textureView.isAvailable()) {
-            openCamera(textureView.getWidth(),textureView.getHeight());
+            openCamera(textureView.getWidth(), textureView.getHeight());
         } else {
             textureView.setSurfaceTextureListener(textureListener);
         }
@@ -432,7 +537,8 @@ public class CameraActivity extends Activity {
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private int getJpegOrientation(CameraCharacteristics c, int deviceOrientation) {
-        if (deviceOrientation == android.view.OrientationEventListener.ORIENTATION_UNKNOWN) return 0;
+        if (deviceOrientation == android.view.OrientationEventListener.ORIENTATION_UNKNOWN)
+            return 0;
         int sensorOrientation = c.get(CameraCharacteristics.SENSOR_ORIENTATION);
 
         // Round device orientation to a multiple of 90
@@ -451,7 +557,7 @@ public class CameraActivity extends Activity {
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     protected void takePicture() {
-        if(null == cameraDevice) {
+        if (null == cameraDevice) {
             Log.e(TAG, "cameraDevice is null");
             return;
         }
@@ -462,12 +568,7 @@ public class CameraActivity extends Activity {
             if (characteristics != null) {
                 jpegSizes = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP).getOutputSizes(ImageFormat.JPEG);
             }
-/*
-            DisplayMetrics displayMetrics = new DisplayMetrics();
-            getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-            int height = displayMetrics.heightPixels;
-            int width = displayMetrics.widthPixels;
-*/
+
             Point size = new Point();
             int width = 1280;
             int height = 720;
@@ -480,13 +581,6 @@ public class CameraActivity extends Activity {
                 Log.i("error", "it can't work");
             }
 
-            /*
-            if (jpegSizes != null && 0 < jpegSizes.length) {
-                width = jpegSizes[4].getWidth();
-                height = jpegSizes[4].getHeight();
-            }
-        */
-
             ImageReader reader = ImageReader.newInstance(width, height, ImageFormat.JPEG, 1);
             List<Surface> outputSurfaces = new ArrayList<>(2);
             outputSurfaces.add(reader.getSurface());
@@ -498,11 +592,12 @@ public class CameraActivity extends Activity {
             // Orientation
             int rotation = getWindowManager().getDefaultDisplay().getRotation();
             //captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, ORIENTATIONS.get(rotation));
-            captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, getJpegOrientation(characteristics,rotation));
+            captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, getJpegOrientation(characteristics, rotation));
             //final File file = new File(Environment.getExternalStorageDirectory()+"filesync/Images/"+idvalue+".jpg");
+            String timeStamp = new SimpleDateFormat("ddMMyy_HHmmss", Locale.getDefault()).format(new Date());
 
             try {
-                file = createImageFile(idvalue);
+                file = createImageFile(idvalue,timeStamp);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -525,27 +620,19 @@ public class CameraActivity extends Activity {
                         }
                     }
                 }
+
                 private void save(byte[] bytes) throws IOException {
                     OutputStream output = null;
                     try {
                         output = new FileOutputStream(file);
                         output.write(bytes);
-                        sendToast("Saved:" + file,CameraActivity.this);
+                        sendToast("Saved:" + file, CameraActivity.this);
+                    } catch (NullPointerException ignore) {
                     } finally {
                         if (null != output) {
                             output.close();
                         }
                     }
-                }
-            };
-
-            reader.setOnImageAvailableListener(readerListener, mBackgroundHandler);
-            final CameraCaptureSession.CaptureCallback captureListener = new CameraCaptureSession.CaptureCallback() {
-                @Override
-                public void onCaptureCompleted(@NonNull CameraCaptureSession session, @NonNull CaptureRequest request, @NonNull TotalCaptureResult result) {
-                    super.onCaptureCompleted(session, request, result);
-                    //Toast.makeText(CameraActivity.this, "Saved:" + file, Toast.LENGTH_SHORT).show();
-                    @SuppressLint("SimpleDateFormat") String timeStamp = new SimpleDateFormat("ddMMyy_HHmmss").format(new Date());
                     String strTempbarcode = null;
 
                     if (strDetail2name.equals("BARCODE: ")) {
@@ -555,20 +642,13 @@ public class CameraActivity extends Activity {
                     }
 
 
-                    ExifUtil exifUtil = new ExifUtil();
-                    Bitmap bmp;
-
+                    //ExifUtil exifUtil = new ExifUtil();
+                    Bitmap bmp = BitmapDecoder.from(file.getAbsolutePath()).decode();
                     try {
-                        Bitmap tempbit = BitmapDecoder.from(file.getAbsolutePath()).decode();
+                        //Bitmap tempbit = BitmapDecoder.from(file.getAbsolutePath()).decode();
+                        bmp = drawMultilineTextToBitmap(getBaseContext(), ExifUtil.rotateBitmap(file.getAbsolutePath(), BitmapDecoder.from(file.getAbsolutePath()).decode()), strPictureText + "\nDate: " + timeStamp);
                     } catch (Exception e) {
                         e.printStackTrace();
-                    }
-
-                    if (!MainActivity.NODE_ID.startsWith(String.valueOf(601)) || !MainActivity.NODE_ID.startsWith(String.valueOf(602)) || !MainActivity.NODE_ID.startsWith(String.valueOf(603)) || !MainActivity.NODE_ID.startsWith(String.valueOf(604))) {
-                        bmp = drawMultilineTextToBitmap(getBaseContext(), ExifUtil.rotateBitmap(file.getAbsolutePath(), BitmapDecoder.from(file.getAbsolutePath()).decode()), strPictureText + "\nDate: " + timeStamp);
-                    } else {
-                        bmp = drawMultilineTextToBitmap(getBaseContext(), BitmapDecoder.from(file.getAbsolutePath()).decode() ,strPictureText+"\nDate: "+timeStamp);
-
                     }
 
                     FileOutputStream out = null;
@@ -587,6 +667,18 @@ public class CameraActivity extends Activity {
                             e.printStackTrace();
                         }
                     }
+                }
+            };
+
+            ListView lstGallery = findViewById(R.id.listGallery);
+           reader.setOnImageAvailableListener(readerListener, mBackgroundHandler);
+            final CameraCaptureSession.CaptureCallback captureListener = new CameraCaptureSession.CaptureCallback() {
+                @Override
+                public void onCaptureCompleted(@NonNull CameraCaptureSession session, @NonNull CaptureRequest request, @NonNull TotalCaptureResult result) {
+                    super.onCaptureCompleted(session, request, result);
+                    //Toast.makeText(CameraActivity.this, "Saved:" + file, Toast.LENGTH_SHORT).show();
+                    adapter.notifyDataSetChanged();
+
                     createCameraPreview();
                 }
             };
@@ -595,15 +687,16 @@ public class CameraActivity extends Activity {
                 public void onConfigured(@NonNull CameraCaptureSession session) {
                     try {
                         session.capture(captureBuilder.build(), captureListener, mBackgroundHandler);
-                    } catch (CameraAccessException e) {
+                    } catch (CameraAccessException | IllegalStateException e) {
                         e.printStackTrace();
                     }
                 }
+
                 @Override
                 public void onConfigureFailed(@NonNull CameraCaptureSession session) {
                 }
             }, mBackgroundHandler);
-        } catch (CameraAccessException e) {
+        } catch (CameraAccessException | IllegalStateException e) {
             e.printStackTrace();
         }
     }
@@ -615,7 +708,7 @@ public class CameraActivity extends Activity {
     }
 
     @Override
-    protected void onStop () {
+    protected void onStop() {
         super.onStop();
         removeToast();
     }
@@ -623,7 +716,7 @@ public class CameraActivity extends Activity {
     public void removeToast() {
         runOnUiThread(() -> {
             if (null != toasts) {
-                for(Toast toast:toasts) {
+                for (Toast toast : toasts) {
                     toast.cancel();
                 }
                 toasts = null;
@@ -631,7 +724,6 @@ public class CameraActivity extends Activity {
         });
     }
 
-    private ArrayList<Toast> toasts;
     public void sendToast(final String message, Context toastContext) {
         if (null == toasts) {
             toasts = new ArrayList<>();
@@ -639,10 +731,10 @@ public class CameraActivity extends Activity {
         runOnUiThread(() -> {
             try {
                 Toast toast = Toast.makeText(toastContext, message, Toast.LENGTH_SHORT);
-                toast.setGravity(Gravity.TOP|Gravity.CENTER, 0, 300);
+                toast.setGravity(Gravity.BOTTOM | Gravity.CENTER, 0, 300);
                 toast.show();
                 toasts.add(toast);
-            } catch(Exception e) {/* do nothing, just means that the activity doesn't exist anymore*/}
+            } catch (Exception e) {/* do nothing, just means that the activity doesn't exist anymore*/}
         });
     }
 
@@ -654,7 +746,7 @@ public class CameraActivity extends Activity {
 
         android.graphics.Bitmap.Config bitmapConfig = bitmap.getConfig();
         // set default bitmap config if none
-        if(bitmapConfig == null) {
+        if (bitmapConfig == null) {
             bitmapConfig = android.graphics.Bitmap.Config.ARGB_8888;
         }
         // resource bitmaps are imutable,
@@ -664,13 +756,13 @@ public class CameraActivity extends Activity {
         Canvas canvas = new Canvas(bitmap);
 
         // new antialiased Paint
-        TextPaint paint=new TextPaint(Paint.ANTI_ALIAS_FLAG);
+        TextPaint paint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
         // text color - #3D3D3D
-        paint.setColor(Color.DKGRAY);
+        paint.setColor(Color.BLACK);
         // text size in pixels
         paint.setTextSize((int) (10 * scale));
         // text shadow
-        paint.setShadowLayer(1f, 0f, 1f, Color.WHITE);
+        paint.setShadowLayer(2f, 2f, 2f, Color.WHITE);
 
         // set text width to canvas width minus 16dp padding
         int textWidth = canvas.getWidth() - (int) (16 * scale);
@@ -683,7 +775,7 @@ public class CameraActivity extends Activity {
 
         // get position of text's top left corner
         float x = 20; //(bitmap.getWidth() - textWidth);
-        float y = (bitmap.getHeight() - textHeight)-20;
+        float y = (bitmap.getHeight() - textHeight) - 20;
 
         // draw text to the Canvas center
         canvas.save();
@@ -694,16 +786,17 @@ public class CameraActivity extends Activity {
         return bitmap;
     }
 
-    private File createImageFile(String barcode) throws IOException {
+    private File createImageFile(String barcode, String timeStamp) throws IOException {
         // Create an image file name
-        String timeStamp = new SimpleDateFormat("ddMMyy_HHmmss").format(new Date());
-        File dir = new File(Environment.getExternalStorageDirectory().toString() + "/filesync/Images/");
+
+
+        File dir = createFolder(this.getBaseContext(), "/filesync/Images/");
         int folderlength = 0;
         try {
             folderlength = dir.list().length + 1;
         } catch (NullPointerException e) {
             e.printStackTrace();
-            folderlength=0;
+            folderlength = 0;
         }
         imageFileName = picturetype + "_" + barcode + "_" + folderlength + "_" + timeStamp;
         File image = File.createTempFile(
@@ -711,7 +804,7 @@ public class CameraActivity extends Activity {
                 ".jpg",         // suffix
                 dir      // directory
         );
-        // Save a file: path for use with ACTION_VIEW intents
+        // Save a file: path for use with ACTION_VIEW intentsmr
         mCurrentPhotoPath = image.getAbsolutePath();
         Log.i("PHOTOPATH: ", mCurrentPhotoPath);
         return image;
@@ -720,13 +813,14 @@ public class CameraActivity extends Activity {
     @Override
     public void onBackPressed() {
         Intent gotogallery = new Intent(CameraActivity.this, GalleryActivity.class);
-        gotogallery.putExtra("PHOTO ID",idvalue);
-        gotogallery.putExtra("PIC TEXT SQL STRING",sql);
-        gotogallery.putExtra("DETAIL1 TITLE",strDetail1Name);
-        gotogallery.putExtra("PICTURE TYPE",picturetype);
+        gotogallery.putExtra("PHOTO ID", idvalue);
+        gotogallery.putExtra("PIC TEXT SQL STRING", sql);
+        gotogallery.putExtra("DETAIL1 TITLE", strDetail1Name);
+        gotogallery.putExtra("PICTURE TYPE", picturetype);
         try {
-            gotogallery.putExtra("DETAIL2 TITLE",strDetail2name);
-        } catch (Exception ignore) {}
+            gotogallery.putExtra("DETAIL2 TITLE", strDetail2name);
+        } catch (Exception ignore) {
+        }
         startActivity(gotogallery);
         finish();
     }
@@ -741,6 +835,66 @@ public class CameraActivity extends Activity {
                     (long) rhs.getWidth() * rhs.getHeight());
         }
 
+    }
+
+    public View itemView;
+
+    private class picdetails_ListAdapter extends ArrayAdapter<File> {
+
+        picdetails_ListAdapter() {
+            super(CameraActivity.this, R.layout.content_pictures, arrGallery);
+        }
+
+        @NonNull
+        public View getView(int position, View convertView, @NonNull ViewGroup parent) {
+            itemView = convertView;
+
+            if (itemView == null)
+                itemView = getLayoutInflater().inflate(R.layout.content_pictures, parent, false);
+
+            final int pos = position;
+
+            File mSaveBit = arrGallery.get(position);
+            String filePath = mSaveBit.getAbsolutePath();
+            final ImageView contentpic = itemView.findViewById(R.id.content_imgview);
+
+            /*
+            if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+                contentpic.setRotation(90);
+            }
+*/
+
+            try {
+                BitmapDecoder.from(filePath).scale(75, 75).into(contentpic);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            View.OnClickListener piclistener = view -> {
+                //ImageView image = findViewById(R.id.imgAssetPic);
+                TextView imagename = findViewById(R.id.txtPicName);
+                imagename.setText(arrGallery.get(pos).getName());
+                mCurrentPhotoPath = arrGallery.get(pos).getAbsolutePath();
+                //Bitmap mImageBitmap = BitmapDecoder.from(mCurrentPhotoPath).decode();
+                //rotateImage(mImageBitmap,mCurrentPhotoPath);
+                BitmapDecoder.from(mCurrentPhotoPath).into(textureView);
+                /*
+                try {
+                    setCurrentImage(BitmapDecoder.from(mCurrentPhotoPath).decode(), mCurrentPhotoPath);
+                } catch (EOFException e) {
+                    FileActions fileActions = new FileActions();
+                    fileActions.deleteFile(mCurrentPhotoPath);
+                }
+                */
+                //textureView.setImageBitmap(mImageBitmap);
+                //imageOrientationValidator(mCurrentPhotoPath);
+            };
+
+            itemView.setClickable(true);
+            itemView.setOnClickListener(piclistener);
+
+            return itemView;
+        }
     }
 
 }

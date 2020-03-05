@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 import za.co.rdata.r_datamobile.DBHelpers.sqliteDBHelper;
+import za.co.rdata.r_datamobile.DBMeta.intentcodes;
 import za.co.rdata.r_datamobile.DBMeta.meta;
 import za.co.rdata.r_datamobile.GalleryActivity;
 import za.co.rdata.r_datamobile.MainActivity;
@@ -72,6 +73,7 @@ public class PopulateRoomActivity extends AppCompatActivity {
     String strLocationdesc;
     String strResponsibleperson;
     String barcode;
+    String strSelectedBarcode;
 
     public static int intentcode = -1;
     int GET_DESC_CODE = 4;
@@ -82,6 +84,7 @@ public class PopulateRoomActivity extends AppCompatActivity {
     int currentlayout;
     String strDetailName="ROOM CODE: ";
     String strDetailName2="BARCODE: ";
+    String strCurrentroom = "";
 
     TextView txtRoomNumber;
     TextView txtAssetTally;
@@ -112,6 +115,7 @@ public class PopulateRoomActivity extends AppCompatActivity {
         Bundle bSaved = iPoproom.getExtras();
 
         assert bSaved != null;
+        strCurrentroom = bSaved.getString(intentcodes.asset_activity.current_room);
         strSelectedRoom = bSaved.getString("ROOM SCAN");
         scancycle = bSaved.getInt("SCAN CYCLE");
         strLocationscantype = bSaved.getString("LOCATION SCAN TYPE");
@@ -119,6 +123,7 @@ public class PopulateRoomActivity extends AppCompatActivity {
         strResponsibleperson = bSaved.getString("RESPONSIBLE PERSON");
         itemviewid = bSaved.getInt("SUMMARY VALUE");
         barcode = bSaved.getString("BARCODE");
+        strSelectedBarcode = bSaved.getString("BARCODE");
         lightcolour = bSaved.getInt("LIGHT COLOUR");
 
         FloatingActionButton fltMoreOptions = findViewById(R.id.fltMoreOptions);
@@ -139,18 +144,22 @@ public class PopulateRoomActivity extends AppCompatActivity {
         txtAssetTally = findViewById(R.id.lblAssetTally);
         txtCurrentItem = findViewById(R.id.txtCurrentItem);
 
+        String sqlstring = "SELECT scan_barcode FROM pro_ar_scan WHERE scan_location = '" + strCurrentroom + "' and scan_location_entry = '" +
+                strCurrentroom + "'";
 
-        Cursor curAssetsinroom = db.rawQuery("SELECT reg_barcode FROM pro_ar_register WHERE reg_location_code = '" + strSelectedRoom + "'", null);
+        Cursor curAssetsinroom = db.rawQuery("SELECT reg_barcode FROM pro_ar_register WHERE reg_location_code = '" + strCurrentroom + "'", null);
         curAssetsinroom.moveToFirst();
 
-        String sqlstring = "SELECT scan_barcode FROM pro_ar_scan WHERE scan_location = '" + strSelectedRoom + "' and scan_location_entry = '" +
-                strSelectedRoom + "'";
-
-        Cursor curCorrectScanCount = db.rawQuery(sqlstring,null); // + "' and scan_location_entry = '" +
-                //strSelectedRoom + "'", null);
+        Cursor curCorrectScanCount = db.rawQuery("SELECT scan_barcode FROM pro_ar_scan WHERE scan_location = '" + strCurrentroom + "' and scan_location_entry = '" + strCurrentroom + "';", null);
         curCorrectScanCount.moveToFirst();
 
-        txtAssetTally.setText(curCorrectScanCount.getCount() + "/" + curAssetsinroom.getCount());
+        Cursor curScanCount = db.rawQuery("SELECT scan_barcode FROM pro_ar_scan WHERE scan_location = '" + strCurrentroom + "';", null);
+        curScanCount.moveToFirst();
+
+        txtAssetTally.setText(curCorrectScanCount.getCount() + "(" + (curScanCount.getCount()-curCorrectScanCount.getCount()) + ")/" + curAssetsinroom.getCount());
+        curAssetsinroom.close();
+        curCorrectScanCount.close();
+        curScanCount.close();
 
         listAssetFragments = new ArrayList<>();
 
@@ -162,7 +171,7 @@ public class PopulateRoomActivity extends AppCompatActivity {
         data = makeScanAssetData.MakeAssetData();
         scan = makeScanAssetData.MakeAsset(scancycle, "S", strLocationscantype);
 
-        txtRoomNumber.setText(strSelectedRoom);
+        txtRoomNumber.setText(strCurrentroom);
 
         txtCurrentItem = findViewById(R.id.txtCurrentItem);
         txtCurrentItem.bringToFront();
@@ -174,8 +183,6 @@ public class PopulateRoomActivity extends AppCompatActivity {
         assetViewContent.setLocationname(strLocationdesc);
         assetViewContent.setResponsibleperson(strResponsibleperson);
         assetViewContent.setScannedLightColour(lightcolour);
-
-
 
         try {
             listAssetFragments.add(assetViewContent);
@@ -212,6 +219,7 @@ public class PopulateRoomActivity extends AppCompatActivity {
                        barcode = scanningResult.getContents();
                        Intent roomintent = new Intent(PopulateRoomActivity.this, PopulateRoomActivity.class);
                        roomintent.putExtra("ROOM SCAN", strSelectedRoom);
+                       roomintent.putExtra(intentcodes.asset_activity.current_room, strCurrentroom);
                        roomintent.putExtra("CYCLE", scancycle);
                        roomintent.putExtra("LOCATION SCAN TYPE", "s");
                        roomintent.putExtra("LOCATION NAME", strLocationdesc);
@@ -389,9 +397,9 @@ public class PopulateRoomActivity extends AppCompatActivity {
                     txtDesc = Objects.requireNonNull(listAssetFragments.get(intPagePosition).getView()).findViewById(R.id.txtComments2);
                     txtDesc.setText(listAssetFragments.get(intPagePosition).getScannedassetdata().getComments2());
 
-                    txtActualDesc = Objects.requireNonNull(listAssetFragments.get(intPagePosition).getView()).findViewById(R.id.txtDescription);
-                    txtActualDesc.setText(listAssetFragments.get(intPagePosition).getScannedassetdata().getComments2());
-                    txtActualDesc.setBackgroundResource(R.drawable.textinput_shape);
+//                    txtActualDesc = Objects.requireNonNull(listAssetFragments.get(intPagePosition).getView()).findViewById(R.id.txtDescription);
+//                    txtActualDesc.setText(listAssetFragments.get(intPagePosition).getScannedassetdata().getComments2());
+//                    txtActualDesc.setBackgroundResource(R.drawable.textinput_shape);
 
                     SelectAsset.SaveComments2 saveDescription = new SelectAsset.SaveComments2();
                     saveDescription.setBarcode(listAssetFragments.get(intPagePosition).getAssetdata().getReg_barcode());
@@ -452,9 +460,19 @@ public class PopulateRoomActivity extends AppCompatActivity {
                 String sqlstring = "SELECT scan_barcode FROM pro_ar_scan WHERE scan_location = '" + strSelectedRoom + "' and scan_location_entry = '" +
                         strSelectedRoom + "'";
 
-                Cursor curCorrectScanCount = db.rawQuery(sqlstring, null);
-                txtAssetTally.setText(curCorrectScanCount.getCount() + "/" + curAsset.getCount());
+                Cursor curAssetsinroom = db.rawQuery("SELECT reg_barcode FROM pro_ar_register WHERE reg_location_code = '" + strCurrentroom + "'", null);
+                curAssetsinroom.moveToFirst();
+
+                Cursor curCorrectScanCount = db.rawQuery("SELECT scan_barcode FROM pro_ar_scan WHERE scan_location = '" + strCurrentroom + "' and scan_location_entry = '" + strCurrentroom + "';", null);
+                curCorrectScanCount.moveToFirst();
+
+                Cursor curScanCount = db.rawQuery("SELECT scan_barcode FROM pro_ar_scan WHERE scan_location = '" + strCurrentroom + "';", null);
+                curScanCount.moveToFirst();
+
+                txtAssetTally.setText(curCorrectScanCount.getCount() + "(" + (curScanCount.getCount()-curCorrectScanCount.getCount()) + ") /" + curAssetsinroom.getCount());
+                curAssetsinroom.close();
                 curCorrectScanCount.close();
+                curScanCount.close();
             } else {
                 try {
                     MakeScanAssetData makeScanAssetData = new MakeScanAssetData(barcode, strSelectedRoom);
@@ -579,6 +597,7 @@ public class PopulateRoomActivity extends AppCompatActivity {
                 Intent roomintent = new Intent(PopulateRoomActivity.this, PopulateRoomActivity.class);
                 //assets.move(assetposition);
                 roomintent.putExtra("ROOM SCAN", assets.getString(1));
+                roomintent.putExtra(intentcodes.asset_activity.current_room, strCurrentroom);
                 roomintent.putExtra("CYCLE", scancycle);
                 roomintent.putExtra("LOCATION SCAN TYPE", "k");
 
@@ -709,7 +728,8 @@ public class PopulateRoomActivity extends AppCompatActivity {
 
             Intent roomintent = new Intent(PopulateRoomActivity.this, RoomMainSummary.class);
             roomintent.putExtra("TO ROOMS",2);
-            roomintent.putExtra("ROOM SCAN", strSelectedRoom);
+            roomintent.putExtra("ROOM SCAN", strCurrentroom);
+            roomintent.putExtra(intentcodes.asset_activity.current_room, strCurrentroom);
             roomintent.putExtra("SUMMARY VALUE",itemviewid);
             startActivity(roomintent);
 
@@ -723,17 +743,21 @@ public class PopulateRoomActivity extends AppCompatActivity {
                     sqliteDb.getWritableDatabase().execSQL("DELETE FROM pro_ar_scan WHERE scan_barcode = '" + barcode + "'");
 
 
-                    Cursor curAssetsinroom = db.rawQuery("SELECT reg_barcode FROM pro_ar_register WHERE reg_location_code = '" + strSelectedRoom + "'", null);
+                    Cursor curAssetsinroom = db.rawQuery("SELECT reg_barcode FROM pro_ar_register WHERE reg_location_code = '" + strCurrentroom + "'", null);
                     curAssetsinroom.moveToFirst();
 
-                    Cursor curCorrectScanCount = db.rawQuery("SELECT scan_barcode FROM pro_ar_scan WHERE scan_location = '" + strSelectedRoom + "' and scan_location_entry = '" + strSelectedRoom + "';", null);
+                    Cursor curCorrectScanCount = db.rawQuery("SELECT scan_barcode FROM pro_ar_scan WHERE scan_location = '" + strCurrentroom + "' and scan_location_entry = '" + strCurrentroom + "';", null);
                     curCorrectScanCount.moveToFirst();
+
+                    Cursor curScanCount = db.rawQuery("SELECT scan_barcode FROM pro_ar_scan WHERE scan_location = '" + strCurrentroom + "';", null);
+                    curScanCount.moveToFirst();
 
                     currentexists.close();
 
-                    txtAssetTally.setText(curCorrectScanCount.getCount() + "/" + curAssetsinroom.getCount());
+                    txtAssetTally.setText(curCorrectScanCount.getCount() + "(" + (curScanCount.getCount()-curCorrectScanCount.getCount()) + ") /" + curAssetsinroom.getCount());
                     curAssetsinroom.close();
                     curCorrectScanCount.close();
+                    curScanCount.close();
 
                     TextView txtScanRoom = listAssetFragments.get(intPagePosition).getView().findViewById(R.id.txtScannedRoom);
                     txtScanRoom.setText("not scanned");
@@ -943,7 +967,8 @@ public class PopulateRoomActivity extends AppCompatActivity {
     public void onBackPressed() {
 
         Intent gotomainsummary = new Intent(PopulateRoomActivity.this,RoomMainSummary.class);
-        gotomainsummary.putExtra("ROOM SCAN",strSelectedRoom);
+        gotomainsummary.putExtra("ROOM SCAN",strCurrentroom);
+        gotomainsummary.putExtra(intentcodes.asset_activity.current_room,strCurrentroom);
         startActivity(gotomainsummary);
 
     }
@@ -951,23 +976,28 @@ public class PopulateRoomActivity extends AppCompatActivity {
     public int lightColourChecking(model_pro_ar_asset_rows assetdata, model_pro_ar_scanasset scannedassetdata) {
         int light;
         light = lightcolour;
-        if (assetdata.getManual()) {
-            if (!scannedassetdata.getScan_location().equals(assetdata.getReg_location_code())) {
-                light = R.color.ManualScanned;
-            } else {
-                light = R.drawable.room_item_manual_and_scanned;
+            if (assetdata.getManual()) {
+                if (!scannedassetdata.getScan_location().equals(assetdata.getReg_location_code())) {
+                    light = R.color.ManualScanned;
+                } else {
+                    light = R.drawable.room_item_manual_and_scanned;
+                }
+            } else if (!assetdata.getActive()) {
+                light = R.color.PreviouslyDisposed;
+            } else if (scannedassetdata.getScan_location_entry().equals("R0000")) {
+                light = R.color.NotScanned;
+            } else if (scannedassetdata.getScan_location().equals("not scanned")) {
+                light = R.color.not_yet_scanned;
+            } else if (!scannedassetdata.getScan_location().equals(assetdata.getReg_location_code())) {
+                //TextView txtScanRoom = listAssetFragments.get(intPagePosition).getView().findViewById(R.id.txtScannedRoom);
+                if (strSelectedRoom.equals(strCurrentroom)) {
+                    light = R.color.OutOfLocation;
+                } else {
+                    light = R.color.NewScanned;
+                }
+            } else if (scannedassetdata.getScan_location_entry().equals(scannedassetdata.getScan_location())) {
+                light = R.color.AlreadyScanned;
             }
-        } else if (!assetdata.getActive()) {
-            light = R.color.PreviouslyDisposed;
-        } else if (scannedassetdata.getScan_location_entry().equals("R0000")) {
-            light = R.color.NotScanned;
-        } else if (scannedassetdata.getScan_location().equals("not scanned")) {
-            light = R.color.not_yet_scanned;
-        } else if (!scannedassetdata.getScan_location().equals(assetdata.getReg_location_code())) {
-            light = R.color.OutOfLocation;
-        } else if (scannedassetdata.getScan_location_entry().equals(scannedassetdata.getScan_location())) {
-            light = R.color.AlreadyScanned;
-        }
         return light;
     }
 
@@ -977,12 +1007,14 @@ public class PopulateRoomActivity extends AppCompatActivity {
 
         Intent gotogallery = new Intent(PopulateRoomActivity.this, GalleryActivity.class);
         gotogallery.putExtra("PHOTO ID",barcode);
-
         String sql = "SELECT scan_location, scan_lattitude, scan_longitude FROM pro_ar_scan WHERE scan_barcode = '"+barcode+"'";
+        gotogallery.putExtra(intentcodes.asset_activity.current_room,strCurrentroom);
+        gotogallery.putExtra("ROOM SCAN",strSelectedRoom);
         gotogallery.putExtra("PIC TEXT SQL STRING",sql);
         gotogallery.putExtra("DETAIL1 TITLE",strDetailName2);
         gotogallery.putExtra("DETAIL2 TITLE",strDetailName);
         gotogallery.putExtra("PICTURE TYPE","A");
+        gotogallery.putExtra(intentcodes.asset_activity.asset_barcode,strSelectedBarcode);
         startActivity(gotogallery);
     }
 
@@ -999,6 +1031,7 @@ public class PopulateRoomActivity extends AppCompatActivity {
         gotorooms.putExtra("TO ROOMS",3);
         gotorooms.putExtra("roomorasset",FALSE);
         gotorooms.putExtra("ROOM SCAN",strSelectedRoom);
+        gotorooms.putExtra(intentcodes.asset_activity.current_room,strCurrentroom);
         gotorooms.putExtra("carried barcode",barcode);
         gotorooms.putExtra("LIGHT COLOUR",lightcolour);
         gotorooms.putExtra("FROM POPULATE",TRUE);

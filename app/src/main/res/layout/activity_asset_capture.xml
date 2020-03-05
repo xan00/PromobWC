@@ -76,8 +76,9 @@
         android:id="@+id/txtLocation"
         android:layout_width="0dp"
         android:layout_height="18dp"
-        android:layout_marginEnd="16dp"
         android:layout_marginStart="24dp"
+        app:layout_constraintStart_toEndOf="@+id/textView17"
+        android:layout_marginEnd="16dp"
         android:background="@drawable/textview_shape"
         android:bottomLeftRadius="5dp"
         android:bottomRightRadius="5dp"
@@ -89,7 +90,7 @@
         app:layout_constraintBaseline_toBaselineOf="@+id/textView19"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/textView19" />
+         />
 
     <TextView
         android:id="@+id/txtDepartment"
@@ -225,6 +226,7 @@
         android:id="@+id/txtRoomNumber"
         android:layout_width="0dp"
         android:layout_height="18dp"
+        android:layout_marginStart="24dp"
         android:layout_marginEnd="16dp"
         android:background="@drawable/textview_shape"
         android:bottomLeftRadius="5dp"
@@ -236,7 +238,7 @@
         android:topRightRadius="5dp"
         app:layout_constraintBaseline_toBaselineOf="@+id/textView17"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/guideline4" />
+        app:layout_constraintStart_toEndOf="@+id/textView17" />
 
     <TextView
         android:id="@+id/textView24"
@@ -320,6 +322,7 @@
         android:id="@+id/txtUsefulLife"
         android:layout_width="0dp"
         android:layout_height="18dp"
+        android:layout_marginStart="24dp"
         android:background="@drawable/textview_shape"
         android:bottomLeftRadius="5dp"
         android:bottomRightRadius="5dp"
@@ -332,9 +335,9 @@
         android:topLeftRadius="5dp"
         android:topRightRadius="5dp"
         app:layout_constraintBaseline_toBaselineOf="@+id/textView41"
+        app:layout_constraintEnd_toStartOf="@+id/guideline2"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="@+id/guideline4"
-        app:layout_constraintEnd_toStartOf="@+id/guideline2" />
+        app:layout_constraintStart_toEndOf="@+id/textView41" />
 
     <TextView
         android:id="@+id/textView44"
@@ -365,6 +368,7 @@
         android:id="@+id/txtUsefulRemaining"
         android:layout_width="0dp"
         android:layout_height="18dp"
+        android:layout_marginStart="24dp"
         android:background="@drawable/textview_shape"
         android:bottomLeftRadius="5dp"
         android:bottomRightRadius="5dp"
@@ -378,7 +382,7 @@
         android:topRightRadius="5dp"
         app:layout_constraintBaseline_toBaselineOf="@+id/textView44"
         app:layout_constraintEnd_toStartOf="@+id/guideline2"
-        app:layout_constraintStart_toStartOf="@+id/guideline4" />
+        app:layout_constraintStart_toEndOf="@+id/textView41" />
 
     <TextView
         android:id="@+id/space3"
@@ -398,6 +402,7 @@
         android:id="@+id/txtAddontoremaining"
         android:layout_width="0dp"
         android:layout_height="24dp"
+        android:layout_marginStart="24dp"
         android:background="@drawable/textinput_shape"
         android:bottomLeftRadius="5dp"
         android:bottomRightRadius="5dp"
@@ -417,7 +422,7 @@
         app:layout_constraintBaseline_toBaselineOf="@+id/textView47"
         app:layout_constraintEnd_toStartOf="@+id/guideline2"
         app:layout_constraintHorizontal_bias="0.75"
-        app:layout_constraintStart_toStartOf="@+id/guideline4"
+        app:layout_constraintStart_toEndOf="@+id/textView47"
         tools:ignore="UnusedAttribute" />
 
     <androidx.constraintlayout.widget.Guideline
@@ -433,7 +438,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_end="237dp" />
+        app:layout_constraintGuide_percent="0.42335767" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline5"

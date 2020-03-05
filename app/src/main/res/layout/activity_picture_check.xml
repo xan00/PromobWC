@@ -38,6 +38,7 @@
         android:id="@+id/listGallery"
         android:layout_width="75dp"
         android:layout_height="0dp"
+        android:layout_marginStart="4dp"
         app:layout_constraintBottom_toBottomOf="@id/fltAccept"
         app:layout_constraintStart_toStartOf="@id/fltAccept"
         app:layout_constraintTop_toTopOf="@id/fltAccept"

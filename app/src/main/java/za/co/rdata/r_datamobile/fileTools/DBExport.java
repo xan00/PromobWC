@@ -1,5 +1,6 @@
 package za.co.rdata.r_datamobile.fileTools;
 
+import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
@@ -11,19 +12,17 @@ import java.util.ArrayList;
 
 import za.co.rdata.r_datamobile.MainActivity;
 
+import static za.co.rdata.r_datamobile.fileTools.FileActions.createFolder;
+
 /**
  * Created by James de Scande on 21/09/2017 at 13:43.
  */
 
 public class DBExport {
 
-    public void exportDB(String csvname, String sqlstring, int fulldump) {
+    public void exportDB(Context context, String csvname, String sqlstring, int fulldump) {
 
-        File exportDir = new File(Environment.getExternalStorageDirectory()+"/filesync/Documents/", "");
-        if (!exportDir.exists()) {
-            //noinspection ResultOfMethodCallIgnored
-            exportDir.mkdirs();
-        }
+        File exportDir = createFolder(context,"/filesync/Documents");
 
         File file = new File(exportDir, csvname+".csv");
         try {

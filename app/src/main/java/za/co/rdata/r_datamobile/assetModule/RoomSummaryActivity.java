@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.util.ArrayList;
 
 import za.co.rdata.r_datamobile.DBHelpers.sqliteDBHelper;
+import za.co.rdata.r_datamobile.DBMeta.intentcodes;
 import za.co.rdata.r_datamobile.DBMeta.meta;
 import za.co.rdata.r_datamobile.MainActivity;
 import za.co.rdata.r_datamobile.Models.model_pro_ar_asset_headers;
@@ -45,7 +46,8 @@ public class RoomSummaryActivity extends AppCompatActivity {
     protected static int notyetscannedCount;         //FUCHSIA   7
 
     static public sqliteDBHelper sqliteDb;
-
+    String strSelectedRoom;
+    String strSelectedRoomBackup;
     public RoomSummaryActivity() {
 
     }
@@ -58,7 +60,9 @@ public class RoomSummaryActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        Bundle bSaved = getIntent().getExtras();
+        strSelectedRoom = bSaved.getString("ROOM SCAN");
+        strCurrentRoom = bSaved.getString(intentcodes.asset_activity.current_room);
     }
 
     @Override
@@ -277,8 +281,8 @@ public class RoomSummaryActivity extends AppCompatActivity {
         outoflocationassets.moveToFirst();
         arrNewCount.clear();
         while (!outoflocationassets.isAfterLast()) {
-            arrNewCount.add(new model_pro_ar_asset_headers(strCurrentRoom,
-                    outoflocationassets.getString(outoflocationassets.getColumnIndex(meta.pro_ar_scan.scan_location)),
+            arrNewCount.add(new model_pro_ar_asset_headers(outoflocationassets.getString(outoflocationassets.getColumnIndex(meta.pro_ar_scan.scan_location)),
+                    strCurrentRoom,
                     outoflocationassets.getString(outoflocationassets.getColumnIndex(meta.pro_ar_register.reg_dept_code)),
                     outoflocationassets.getString(outoflocationassets.getColumnIndex(meta.pro_ar_register.reg_barcode)),
                     outoflocationassets.getString(outoflocationassets.getColumnIndex(meta.pro_ar_register.reg_asset_serial_nr)),
