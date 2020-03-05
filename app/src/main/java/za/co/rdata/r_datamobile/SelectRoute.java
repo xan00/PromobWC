@@ -68,8 +68,8 @@ public class SelectRoute extends AppCompatActivity {
             String route_backup_name = "AllRoutes" + GetCleanDate();
             String meter_backup_name = "AllMeters" + GetCleanDate();
 
-            mail.exportDB(route_backup_name, "SELECT * FROM pro_mr_route_headers",1);
-            mail.exportDB(meter_backup_name, "SELECT * FROM pro_mr_route_rows",1);
+            mail.exportDB(this, route_backup_name, "SELECT * FROM pro_mr_route_headers",1);
+            mail.exportDB(this, meter_backup_name, "SELECT * FROM pro_mr_route_rows",1);
 
             Intent i = new Intent(Intent.ACTION_SEND_MULTIPLE);
             i.setType("message/rfc822");

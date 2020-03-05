@@ -10,4 +10,10 @@ public class intentcodes {
         public static String job_desc = "job_desc";
 
     }
+
+    public static class asset_activity {
+        public static String current_room = "current_room";
+        public static String light_colour =  "LIGHT COLOUR";
+        public static String asset_barcode = "BARCODE";
+    }
 }

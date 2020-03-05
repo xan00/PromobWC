@@ -1,5 +1,7 @@
 package za.co.rdata.r_datamobile.fileTools;
 
+import android.content.Context;
+import android.os.Environment;
 import android.util.Log;
 
 import java.io.File;
@@ -13,6 +15,38 @@ import java.io.OutputStream;
  */
 
 public class FileActions {
+
+    Context context;
+
+    public static File createFolder(Context context, String path) {
+
+        File dir;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            dir = new File( context.getFilesDir().toString() + path);
+
+        } else {
+            dir = new File(Environment.getExternalStorageDirectory().toString() + path);
+        }
+        if (!dir.isDirectory()) {
+            dir.mkdirs();
+        }
+        return dir;
+    }
+
+    public File createFile(Context context, String path) {
+
+        File dir;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            dir = new File( context.getFilesDir().toString() + path);
+
+        } else {
+            dir = new File(Environment.getExternalStorageDirectory().toString() + path);
+        }
+        if (!dir.isDirectory()) {
+            dir.mkdirs();
+        }
+        return dir;
+    }
 
     public void moveFile(String inputPath, String inputFile, String outputPath, String outputName) {
 

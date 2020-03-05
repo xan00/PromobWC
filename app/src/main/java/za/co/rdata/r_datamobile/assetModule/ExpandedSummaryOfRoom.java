@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
+import za.co.rdata.r_datamobile.DBMeta.intentcodes;
 import za.co.rdata.r_datamobile.Models.model_pro_ar_asset_headers;
 import za.co.rdata.r_datamobile.R;
 import za.co.rdata.r_datamobile.adapters.adapter_AssetRecycler;
@@ -29,6 +30,7 @@ import static java.lang.Boolean.TRUE;
 public class ExpandedSummaryOfRoom  extends AppCompatActivity {
 
     static String strSelectedRoom;
+    static String strCurrentRoom;
     ArrayList<model_pro_ar_asset_headers> listArray = new ArrayList<>();
     String temp;
     int lightcolour;
@@ -41,6 +43,7 @@ public class ExpandedSummaryOfRoom  extends AppCompatActivity {
         Bundle bSaved = iPoproom.getExtras();
         setContentView(R.layout.activity_asset_list);
         strSelectedRoom = bSaved.getString("ROOM SCAN");
+        strCurrentRoom = bSaved.getString(intentcodes.asset_activity.current_room);
         listArray = bSaved.getParcelableArrayList("Array Content");
         temp = bSaved.getString("Toast String");
         lightcolour = bSaved.getInt("LIGHT COLOUR");
@@ -63,6 +66,7 @@ public class ExpandedSummaryOfRoom  extends AppCompatActivity {
         adapter_AssetRecycler adapter_assetRecycler = new adapter_AssetRecycler(listArray,R.layout.select_room_item);
         adapter_assetRecycler.setLightcolour(lightcolour);
         adapter_assetRecycler.setmContext(this);
+        adapter_assetRecycler.setCurrentRoom(strRoom);
         adapter_assetRecycler.setRetbarcode(R.id.Asset_reg_barcode);
         adapter_assetRecycler.setRetdesc(R.id.Asset_reg_asset_desc);
         adapter_assetRecycler.setRetroom(R.id.txtRoomID);
@@ -96,9 +100,10 @@ public class ExpandedSummaryOfRoom  extends AppCompatActivity {
             gotorooms.putExtra("came_from_expanded",TRUE);
             gotorooms.putExtra("roomorasset",FALSE);
             gotorooms.putExtra("ROOM SCAN", strSelectedRoom);
+            gotorooms.putExtra(intentcodes.asset_activity.current_room, strCurrentRoom);
             //gotorooms.putExtra("Count Handler",counthandler);
             gotorooms.putExtra("Toast String",temp);
-            gotorooms.putExtra("LIGHT COLOUR",lightcolour);
+            gotorooms.putExtra(intentcodes.asset_activity.light_colour,lightcolour);
             gotorooms.putParcelableArrayListExtra("Array Content",listArray);
             gotorooms.putExtra("Summary Choice",v);
 
@@ -111,8 +116,9 @@ public class ExpandedSummaryOfRoom  extends AppCompatActivity {
             gotorooms.putExtra("roomorasset",TRUE);
             gotorooms.putExtra("ROOM SCAN",strSelectedRoom);
             gotorooms.putExtra("Toast String",temp);
-            gotorooms.putExtra("LIGHT COLOUR",lightcolour);
+            gotorooms.putExtra(intentcodes.asset_activity.light_colour,lightcolour);
             gotorooms.putParcelableArrayListExtra("Array Content",listArray);
+            gotorooms.putExtra(intentcodes.asset_activity.current_room, strCurrentRoom);
             gotorooms.putExtra("Summary Choice",v);
 
             startActivity(gotorooms);
@@ -133,7 +139,7 @@ public class ExpandedSummaryOfRoom  extends AppCompatActivity {
         super.onBackPressed();
 
         Intent gotomainsummary = new Intent(ExpandedSummaryOfRoom.this,RoomMainSummary.class);
-        gotomainsummary.putExtra("ROOM SCAN",strSelectedRoom);
+        gotomainsummary.putExtra("ROOM SCAN",strCurrentRoom);
         startActivity(gotomainsummary);
     }
 }

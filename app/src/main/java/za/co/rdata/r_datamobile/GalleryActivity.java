@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.database.Cursor;
+import android.database.CursorIndexOutOfBoundsException;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -50,7 +51,11 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import rapid.decoder.BitmapDecoder;
 import za.co.rdata.r_datamobile.DBHelpers.sqliteDBHelper;
+import za.co.rdata.r_datamobile.DBMeta.intentcodes;
+import za.co.rdata.r_datamobile.fileTools.FileActions;
 import za.co.rdata.r_datamobile.locationTools.GetLocation;
+
+import static za.co.rdata.r_datamobile.fileTools.FileActions.createFolder;
 
 /**
  * Created by James de Scande on 08/12/2017 at 10:33.
@@ -81,6 +86,7 @@ public class GalleryActivity extends AppCompatActivity {
     private String strDetail1Name;
     private String strDetail2name;
     private String imagetype;
+    private String barcode;
 
     private static sqliteDBHelper sqliteDb;
 
@@ -124,13 +130,14 @@ public class GalleryActivity extends AppCompatActivity {
 
         strSQL = bSaved.getString("PIC TEXT SQL STRING");
         strDetail1Name = bSaved.getString("DETAIL1 TITLE");
+        barcode = bSaved.getString(intentcodes.asset_activity.asset_barcode);
 
         sqliteDb = sqliteDBHelper.getInstance(this.getApplicationContext());
         Cursor picturedata = sqliteDb.getReadableDatabase().rawQuery(strSQL,null);
         picturedata.moveToFirst();
         try {
             idvalue = String.valueOf(picturedata.getString(3));
-        } catch (IllegalStateException e) {
+        } catch (IllegalStateException | CursorIndexOutOfBoundsException e) {
             idvalue = bSaved.getString("PHOTO ID");
         }
 
@@ -204,13 +211,25 @@ public class GalleryActivity extends AppCompatActivity {
                 camerausage.moveToFirst();
                 String camerausagevalue = camerausage.getString(0);
 
+                File dir = createFolder(this.getBaseContext(), "/filesync/Images/");
+
+                Bitmap bmp = BitmapDecoder.from(mCurrentPhotoPath).decode();
+
                 try {
-                if (!MainActivity.NODE_ID.startsWith(String.valueOf(6)) || camerausagevalue.equals("1")) {
+                    //Bitmap tempbit = BitmapDecoder.from(file.getAbsolutePath()).decode();
                     bmp = drawMultilineTextToBitmap(getBaseContext(), ExifUtil.rotateBitmap(mCurrentPhotoPath, BitmapDecoder.from(mCurrentPhotoPath).decode()), strPicturetext + "\nDate: " + timeStamp, 50);
-                } else {
-                    bmp = drawMultilineTextToBitmap(getBaseContext(), BitmapDecoder.from(mCurrentPhotoPath).decode() ,strPicturetext+"\nDate: "+timeStamp, 50);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-                } catch (NullPointerException ignore) {}
+
+//                try {
+//                if (!MainActivity.NODE_ID.startsWith(String.valueOf(6)) || camerausagevalue.equals("1")) {
+//                    bmp = drawMultilineTextToBitmap(getBaseContext(), ExifUtil.rotateBitmap(mCurrentPhotoPath, BitmapDecoder.from(mCurrentPhotoPath).decode()), strPicturetext + "\nDate: " + timeStamp, 50);
+//                } else {
+//                    bmp = drawMultilineTextToBitmap(getBaseContext(), BitmapDecoder.from(mCurrentPhotoPath).decode() ,strPicturetext+"\nDate: "+timeStamp, 50);
+//                }
+//                } catch (NullPointerException ignore) {}
+
                 camerausage.close();
 
                 FileOutputStream out;// = null;
@@ -251,15 +270,31 @@ public class GalleryActivity extends AppCompatActivity {
         captureintent.putExtra("PHOTO ID",idvalue);
         captureintent.putExtra("PIC TEXT SQL STRING",strSQL);
         captureintent.putExtra("PICTURE TYPE",imagetype);
+        captureintent.putExtra(intentcodes.asset_activity.asset_barcode,barcode);
         Cursor picturedata = sqliteDb.getReadableDatabase().rawQuery(strSQL,null);
         picturedata.moveToFirst();
-        lat = String.valueOf(picturedata.getDouble(1));
-        lng = String.valueOf(picturedata.getDouble(2));
 
+        try {
+            lat = String.valueOf(picturedata.getDouble(1));
+        } catch (CursorIndexOutOfBoundsException e){
+            lat = "0.0";
+        }
+        try {
+            lng = String.valueOf(picturedata.getDouble(1));
+        } catch (CursorIndexOutOfBoundsException e){
+            lng = "0.0";
+        }
         checkcoordsforzero(Double.parseDouble(getLat()),Double.parseDouble(getLng()));
 
         String user = MainActivity.USER;
-        String detail1 = String.valueOf(picturedata.getString(0));
+        String detail1 = "";
+
+        try {
+        detail1 = String.valueOf(picturedata.getString(0));
+        } catch (CursorIndexOutOfBoundsException ignore) {
+            detail1 = barcode;
+        }
+
         String detail2 = null;
 
         try {
@@ -322,11 +357,11 @@ public class GalleryActivity extends AppCompatActivity {
     private File createImageFile(String barcode) throws IOException {
         // Create an image file name
         @SuppressLint("SimpleDateFormat") String timeStamp = new SimpleDateFormat("ddMMyy_HHmmss").format(new Date());
-        File dir = new File(Environment.getExternalStorageDirectory().toString() + "/filesync/Images/");
-        File dir2 = new File(Environment.getDataDirectory().toString() + "/filesync/Images/");
-        int folderlength = 0;
+        File dir;
+        int folderlength;
+        dir = createFolder(this.getBaseContext(), "/filesync/Images/");
         try {
-            folderlength = dir.list().length + 1;
+            folderlength = dir.list().length;
         } catch (NullPointerException e) {
             e.printStackTrace();
             folderlength = 0;
@@ -367,19 +402,7 @@ public class GalleryActivity extends AppCompatActivity {
         } catch (NullPointerException ignore) {
         }
 
-        //if (arrGallery == null) {
-            //File dir = new File(Environment.getExternalStorageDirectory().toString() + "/filesync/Images/");
-
-        File dir = null;
-        try {
-            dir = new File(Environment.getExternalStorageDirectory().toString() + "/filesync/Images/");
-            if (!dir.exists()) {
-                dir.mkdirs();
-            }
-        }
-        catch(Exception e){
-            Log.w("creating file error", e.toString());
-        }
+        File dir = createFolder(this.getBaseContext(), "/filesync/Images/");
 
         try {
             //noinspection ConstantConditions
@@ -389,6 +412,12 @@ public class GalleryActivity extends AppCompatActivity {
                         & pathname.getName().toLowerCase().endsWith(".jpg");
 
             })));
+
+
+            for (File d: arrGallery
+            ) {
+                if (d.getTotalSpace()<10) d.delete();
+            }
         }
             catch (NullPointerException e) {
                 e.printStackTrace();
@@ -407,18 +436,6 @@ public class GalleryActivity extends AppCompatActivity {
                 arrGallery.remove(0);
             }
         } catch (IndexOutOfBoundsException | NullPointerException ignore) {
-        }
-
-        try {
-            if (!mCurrentPhotoPath.equals(arrGallery.get(arrGallery.size() - 1).getAbsolutePath())) {
-                dir = new File(mCurrentPhotoPath);
-
-                if (dir.getName().startsWith(barcode)) {
-                    arrGallery.add(dir);
-                }
-                mCurrentPhotoPath = null;
-            }
-        } catch (ArrayIndexOutOfBoundsException | NullPointerException ignore) {
         }
 
         try {
@@ -623,7 +640,7 @@ public class GalleryActivity extends AppCompatActivity {
             final int pos = position;
 
             File mSaveBit = arrGallery.get(position);
-            String filePath = mSaveBit.getPath();
+            String filePath = mSaveBit.getAbsolutePath();
             final ImageView contentpic = itemView.findViewById(R.id.content_imgview);
 
             /*

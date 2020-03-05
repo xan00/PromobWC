@@ -27,6 +27,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 
 import za.co.rdata.r_datamobile.DBHelpers.DataCursorLoaders;
+import za.co.rdata.r_datamobile.DBMeta.intentcodes;
 import za.co.rdata.r_datamobile.MainActivity;
 import za.co.rdata.r_datamobile.Models.model_pro_ar_asset_headers;
 import za.co.rdata.r_datamobile.Models.model_pro_ar_scanasset;
@@ -90,7 +91,7 @@ public class RoomMainSummary extends AppCompatActivity {
         fromexpanded = fromSelectAsset.getBoolean("came_from_expanded");
         fromPopulate = fromSelectAsset.getBoolean("FROM POPULATE");
         roomorasset = fromSelectAsset.getBoolean("roomorasset");
-        strSelectedRoomBackup = fromSelectAsset.getString("ROOM SCAN");
+        strSelectedRoomBackup = fromSelectAsset.getString(intentcodes.asset_activity.current_room);
         carriedLightColour = fromSelectAsset.getInt("LIGHT COLOUR");
         carriedBarcode = fromSelectAsset.getString("carried barcode","");
 
@@ -171,19 +172,6 @@ public class RoomMainSummary extends AppCompatActivity {
 
     };
 
-/*
-    public View.OnClickListener listenernewroom = v -> {
-        SelectAsset selectAsset = new SelectAsset(mContext,RoomMainSummary.this);
-        intentcode = 11;
-        scanContent="R0000";
-        intentcode = 5;
-        inputtitle = ("Input Room Barcode");
-        roomscantype = "s";
-        strSelectedRoom=null;
-        selectAsset.ScanRoom();     ///////Clears Current Room and Contained Assets
-    };
-*/
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
 
@@ -239,28 +227,6 @@ public class RoomMainSummary extends AppCompatActivity {
             } catch (NullPointerException ignore) {
                 Inputbox(1, this);
             }
-
-            /*
-            try {
-                assert scanningResult != null;
-                ArrayList<String> filepath = new ArrayList<>(
-                        Arrays.asList(scanningResult.getBarcodeImagePath().split("/")));
-                int filenamenumber = filepath.size();
-                String filename = filepath.get(filenamenumber - 1);
-                Log.d(TAG, filename);
-                filepath.remove(filenamenumber - 1);
-
-                StringBuilder dir = new StringBuilder();
-
-                for (int i = 0; i < filepath.size(); i++) {
-                    dir.append(filepath.get(i)).append("/");
-                }
-
-                FileActions fileActions = new FileActions();
-                fileActions.moveFile(dir.toString(), filename, Environment.getExternalStorageDirectory().toString() + "/filesync/", scanContent + "-" + GetDate("-") + ".jpg");
-            } catch (NullPointerException ignore) {
-            }
-            */
         }
 
 /////////////////////////////////////New Room Results///////////////////////////////////////////////////////////////////////////
@@ -305,82 +271,16 @@ public class RoomMainSummary extends AppCompatActivity {
             }
         }
 
-        /*super.onActivityResult(requestCode, resultCode, data);
-        IntentResult scanningResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-        String scanresult = scanningResult.getContents();
-
-        if (scanresult != null) {
-
-            switch (intentcode) {
-                case 11: {
-                    Intent gotomainsummary = new Intent(RoomMainSummary.this, RoomMainSummary.class);
-                    gotomainsummary.putExtra("ROOM SCAN", scanresult);
-                }
-                case 22: {
-                    Intent roomintent = new Intent(this, PopulateRoomActivity.class);
-                    roomintent.putExtra("ROOM SCAN", strSelectedRoom);
-                    roomintent.putExtra("CYCLE", GetCycle());
-                    roomintent.putExtra("LOCATION SCAN TYPE", "s");
-                    roomintent.putExtra("LOCATION NAME", GetLocationName(scanresult));
-                    roomintent.putExtra("RESPONSIBLE PERSON", GetRespPerson(scanresult));
-                    roomintent.putExtra("BARCODE", scanresult);
-                    roomintent.putExtra("LIGHT COLOUR", lightcolour);
-                    //roomintent.putExtra("SUMMARY VALUE", tempviewid);
-                    startActivity(roomintent);
-                }
-            }
-        } else {
-            SelectAsset selectAsset = new SelectAsset();
-            Context mContext = getApplicationContext();
-            if (intentcode == 11) {
-                selectAsset.Inputbox(0 ,mContext);
-            } else {
-                selectAsset.Inputbox(1 ,mContext);
-            }
-        }
-        */
     }
 
     protected void onResume() {
         super.onResume();
-/*
-        if (intentcode == 1) {
-
-            try {
-                SelectAsset selectAsset = new SelectAsset(mContext,mActivity);
-                if (scanContent.equals("R0000")) {
-                    if (savescan) {
-                        selectAsset.ScanAsset();
-                    } else {
-                        //newRoomIntent(strSelectedRoom, scanContent);
-                        selectAsset.ScanSearchAsset();
-                    }
-                    //   } else if (scanContent == null) {
-                    //     Inputbox(1);
-                } else if ((scanContent.startsWith("R") | (scanContent.length() < 5))) {
-                    Toast.makeText(getBaseContext(), "Error When Scanning Asset, Room Was Scanned Instead", Toast.LENGTH_LONG).show();
-                    //ScanAsset(this);
-                    Intent gotomainsummary = new Intent(RoomMainSummary.this,RoomMainSummary.class);
-                    gotomainsummary.putExtra("ROOM SCAN",strSelectedRoom);
-                    // MakeExpandedList(scanContent);
-                } else {
-                    strLocationscantype = "S";
-
-                    if (savescan) {
-                        ScanCheck(scanContent, strSelectedRoom);
-                    }
-                    newRoomIntent(strSelectedRoom, scanContent,RoomMainSummary.this);
-                }
-            } catch (NullPointerException ignore) {
-                Inputbox(1,this );
-            }
-        }
-        */
     }
 
     public void newRoomIntent(String strscanContent, String barcode, Activity mContext) {
         Intent roomintent = new Intent(mContext, PopulateRoomActivity.class);
         roomintent.putExtra("ROOM SCAN", strscanContent);
+        roomintent.putExtra(intentcodes.asset_activity.current_room, strSelectedRoomBackup);
         roomintent.putExtra("CYCLE", GetCycle());
         roomintent.putExtra("LOCATION SCAN TYPE", "s");
         roomintent.putExtra("LOCATION NAME", GetLocationName(strscanContent));
@@ -477,7 +377,7 @@ public class RoomMainSummary extends AppCompatActivity {
         builder.setNegativeButton("Cancel", (dialog, which) -> {
             dialog.cancel();
             if (fromPopulate) {
-               newRoomIntent(strSelectedRoomBackup,carriedBarcode,RoomMainSummary.this);
+               newRoomIntent(strSelectedRoom,carriedBarcode,RoomMainSummary.this);
             }
             else if (fromexpanded) {
                 gotoroom(0,carriedToastMessage,lightcolour,carriedSummaryChoice, listArray, strSelectedRoomBackup);
@@ -665,10 +565,10 @@ public class RoomMainSummary extends AppCompatActivity {
      * Take care of popping the fragment back stack or finishing the activity
      * as appropriate.
      */
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        Intent menu = new Intent(RoomMainSummary.this,SelectAsset.class);
-        startActivity(menu);
-    }
+//    @Override
+//    public void onBackPressed() {
+//        super.onBackPressed();
+//        Intent menu = new Intent(RoomMainSummary.this,SelectAsset.class);
+//        startActivity(menu);
+//    }
 }

@@ -1,0 +1,388 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cslJobCapture"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/default_back">
+
+    <TextView
+        android:id="@+id/jobTopHeader"
+        android:layout_width="0dp"
+        android:layout_height="20dp"
+        android:textSize="14sp"
+        android:background="@color/roomcolour"
+        android:text="@string/job_information"
+        android:textAlignment="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/lblJobNum"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Number: "
+        android:textAlignment="textEnd"
+        android:textColor="@color/black"
+        android:textSize="13sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/jobTopHeader" />
+
+    <TextView
+        android:id="@+id/lblJobType"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Type: "
+        android:textAlignment="textEnd"
+        android:textColor="@color/black"
+        android:textSize="13sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/lblJobNum" />
+
+    <TextView
+        android:id="@+id/lblJobStatus"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Status: "
+        android:textAlignment="textEnd"
+        android:textColor="@color/black"
+        android:textSize="13sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/lblJobType" />
+
+    <TextView
+        android:id="@+id/lblJobAddress"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Address: "
+        android:textAlignment="textEnd"
+        android:textColor="@color/black"
+        android:textSize="13sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/lblJobStatus" />
+
+
+    <TextView
+        android:id="@+id/txtfragJobNumber"
+        android:layout_width="0dp"
+        android:layout_height="18dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/textview_shape"
+        android:bottomLeftRadius="5dp"
+        android:bottomRightRadius="5dp"
+        android:text=""
+        android:textAlignment="center"
+        android:textColor="@color/colorTextLight"
+        android:textSize="13sp"
+        android:topLeftRadius="5dp"
+        android:topRightRadius="5dp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/lblJobNum"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/lblJobNum" />
+
+    <TextView
+        android:id="@+id/txtfragJobtype"
+        android:layout_width="0dp"
+        android:layout_height="18dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/textview_shape"
+        android:bottomLeftRadius="5dp"
+        android:bottomRightRadius="5dp"
+        android:text=""
+        android:textAlignment="center"
+        android:textColor="@color/colorTextLight"
+        android:textSize="13sp"
+        android:topLeftRadius="5dp"
+        android:topRightRadius="5dp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/lblJobType"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/lblJobType" />
+
+    <TextView
+        android:id="@+id/txtfragJobStatus"
+        android:layout_width="0dp"
+        android:layout_height="18dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/textview_shape"
+        android:bottomLeftRadius="5dp"
+        android:bottomRightRadius="5dp"
+        android:text=""
+        android:textAlignment="center"
+        android:textColor="@color/colorTextLight"
+        android:textSize="13sp"
+        android:topLeftRadius="5dp"
+        android:topRightRadius="5dp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/lblJobStatus"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/lblJobStatus" />
+
+    <TextView
+        android:id="@+id/txtfragJobAddress"
+        android:layout_width="0dp"
+        android:layout_height="18dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/textview_shape"
+        android:bottomLeftRadius="5dp"
+        android:bottomRightRadius="5dp"
+        android:text=""
+        android:textAlignment="center"
+        android:textColor="@color/colorTextLight"
+        android:textSize="13sp"
+        android:topLeftRadius="5dp"
+        android:topRightRadius="5dp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/lblJobAddress"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/lblJobAddress"
+        android:singleLine="false"/>
+
+    <TextView
+        android:id="@+id/jobTypeHeader"
+        android:layout_width="0dp"
+        android:layout_height="20dp"
+        android:layout_marginTop="16dp"
+        android:background="@color/roomcolour"
+        android:text="Type Information"
+        android:textAlignment="center"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/txtfragJobAddress" />
+
+    <TextView
+        android:id="@+id/lbljobmeterno"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Meter No: "
+        android:textAlignment="textEnd"
+        android:textColor="@color/black"
+        android:textSize="13sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/jobTypeHeader" />
+
+    <TextView
+        android:id="@+id/lbljobmetertype"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Meter Type: "
+        android:textAlignment="textEnd"
+        android:textColor="@color/black"
+        android:textSize="13sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/lbljobmeterno" />
+
+    <TextView
+        android:id="@+id/lbljobdetail1"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Detail 1: "
+        android:textAlignment="textEnd"
+        android:textColor="@color/black"
+        android:textSize="13sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/lbljobmetertype" />
+
+    <TextView
+        android:id="@+id/lbljobdetail2"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Detail 2: "
+        android:textAlignment="textEnd"
+        android:textColor="@color/black"
+        android:textSize="@dimen/fragment_detail_label"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/lbljobdetail1" />
+
+    <TextView
+        android:id="@+id/lbljobdetail3"
+        android:layout_width="@dimen/fragmet_label_width_small"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Detail 3: "
+        android:textAlignment="textEnd"
+        android:textColor="@color/black"
+        android:textSize="@dimen/fragment_detail_label"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/lbljobdetail2" />
+
+    <TextView
+        android:id="@+id/txtfragMeterNumber"
+        android:layout_width="0dp"
+        android:layout_height="18dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/textview_shape"
+        android:bottomLeftRadius="5dp"
+        android:bottomRightRadius="5dp"
+        android:text=""
+        android:textAlignment="center"
+        android:textColor="@color/colorTextLight"
+        android:textSize="13sp"
+        android:topLeftRadius="5dp"
+        android:topRightRadius="5dp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/lbljobmeterno"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/lbljobmeterno" />
+
+    <TextView
+        android:id="@+id/txtfragMeterType"
+        android:layout_width="0dp"
+        android:layout_height="18dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/textview_shape"
+        android:bottomLeftRadius="5dp"
+        android:bottomRightRadius="5dp"
+        android:text=""
+        android:textAlignment="center"
+        android:textColor="@color/colorTextLight"
+        android:textSize="13sp"
+        android:topLeftRadius="5dp"
+        android:topRightRadius="5dp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/lbljobmetertype"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/lbljobmetertype" />
+
+    <TextView
+        android:id="@+id/txtfragjobdetail1"
+        android:layout_width="0dp"
+        android:layout_height="18dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/textview_shape"
+        android:bottomLeftRadius="5dp"
+        android:bottomRightRadius="5dp"
+        android:text=""
+        android:textAlignment="center"
+        android:textColor="@color/colorTextLight"
+        android:textSize="13sp"
+        android:topLeftRadius="5dp"
+        android:topRightRadius="5dp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/lbljobdetail1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/lbljobdetail1" />
+
+    <TextView
+        android:id="@+id/txtfragjobdetail2"
+        android:layout_width="0dp"
+        android:layout_height="18dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/textview_shape"
+        android:bottomLeftRadius="5dp"
+        android:bottomRightRadius="5dp"
+        android:text=""
+        android:textAlignment="center"
+        android:textColor="@color/colorTextLight"
+        android:textSize="13sp"
+        android:topLeftRadius="5dp"
+        android:topRightRadius="5dp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/lbljobdetail2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/lbljobdetail2" />
+
+    <TextView
+        android:id="@+id/txtfragjobdetail3"
+        android:layout_width="0dp"
+        android:layout_height="18dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/textview_shape"
+        android:bottomLeftRadius="5dp"
+        android:bottomRightRadius="5dp"
+        android:text=""
+        android:textAlignment="center"
+        android:textColor="@color/colorTextLight"
+        android:textSize="13sp"
+        android:topLeftRadius="5dp"
+        android:topRightRadius="5dp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/lbljobdetail3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/lbljobdetail3" />
+
+    <TextView
+        android:id="@+id/jobInputHeader"
+        android:layout_width="0dp"
+        android:layout_height="20dp"
+        android:layout_marginTop="16dp"
+        android:background="@color/roomcolour"
+        android:text="Job Input"
+        android:textAlignment="center"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/lbljobdetail3" />
+
+    <TextView
+        android:id="@+id/lbljobinput1"
+        android:layout_width="70dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="Input 1: "
+        android:textAlignment="textEnd"
+        android:textColor="@color/black"
+        android:textSize="@dimen/fragment_detail_label"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/jobInputHeader" />
+
+    <TextView
+        android:id="@+id/txtjobInput1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:background="@drawable/textinput_shape"
+        android:gravity="center|center_horizontal|center_vertical"
+        android:paddingStart="25dp"
+        android:paddingTop="4dp"
+        android:paddingEnd="25dp"
+        android:paddingBottom="4dp"
+        android:text="@string/_12345"
+        android:textColor="@color/colorTextLight"
+        android:textSize="18sp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/lbljobinput1"
+        app:layout_constraintStart_toEndOf="@+id/lbljobinput1" />
+
+    <TextView
+        android:id="@+id/lbljobinput2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:text="Input 2: "
+        android:textAlignment="textEnd"
+        android:textColor="@color/black"
+        android:textSize="@dimen/fragment_detail_label"
+        app:layout_constraintBaseline_toBaselineOf="@+id/txtjobInput1"
+        app:layout_constraintStart_toEndOf="@+id/txtjobInput1" />
+
+    <TextView
+        android:id="@+id/txtjobInput2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:background="@drawable/textinput_shape"
+        android:gravity="center|center_horizontal|center_vertical"
+        android:paddingStart="25dp"
+        android:paddingTop="4dp"
+        android:paddingEnd="25dp"
+        android:paddingBottom="4dp"
+        android:text="@string/_12345"
+        android:textColor="@color/colorTextLight"
+        android:textSize="18sp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/lbljobinput2"
+        app:layout_constraintStart_toEndOf="@+id/lbljobinput2" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

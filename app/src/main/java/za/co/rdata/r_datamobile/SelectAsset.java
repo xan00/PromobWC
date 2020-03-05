@@ -816,9 +816,9 @@ public class SelectAsset extends AppCompatActivity {
         if (ascsv) {
             DBExport mail = new DBExport();
 
-            mail.exportDB(all + "-scanned-" + date, scanned,fulldump);
+            mail.exportDB(this, all + "-scanned-" + date, scanned,fulldump);
             if (fulldump!=2) {
-                mail.exportDB(all + "-not_scanned-" + date, notscanned, fulldump);
+                mail.exportDB(this, all + "-not_scanned-" + date, notscanned, fulldump);
             }
             } else {
 

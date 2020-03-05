@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 import za.co.rdata.r_datamobile.DBHelpers.sqliteDBHelper;
+import za.co.rdata.r_datamobile.DBMeta.intentcodes;
 import za.co.rdata.r_datamobile.DBMeta.meta;
 import za.co.rdata.r_datamobile.MainActivity;
 import za.co.rdata.r_datamobile.Models.model_pro_ar_asset_headers;
@@ -32,6 +33,7 @@ public class adapter_AssetRecycler extends RecyclerView.Adapter<adapter_AssetRec
     private int retdesc;
     private Context mContext;
     private int lightcolour;
+    private String currentRoom;
 
     public void setRetbarcode(int retbarcode) {
         this.retbarcode = retbarcode;
@@ -75,6 +77,14 @@ public class adapter_AssetRecycler extends RecyclerView.Adapter<adapter_AssetRec
 
     public void setLightcolour(int lightcolour) {
         this.lightcolour = lightcolour;
+    }
+
+    public void setCurrentRoom(String currentRoom) {
+        this.currentRoom = currentRoom;
+    }
+
+    public String getCurrentRoom() {
+        return currentRoom;
     }
 
     class GenericViewHolder extends RecyclerView.ViewHolder {
@@ -175,6 +185,7 @@ public class adapter_AssetRecycler extends RecyclerView.Adapter<adapter_AssetRec
             String strSelectedAsset = textViewasset.getText().toString();
             Intent roomintent = new Intent(mContext, PopulateRoomActivity.class);
             roomintent.putExtra("ROOM SCAN", strSelectedRoom);
+            roomintent.putExtra(intentcodes.asset_activity.current_room, currentRoom);
             roomintent.putExtra("CYCLE", GetCycle());
             roomintent.putExtra("LOCATION SCAN TYPE", "s");
             roomintent.putExtra("LOCATION NAME", GetLocationName(strSelectedRoom));
