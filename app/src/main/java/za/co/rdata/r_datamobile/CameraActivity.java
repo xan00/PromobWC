@@ -109,6 +109,11 @@ public class CameraActivity extends Activity {
     private TextureView textureView;
     private String cameraId;
     private Size imageDimension;
+    Handler hanImagecheck = new Handler();
+    Runnable runImagecheck;
+
+
+
     TextureView.SurfaceTextureListener textureListener = new TextureView.SurfaceTextureListener() {
         @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
         @Override
@@ -171,8 +176,9 @@ public class CameraActivity extends Activity {
 
     private String strCurrentRoom;
     private String strSelectedRoom;
+    private int handlerruntime;
 
-    ArrayAdapter<File> adapter = new picdetails_ListAdapter();
+    ArrayAdapter<File> adapter; //= new picdetails_ListAdapter();
     static ArrayList<File> arrGallery;
 
     private ArrayList<Toast> toasts;
@@ -261,7 +267,7 @@ public class CameraActivity extends Activity {
             //noinspection ConstantConditions
             arrGallery = new ArrayList<>(Arrays.asList(dir.listFiles(pathname -> {
                 Log.d("Picture Name", pathname.getName());
-                return pathname.getName().toUpperCase().startsWith(picturetype+"_"+strDetail1Value+"_")
+                return pathname.getName().toUpperCase().startsWith(picturetype+"_"+idvalue+"_")
                         & pathname.getName().toLowerCase().endsWith(".jpg");
 
             })));
@@ -291,42 +297,27 @@ public class CameraActivity extends Activity {
         } catch (IndexOutOfBoundsException | NullPointerException ignore) {
         }
 
+        adapter = new picdetails_ListAdapter();
+
         try {
             if (arrGallery.size()>0) {
 
                 ListView lstGallery = findViewById(R.id.listGallery);
-                piclistpopulate piclistpopulate = new piclistpopulate(adapter,lstGallery);
-                piclistpopulate.execute();
+                lstGallery.bringToFront();
+                lstGallery.setAdapter(adapter);
+
             }   else {
                 Toast.makeText(getBaseContext(), "There Are No Images For This Gallery", Toast.LENGTH_SHORT).show();
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
 
-    protected class piclistpopulate extends AsyncTask<Void,String, Boolean> {
+        runImagecheck = () -> {
+            adapter.notifyDataSetChanged();
 
-        ArrayAdapter<File> adapter;
-        ListView lstGallery;
-
-        piclistpopulate(ArrayAdapter<File> adap, ListView lst) {
-            this.adapter = adap;
-            this.lstGallery = lst;
-            //adapter = new picdetails_ListAdapter();
-            //ListView lstGallery = findViewById(R.id.listGallery);
-        }
-
-        @Override
-        protected Boolean doInBackground(Void... voids) {
-
-            try {
-                lstGallery.setAdapter(adapter);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
+        };
+        //hanImagecheck.post(runImagecheck);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -666,18 +657,23 @@ public class CameraActivity extends Activity {
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
+                        arrGallery.add(file);
+
+                        //refreshpiclist refreshpiclist = new refreshpiclist();
+                        //refreshpiclist.execute();
+
                     }
                 }
             };
 
-            ListView lstGallery = findViewById(R.id.listGallery);
+            //ListView lstGallery = findViewById(R.id.listGallery);
            reader.setOnImageAvailableListener(readerListener, mBackgroundHandler);
             final CameraCaptureSession.CaptureCallback captureListener = new CameraCaptureSession.CaptureCallback() {
                 @Override
                 public void onCaptureCompleted(@NonNull CameraCaptureSession session, @NonNull CaptureRequest request, @NonNull TotalCaptureResult result) {
                     super.onCaptureCompleted(session, request, result);
                     //Toast.makeText(CameraActivity.this, "Saved:" + file, Toast.LENGTH_SHORT).show();
-                    adapter.notifyDataSetChanged();
+
 
                     createCameraPreview();
                 }
@@ -699,6 +695,15 @@ public class CameraActivity extends Activity {
         } catch (CameraAccessException | IllegalStateException e) {
             e.printStackTrace();
         }
+
+        hanImagecheck.postDelayed(runImagecheck, 500);
+
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        //setContentView(R.layout.add_entry);
     }
 
     @Override
@@ -890,8 +895,8 @@ public class CameraActivity extends Activity {
                 //imageOrientationValidator(mCurrentPhotoPath);
             };
 
-            itemView.setClickable(true);
-            itemView.setOnClickListener(piclistener);
+            //itemView.setClickable(true);
+            //itemView.setOnClickListener(piclistener);
 
             return itemView;
         }

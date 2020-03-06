@@ -21,6 +21,8 @@ import java.util.List;
 
 import za.co.rdata.r_datamobile.adapters.adapter_ExpandableList;
 
+import static za.co.rdata.r_datamobile.fileTools.FileActions.createFolder;
+
 /**
  * Created by James de Scande on 02/07/2018 at 14:19.
  */
@@ -59,26 +61,19 @@ public class ImageUploadActivity extends AppCompatActivity {
         });
 
         // Listview Group expanded listener
-        expListView.setOnGroupExpandListener(groupPosition -> Toast.makeText(getApplicationContext(),
-                listDataHeader.get(groupPosition) + " Expanded",
-                Toast.LENGTH_SHORT).show());
+       // expListView.setOnGroupExpandListener(groupPosition -> Toast.makeText(getApplicationContext(),
+       //         listDataHeader.get(groupPosition) + " Expanded",
+        //        Toast.LENGTH_SHORT).show());
 
         // Listview Group collasped listener
-        expListView.setOnGroupCollapseListener(groupPosition -> Toast.makeText(getApplicationContext(),
-                listDataHeader.get(groupPosition) + " Collapsed",
-                Toast.LENGTH_SHORT).show());
+       // expListView.setOnGroupCollapseListener(groupPosition -> Toast.makeText(getApplicationContext(),
+        //        listDataHeader.get(groupPosition) + " Collapsed",
+        //        Toast.LENGTH_SHORT).show());
 
         // Listview on child click listener
         expListView.setOnChildClickListener((parent, v, groupPosition, childPosition, id) -> {
             // TODO Auto-generated method stub
-            Toast.makeText(
-                    getApplicationContext(),
-                    listDataHeader.get(groupPosition)
-                            + " : "
-                            + listDataChild.get(
-                            listDataHeader.get(groupPosition)).get(
-                            childPosition), Toast.LENGTH_SHORT)
-                    .show();
+
             try {
                 UploadFile uploadFile = new UploadFile(this,listDataHeader,listDataChild,groupPosition,childPosition);
                 uploadFile.execute();
@@ -182,7 +177,10 @@ public class ImageUploadActivity extends AppCompatActivity {
 //                    + listDataChild.get(
 //                    listDataHeader.get(groupPosition)).get(
 //                    childPosition);
-            this.filetoupload = new File(Environment.getExternalStorageDirectory().toString()
+
+
+
+            this.filetoupload = new File(createFolder(this.context, "/filesync/")
                     + "/filesync/"
                     + listDataHeader.get(groupPosition)
                     + "/"

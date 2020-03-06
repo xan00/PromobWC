@@ -453,6 +453,11 @@ public class GalleryActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
+        for (File d: arrGallery
+        ) {
+            if (d.getTotalSpace()<10) d.delete();
+        }
+
         try {
             if (arrGallery.size()>0) {
         ArrayAdapter<File> adapter = new picdetails_ListAdapter();

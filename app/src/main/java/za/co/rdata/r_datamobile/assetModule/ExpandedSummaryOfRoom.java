@@ -139,7 +139,7 @@ public class ExpandedSummaryOfRoom  extends AppCompatActivity {
         super.onBackPressed();
 
         Intent gotomainsummary = new Intent(ExpandedSummaryOfRoom.this,RoomMainSummary.class);
-        gotomainsummary.putExtra("ROOM SCAN",strCurrentRoom);
+        gotomainsummary.putExtra("ROOM SCAN",strSelectedRoom);
         startActivity(gotomainsummary);
     }
 }

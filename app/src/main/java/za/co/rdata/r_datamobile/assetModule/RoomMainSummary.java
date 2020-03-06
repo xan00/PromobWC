@@ -565,10 +565,10 @@ public class RoomMainSummary extends AppCompatActivity {
      * Take care of popping the fragment back stack or finishing the activity
      * as appropriate.
      */
-//    @Override
-//    public void onBackPressed() {
-//        super.onBackPressed();
-//        Intent menu = new Intent(RoomMainSummary.this,SelectAsset.class);
-//        startActivity(menu);
-//    }
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent menu = new Intent(RoomMainSummary.this,SelectAsset.class);
+        startActivity(menu);
+    }
 }
