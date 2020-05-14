@@ -50,6 +50,8 @@ public class meta {
         public static String password = "password";
         public static String FullName = "FullName";
         public static String status = "status";
+        public static String lastlogin;
+        public static String logintimes;
     }
 
     public static class pro_mr_route_headers {

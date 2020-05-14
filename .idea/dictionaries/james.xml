@@ -9,7 +9,9 @@
       <w>filesync</w>
       <w>gotologin</w>
       <w>keeprunning</w>
+      <w>lastlogin</w>
       <w>listview</w>
+      <w>logintimes</w>
       <w>makedir</w>
       <w>mdata</w>
       <w>nextversion</w>

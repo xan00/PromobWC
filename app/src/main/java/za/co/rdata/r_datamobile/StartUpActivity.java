@@ -11,6 +11,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,11 +19,20 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import za.co.rdata.r_datamobile.DBHelpers.DBHelper;
 import za.co.rdata.r_datamobile.DBHelpers.SymmetricDS_Helper;
@@ -31,18 +41,22 @@ import za.co.rdata.r_datamobile.DBMeta.meta;
 import za.co.rdata.r_datamobile.fileTools.preference_saving;
 import za.co.rdata.r_datamobile.locationTools.DeviceLocationService;
 
+import static org.bouncycastle.asn1.x500.style.RFC4519Style.uid;
+
 public class StartUpActivity extends AppCompatActivity implements AsyncResponse {
 
     //private SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
     private String node_id = "";//sharedPref.getString("node id", "");
     private String serverURL;
     private CheckTables checkTables = new CheckTables();
+    private static final String TAG = StartUpActivity.class.getSimpleName();
 
     private final int GET_NODE_ID_FOR_RESULT_CODE = 1;
     private final int GET_LOGIN_FOR_RESULT_CODE = 2;
     private final int GET_MAIN_FOR_RESULT_CODE = 3;
     private final int GET_SERVER_URL_FOR_RESULT_CODE = 4;
-
+    static public sqliteDBHelper db;
+    
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -202,9 +216,10 @@ public class StartUpActivity extends AppCompatActivity implements AsyncResponse 
             tableEntries.add(new TableEntry(false, meta.pro_ar_scan.TableName));
             tableEntries.add(new TableEntry(false, meta.pro_ar_std_descrip.TableName));
             tableEntries.add(new TableEntry(false, meta.pro_ar_conditions.TableName));
-            //tableEntries.add(new TableEntry(false, meta.pro_stk_scan.TableName));
-            //tableEntries.add(new TableEntry(false, meta.pro_stk_stock.TableName));
-            //tableEntries.add(new TableEntry(false, meta.pro_stk_warehouse.TableName));
+            tableEntries.add(new TableEntry(false, meta.pro_stk_stock.TableName));
+            tableEntries.add(new TableEntry(false, meta.pro_stk_warehouse.TableName));
+            tableEntries.add(new TableEntry(false, meta.pro_stk_scan.TableName));
+            tableEntries.add(new TableEntry(false, meta.pro_fo_jobs.TableName));
 
             try {
                 while (!AllTablesCreated()) {
@@ -315,6 +330,94 @@ public class StartUpActivity extends AppCompatActivity implements AsyncResponse 
                 this.TableName = mTableName;
             }
         }
+    }
+
+    private void getLogin() {
+
+        StringRequest strReq = new StringRequest(Request.Method.POST,
+                AppConfig.URL_LOGIN, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) {
+                Log.d(TAG, "Login Response: " + response.toString());
+                //hideDialog();
+
+                try {
+                    JSONObject jObj = new JSONObject(response);
+                    boolean error = jObj.getBoolean("error");
+
+                    // Check for error node in json
+                    if (!error) {
+                        // user successfully logged in
+                        // Create login session
+                        //session.setLogin(true);
+
+                        JSONObject user = jObj.getJSONObject("user");
+                        // Now store the user in SQLite
+
+                        String InstNode_id = jObj.getString("InstNode_id");
+                        String mobnode_id = jObj.getString("mobnode_id");
+                        String username = jObj.getString("username");
+                        String password = jObj.getString("password");
+                        String FullName = jObj.getString("FullName");
+                        String status = jObj.getString("status");
+                        String lastlogin = jObj.getString("lastlogin");
+                        String logintimes = jObj.getString("logintimes");
+
+                        /*
+                        values.put(meta.pro_sys_users.InstNode_id, InstNode_id);
+        values.put(meta.pro_sys_users.mobnode_id, mobnode_id);
+        values.put(meta.pro_sys_users.username, username);
+        values.put(meta.pro_sys_users.password, password);
+        values.put(meta.pro_sys_users.FullName, FullName);
+        values.put(meta.pro_sys_users.status, status);
+        values.put(meta.pro_sys_users.lastlogin, lastlogin);
+        values.put(meta.pro_sys_users.logintimes, logintimes);
+                        */
+
+                        // Inserting row in users table
+                        db.addUser(InstNode_id,mobnode_id,username,password,FullName,status,lastlogin,logintimes);
+
+                        // Launch main activity
+                        //Intent intent = new Intent(LoginActivity.this,
+                        //        MainActivity.class);
+                        //startActivity(intent);
+                        finish();
+                    } else {
+                        // Error in login. Get the error message
+                        String errorMsg = jObj.getString("error_msg");
+                        Toast.makeText(getApplicationContext(),
+                                errorMsg, Toast.LENGTH_LONG).show();
+                    }
+                } catch (JSONException e) {
+                    // JSON error
+                    e.printStackTrace();
+                    Toast.makeText(getApplicationContext(), "Json error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(TAG, "Login Error: " + error.getMessage());
+                Toast.makeText(getApplicationContext(),
+                        error.getMessage(), Toast.LENGTH_LONG).show();
+                //hideDialog();
+            }
+        }) {
+
+            @Override
+            protected Map<String, String> getParams() {
+                // Posting parameters to login url
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("mobnode_id", MainActivity.NODE_ID);
+                //params.put("password", password);
+
+                return params;
+            }
+
+        };
     }
 
 }

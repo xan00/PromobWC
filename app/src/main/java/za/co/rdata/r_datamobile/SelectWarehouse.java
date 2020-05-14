@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -17,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -65,20 +67,27 @@ public class SelectWarehouse extends AppCompatActivity {
 
 
         SQLiteDatabase db = MainActivity.sqliteDbHelper.getReadableDatabase();
-        Cursor warehouses = db.rawQuery("SELECT * FROM pro_stk_warehouse ORDER BY "+meta.pro_stk_warehouse.whse_code, null);
-        warehouses.moveToFirst();
+        try {
+            Cursor warehouses = db.rawQuery("SELECT * FROM pro_stk_warehouse ORDER BY " + meta.pro_stk_warehouse.whse_code, null);
+            warehouses.moveToFirst();
 
-        listArray.clear();
+            listArray.clear();
 
-        while (!warehouses.isAfterLast()) {
-            listArray.add(new model_pro_stk_warehouse(null, null, warehouses.getInt(warehouses.getColumnIndex(meta.pro_stk_warehouse.whse_code)),
-                    warehouses.getString(warehouses.getColumnIndex(meta.pro_stk_warehouse.whse_description))));
-            warehouses.moveToNext();
+            while (!warehouses.isAfterLast()) {
+                listArray.add(new model_pro_stk_warehouse(null, null, warehouses.getInt(warehouses.getColumnIndex(meta.pro_stk_warehouse.whse_code)),
+                        warehouses.getString(warehouses.getColumnIndex(meta.pro_stk_warehouse.whse_description))));
+                warehouses.moveToNext();
+            }
+            warehouses.close();
+
+            GetLocationHere();
+            ChooseWarehouse();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            Toast.makeText(this, meta.pro_stk_warehouse.TableName + " not found", Toast.LENGTH_SHORT).show();
+            Intent backtomenu = new Intent(SelectWarehouse.this, MainActivity.class);
+            startActivity(backtomenu);
         }
-        warehouses.close();
-
-        GetLocationHere();
-        ChooseWarehouse();
     }
 
     @Override
