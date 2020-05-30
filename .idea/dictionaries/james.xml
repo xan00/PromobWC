@@ -4,6 +4,7 @@
       <w>batchcount</w>
       <w>clearbatches</w>
       <w>collasped</w>
+      <w>combinedurl</w>
       <w>filelocation</w>
       <w>fileold</w>
       <w>filesync</w>
@@ -12,13 +13,17 @@
       <w>lastlogin</w>
       <w>listview</w>
       <w>logintimes</w>
+      <w>mainactivity</w>
       <w>makedir</w>
       <w>mdata</w>
       <w>nextversion</w>
       <w>promob</w>
+      <w>redmeter</w>
       <w>scande</w>
       <w>senddb</w>
       <w>settingsback</w>
+      <w>settingsintent</w>
+      <w>setttingscheck</w>
       <w>shawshank</w>
       <w>strtoconv</w>
       <w>uploadimage</w>

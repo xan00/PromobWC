@@ -6,9 +6,12 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import za.co.rdata.r_datamobile.DBMeta.sharedprefcodes;
 
 public class GetNodeIDActivity extends AppCompatActivity {
 
@@ -36,6 +39,10 @@ public class GetNodeIDActivity extends AppCompatActivity {
     private void sendResult(String Snode_id) {
         Intent resultIntent = new Intent();
         resultIntent.putExtra("node_id", Snode_id);
+
+        CheckBox chkIsManaged = findViewById(R.id.chkIsManagedUser);
+
+        resultIntent.putExtra(sharedprefcodes.activity_startup.isManagedUser, chkIsManaged.isChecked());
         setResult(Activity.RESULT_OK, resultIntent);
         finish();
     }

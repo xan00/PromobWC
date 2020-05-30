@@ -217,5 +217,7 @@
     <string name="icons_for_sync_status_with_phone">Icons for sync status with phone</string>
     <string name="select_job">Select Job</string>
     <string name="job_information">Job Information</string>
+    <string name="node_settings">NODE SETTINGS</string>
+    <string name="managed_user">Managed User</string>
 
 </resources>

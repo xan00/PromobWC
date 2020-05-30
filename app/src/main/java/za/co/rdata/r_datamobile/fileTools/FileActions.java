@@ -21,12 +21,13 @@ public class FileActions {
     public static File createFolder(Context context, String path) {
 
         File dir;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-            dir = new File( context.getFilesDir().toString() + path);
+        //String filedata = context.getFilesDir().toString();
+        //if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+        //    dir = new File( filedata + path);
 
-        } else {
+        //} else {
             dir = new File(Environment.getExternalStorageDirectory().toString() + path);
-        }
+        //}
         if (!dir.isDirectory()) {
             dir.mkdirs();
         }

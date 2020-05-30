@@ -116,8 +116,11 @@ public class PopulateRoomActivity extends AppCompatActivity {
 
         assert bSaved != null;
         strCurrentroom = bSaved.getString(intentcodes.asset_activity.current_room);
-        strSelectedRoom = bSaved.getString("ROOM SCAN");
-        scancycle = bSaved.getInt("SCAN CYCLE");
+            strSelectedRoom = bSaved.getString("ROOM SCAN");
+        if (strCurrentroom==null) {
+            strCurrentroom = strSelectedRoom;
+        }
+            scancycle = bSaved.getInt("SCAN CYCLE");
         strLocationscantype = bSaved.getString("LOCATION SCAN TYPE");
         strLocationdesc = bSaved.getString("LOCATION NAME");
         strResponsibleperson = bSaved.getString("RESPONSIBLE PERSON");
@@ -667,11 +670,19 @@ public class PopulateRoomActivity extends AppCompatActivity {
 
         moreoptionsparms.moveToNext();
 
+        boolean startwith;
+        int unseen;
+
+        startwith = barcode.startsWith(getResources().getString(R.string.manual_tag));
+        unseen = moreoptionsparms.getInt(0);
+
         try {
             if (moreoptionsparms.getInt(0)==1 && barcode.startsWith(getResources().getString(R.string.manual_tag))) {
             menu.add(4, v.getId(), 0, "Un/Mark as Seen");
             }
-        } catch (Exception ignore) {}
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         moreoptionsparms.moveToNext();
 

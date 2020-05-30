@@ -12,9 +12,9 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.StrictMode;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
@@ -28,16 +28,29 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.File;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import za.co.rdata.r_datamobile.DBHelpers.DBHelper;
 import za.co.rdata.r_datamobile.DBHelpers.SymmetricDS_Helper;
 import za.co.rdata.r_datamobile.DBHelpers.sqliteDBHelper;
+import za.co.rdata.r_datamobile.DBMeta.DBScripts;
 import za.co.rdata.r_datamobile.DBMeta.meta;
+import za.co.rdata.r_datamobile.DBMeta.sharedprefcodes;
 import za.co.rdata.r_datamobile.Models.model_pro_sys_users;
+
+import static za.co.rdata.r_datamobile.StartUpActivity.db;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -49,6 +62,12 @@ public class LoginActivity extends AppCompatActivity {
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
+
+    private String node_id = "";//sharedPref.getString("node id", "");
+    private String serverURL;
+    private Boolean isManagedUser;
+
+    private static final String TAG = LoginActivity.class.getSimpleName();
 
     @Override
     public void onBackPressed() {
@@ -80,9 +99,24 @@ public class LoginActivity extends AppCompatActivity {
 
         Button mUserSignInButton = findViewById(R.id.user_sign_in_button);
         mUserSignInButton.setOnClickListener(view -> {
-            if (!attemptLogin())
-                MainActivity.sqliteDbHelper.getReadableDatabase().execSQL("Update pro_sys_users SET lastlogin = strftime('%Y-%m-%d %H:%M:%S', datetime('now')), logintimes=logintimes+1 where mobnode_id = '"+MainActivity.NODE_ID+"'");
+
+            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+            node_id = sharedPref.getString("node id", "");
+
+            isManagedUser = sharedPref.getBoolean(sharedprefcodes.activity_startup.isManagedUser, true);
+
+          //  if (isManagedUser)
+           // {
+                if (!attemptLogin())
+                MainActivity.sqliteDbHelper.getReadableDatabase().execSQL("Update pro_sys_users SET lastlogin = strftime('%Y-%m-%d %H:%M:%S', datetime('now')), logintimes=logintimes+1 where mobnode_id = '" + MainActivity.NODE_ID + "'");
                 SendResult();
+          //  } else
+           // {
+         //       MainActivity.sqliteDbHelper.getWritableDatabase().execSQL(DBScripts.pro_sys_users.ddl,null);
+
+          //  }
+
+
         });
 
 //        mLoginFormView = findViewById(R.id.login_form);
@@ -93,6 +127,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
     }
+
 
     private void SendResult() {
 
@@ -126,7 +161,9 @@ public class LoginActivity extends AppCompatActivity {
                     cursor.getString(cursor.getColumnIndex(meta.pro_sys_users.mobnode_id)),
                     cursor.getString(cursor.getColumnIndex(meta.pro_sys_users.password)),
                     cursor.getString(cursor.getColumnIndex(meta.pro_sys_users.status)),
-                    cursor.getString(cursor.getColumnIndex(meta.pro_sys_users.username)));
+                    cursor.getString(cursor.getColumnIndex(meta.pro_sys_users.username)),
+                    cursor.getString(cursor.getColumnIndex(meta.pro_sys_users.lastlogin)),
+                    cursor.getInt(cursor.getColumnIndex(meta.pro_sys_users.logintimes)));
             users.add(user);
             userList.add(user.getUsername());
             cursor.moveToNext();
@@ -316,6 +353,97 @@ public class LoginActivity extends AppCompatActivity {
             } catch (NullPointerException ignore) {}
 
         }
+    }
+
+    /**
+     * function to verify login details in mysql db
+     * */
+    private void checkLogin(final String username) {
+        // Tag used to cancel the request
+        String tag_string_req = "req_login";
+
+        //pDialog.setMessage("Logging in ...");
+        //showDialog();
+
+        StringRequest strReq = new StringRequest(Request.Method.GET,
+                AppConfig.URL_LOGIN+"?mobnode_id="+node_id, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) {
+                Log.d(TAG, "Login Response: " + response.toString());
+                //hideDialog();
+
+                try {
+                    JSONObject jObj = new JSONObject(response);
+                    boolean error = jObj.getBoolean("error");
+
+                    // Check for error node in json
+                    if (!error) {
+                        // user successfully logged in
+                        // Create login session
+                        //session.setLogin(true);
+
+                        // Now store the user in SQLite
+                        //String uid = jObj.getString("uid");
+                        JSONObject user = jObj.getJSONObject("user");
+
+                        model_pro_sys_users model_pro_sys_users = new model_pro_sys_users(
+                                user.getString("InstNode_id"),
+                                user.getString("mobnode_id"),
+                                user.getString("username"),
+                                user.getString("password"),
+                                user.getString("FullName"),
+                                user.getString("status"),
+                                user.getString("lastlogin"),
+                                user.getInt("logintimes")
+                        );
+
+                        // Inserting row in users table
+                        db.addUser(model_pro_sys_users);
+
+                        // Launch main activity
+                        Intent intent = new Intent(LoginActivity.this,
+                                MainActivity.class);
+                        startActivity(intent);
+                        finish();
+                    } else {
+                        // Error in login. Get the error message
+                        String errorMsg = jObj.getString("error_msg");
+                        Toast.makeText(getApplicationContext(),
+                                errorMsg, Toast.LENGTH_LONG).show();
+                    }
+                } catch (JSONException e) {
+                    // JSON error
+                    e.printStackTrace();
+                    Toast.makeText(getApplicationContext(), "Json error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(TAG, "Login Error: " + error.getMessage());
+                Toast.makeText(getApplicationContext(),
+                        error.getMessage(), Toast.LENGTH_LONG).show();
+                //hideDialog();
+            }
+        }) {
+
+            @Override
+            protected Map<String, String> getParams() {
+                // Posting parameters to login url
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("username", node_id);
+                //params.put("password", password);
+
+                return params;
+            }
+
+        };
+
+        // Adding request to request queue
+        //AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
     }
 
 }

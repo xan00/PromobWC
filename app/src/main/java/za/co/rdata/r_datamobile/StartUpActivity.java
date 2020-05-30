@@ -20,9 +20,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import com.android.volley.Request;
+import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.json.JSONException;
@@ -37,7 +39,10 @@ import java.util.Map;
 import za.co.rdata.r_datamobile.DBHelpers.DBHelper;
 import za.co.rdata.r_datamobile.DBHelpers.SymmetricDS_Helper;
 import za.co.rdata.r_datamobile.DBHelpers.sqliteDBHelper;
+import za.co.rdata.r_datamobile.DBMeta.DBScripts;
 import za.co.rdata.r_datamobile.DBMeta.meta;
+import za.co.rdata.r_datamobile.DBMeta.sharedprefcodes;
+import za.co.rdata.r_datamobile.Models.model_pro_sys_users;
 import za.co.rdata.r_datamobile.fileTools.preference_saving;
 import za.co.rdata.r_datamobile.locationTools.DeviceLocationService;
 
@@ -45,18 +50,18 @@ import static org.bouncycastle.asn1.x500.style.RFC4519Style.uid;
 
 public class StartUpActivity extends AppCompatActivity implements AsyncResponse {
 
-    //private SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-    private String node_id = "";//sharedPref.getString("node id", "");
-    private String serverURL;
-    private CheckTables checkTables = new CheckTables();
     private static final String TAG = StartUpActivity.class.getSimpleName();
-
+    static public sqliteDBHelper db;
     private final int GET_NODE_ID_FOR_RESULT_CODE = 1;
     private final int GET_LOGIN_FOR_RESULT_CODE = 2;
     private final int GET_MAIN_FOR_RESULT_CODE = 3;
     private final int GET_SERVER_URL_FOR_RESULT_CODE = 4;
-    static public sqliteDBHelper db;
-    
+    //private SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+    private String node_id = "";//sharedPref.getString("node id", "");
+    private String serverURL;
+    private Boolean isManagedUser;
+    private CheckTables checkTables = new CheckTables();
+
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,39 +70,53 @@ public class StartUpActivity extends AppCompatActivity implements AsyncResponse 
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         node_id = sharedPref.getString("node id", "");
         serverURL = sharedPref.getString("serverURL", "");
-        if (node_id.compareTo("") == 0)
-            AskUserForNodeID();
-        else if (serverURL.isEmpty())
-            AskUserForServerSettings();
-        else
-            All_OK_Contunue();
+        isManagedUser = sharedPref.getBoolean(sharedprefcodes.activity_startup.isManagedUser, true);
+
+        if (isManagedUser) {
+            if (node_id.compareTo("") == 0)
+                AskUserForNodeID();
+            else if (serverURL.isEmpty())
+                AskUserForServerSettings();
+            else if (isManagedUser)
+                All_OK_Continue();
+            else {
+                Intent mainactivity = new Intent(StartUpActivity.this, LoginActivity.class);
+                startActivity(mainactivity);
+            }
+        } else {
+            Intent mainactivity = new Intent(StartUpActivity.this, LoginActivity.class);
+            startActivity(mainactivity);
+        }
 
         if (Build.VERSION.SDK_INT >= 23) {
             if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
                     == PackageManager.PERMISSION_GRANTED) {
                 final PackageManager pm = getPackageManager();
                 try {
-                    String fullPath = Environment.getExternalStorageDirectory() + "/filesync/Version/promob.apk";
+                    String fullPath = Environment.getExternalStorageDirectory() + "/filesync/Version/%.apk";
                     PackageInfo info = pm.getPackageArchiveInfo(fullPath, 0);
                     Toast.makeText(this, "VersionCode : " + info.versionCode + ", VersionName : " + info.versionName, Toast.LENGTH_LONG).show();
-                } catch (NullPointerException ignore) {}
-                File dir = new File(Environment.getExternalStorageDirectory()+"/filesync/Version/");
-                if(!dir.exists()) {
+                } catch (NullPointerException ignore) {
+                }
+                File dir = new File(Environment.getExternalStorageDirectory() + "/filesync/Version/");
+                if (!dir.exists()) {
                     dir.mkdirs();
                 }
             } else {
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
-        }
+            }
 
-        if (checkSelfPermission(Manifest.permission.CAMERA)== PackageManager.PERMISSION_GRANTED) {
-        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, 1); }
-        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)== PackageManager.PERMISSION_GRANTED) {
-        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1); }
+            if (checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, 1);
+            }
+            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+            }
         }
 
         FloatingActionButton flbSkipLoading = findViewById(R.id.flbSkipLoading);
         flbSkipLoading.setOnClickListener(view -> {
-            Intent mainactivity = new Intent(StartUpActivity.this,MainActivity.class);
+            Intent mainactivity = new Intent(StartUpActivity.this, MainActivity.class);
             startActivity(mainactivity);
         });
 
@@ -129,14 +148,23 @@ public class StartUpActivity extends AppCompatActivity implements AsyncResponse 
             case GET_NODE_ID_FOR_RESULT_CODE:
                 if (resultCode == Activity.RESULT_OK) {
                     node_id = data.getStringExtra("node_id");
+                    isManagedUser = data.getBooleanExtra(sharedprefcodes.activity_startup.isManagedUser, true);
                     SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
                     SharedPreferences.Editor editor = sharedPref.edit();
                     editor.putString("node id", node_id);
+                    editor.putBoolean(sharedprefcodes.activity_startup.isManagedUser, isManagedUser);
                     editor.apply();
-                    if (serverURL.isEmpty())
-                        AskUserForServerSettings();
-                    else
-                        All_OK_Contunue();
+
+                    if (isManagedUser) {
+                        if (serverURL.isEmpty())
+                            AskUserForServerSettings();
+                        else
+                            All_OK_Continue();
+                    } else {
+                        checkLogin();
+                        Intent mainactivity = new Intent(StartUpActivity.this, LoginActivity.class);
+                        startActivity(mainactivity);
+                    }
                 } else
                     finish();
                 break;
@@ -144,7 +172,7 @@ public class StartUpActivity extends AppCompatActivity implements AsyncResponse 
             case GET_SERVER_URL_FOR_RESULT_CODE:
                 if (resultCode == Activity.RESULT_OK) {
                     serverURL = data.getStringExtra("serverURL");
-                    All_OK_Contunue();
+                    All_OK_Continue();
                 } else {
                     finish();
                 }
@@ -152,10 +180,10 @@ public class StartUpActivity extends AppCompatActivity implements AsyncResponse 
 
             case GET_LOGIN_FOR_RESULT_CODE:
                 if (resultCode == Activity.RESULT_OK) {
-                    Boolean loggedIn = data.getBooleanExtra("result", false);
+                    boolean loggedIn = data.getBooleanExtra("result", false);
                     if (loggedIn) {
-                        Intent ImainActivity = new Intent(this, MainActivity.class);
-                        startActivityForResult(ImainActivity, GET_MAIN_FOR_RESULT_CODE);
+                        Intent iMainActivity = new Intent(this, MainActivity.class);
+                        startActivityForResult(iMainActivity, GET_MAIN_FOR_RESULT_CODE);
                     }
                 } else {
                     finish();
@@ -169,12 +197,12 @@ public class StartUpActivity extends AppCompatActivity implements AsyncResponse 
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    private void All_OK_Contunue() {
+    private void All_OK_Continue() {
         MainActivity.NODE_ID = node_id;
         MainActivity.sqliteDbHelper = sqliteDBHelper.getInstance(this.getApplicationContext());
         MainActivity.SYMMETRICDS_REGISTRATION_URL = serverURL;
         SymmetricDS_Helper.Start_SymmetricDS(this.getApplicationContext(), false);
-        startService(new Intent(this,DeviceLocationService.class));
+        startService(new Intent(this, DeviceLocationService.class));
         checkTables.delegate = this;
         try {
             checkTables.execute("");
@@ -193,6 +221,101 @@ public class StartUpActivity extends AppCompatActivity implements AsyncResponse 
         startActivityForResult(intent, GET_LOGIN_FOR_RESULT_CODE);
     }
 
+    private void checkLogin() {
+        // Tag used to cancel the request
+        String tag_string_req = "req_login";
+        RequestQueue queue = Volley.newRequestQueue(this);
+        //pDialog.setMessage("Logging in ...");
+        //showDialog();
+        db = sqliteDBHelper.getInstance(this.getApplicationContext());
+        try {
+            db.getWritableDatabase().execSQL(DBScripts.pro_sys_users.ddl);
+
+            String combinedurl = AppConfig.URL_LOGIN + "?mobnode_id=" + node_id + "";
+
+            StringRequest strReq = new StringRequest(Request.Method.GET,
+                    combinedurl, new Response.Listener<String>() {
+
+                @Override
+                public void onResponse(String response) {
+                    Log.d(TAG, "Login Response: " + response.toString());
+                    //hideDialog();
+
+                    try {
+                        JSONObject jObj = new JSONObject(response);
+                        boolean error = jObj.getBoolean("error");
+
+                        // Check for error node in json
+                        if (!error) {
+                            // user successfully logged in
+                            // Create login session
+                            //session.setLogin(true);
+
+                            // Now store the user in SQLite
+                            //String uid = jObj.getString("uid");
+                            JSONObject user = jObj.getJSONObject("user");
+
+                            model_pro_sys_users model_pro_sys_users = new model_pro_sys_users(
+                                    user.getString("InstNode_id"),
+                                    user.getString("mobnode_id"),
+                                    user.getString("username"),
+                                    user.getString("password"),
+                                    user.getString("FullName"),
+                                    user.getString("status"),
+                                    user.getString("lastlogin"),
+                                    user.getInt("logintimes")
+                            );
+
+                            // Inserting row in users table
+                            db.addUser(model_pro_sys_users);
+
+                            //Intent intent = new Intent(StartUpActivity.this,
+                            //       LoginActivity.class);
+                            //startActivity(intent);
+                            //finish();
+                        } else {
+                            // Error in login. Get the error message
+                            String errorMsg = jObj.getString("error_msg");
+                            Toast.makeText(getApplicationContext(),
+                                    errorMsg, Toast.LENGTH_LONG).show();
+                        }
+                    } catch (JSONException e) {
+                        // JSON error
+                        e.printStackTrace();
+                        Toast.makeText(getApplicationContext(), "Json error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+
+                }
+            }, new Response.ErrorListener() {
+
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.e(TAG, "Login Error: " + error.getMessage());
+                    Toast.makeText(getApplicationContext(),
+                            error.getMessage(), Toast.LENGTH_LONG).show();
+                    //hideDialog();
+                }
+            }) /*{
+
+                @Override
+                protected Map<String, String> getParams() {
+                    // Posting parameters to login url
+                    Map<String, String> params = new HashMap<String, String>();
+                    params.put("username", node_id);
+                    //params.put("password", password);
+
+                    return params;
+                }
+
+            }*/;
+            queue.add(strReq);
+            // Adding request to request queue
+            //AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     private class CheckTables extends AsyncTask<String, String, Boolean> {
 
         private AsyncResponse delegate = null;
@@ -202,6 +325,7 @@ public class StartUpActivity extends AppCompatActivity implements AsyncResponse 
         @Override
         protected Boolean doInBackground(String... urls) {
 
+            tableEntries.add(new TableEntry(false, meta.pro_sys_company.TableName));
             tableEntries.add(new TableEntry(false, meta.pro_mr_route_headers.TableName));
             tableEntries.add(new TableEntry(false, meta.pro_mr_route_rows.TableName));
             tableEntries.add(new TableEntry(false, meta.pro_sys_users.TableName));
@@ -309,6 +433,11 @@ public class StartUpActivity extends AppCompatActivity implements AsyncResponse 
             private String TableName;
             private Boolean Status;
 
+            public TableEntry(Boolean mStatus, String mTableName) {
+                this.Status = mStatus;
+                this.TableName = mTableName;
+            }
+
             public Boolean getStatus() {
                 return Status;
             }
@@ -324,100 +453,7 @@ public class StartUpActivity extends AppCompatActivity implements AsyncResponse 
             public void setTableName(String tableName) {
                 this.TableName = tableName;
             }
-
-            public TableEntry(Boolean mStatus, String mTableName) {
-                this.Status = mStatus;
-                this.TableName = mTableName;
-            }
         }
-    }
-
-    private void getLogin() {
-
-        StringRequest strReq = new StringRequest(Request.Method.POST,
-                AppConfig.URL_LOGIN, new Response.Listener<String>() {
-
-            @Override
-            public void onResponse(String response) {
-                Log.d(TAG, "Login Response: " + response.toString());
-                //hideDialog();
-
-                try {
-                    JSONObject jObj = new JSONObject(response);
-                    boolean error = jObj.getBoolean("error");
-
-                    // Check for error node in json
-                    if (!error) {
-                        // user successfully logged in
-                        // Create login session
-                        //session.setLogin(true);
-
-                        JSONObject user = jObj.getJSONObject("user");
-                        // Now store the user in SQLite
-
-                        String InstNode_id = jObj.getString("InstNode_id");
-                        String mobnode_id = jObj.getString("mobnode_id");
-                        String username = jObj.getString("username");
-                        String password = jObj.getString("password");
-                        String FullName = jObj.getString("FullName");
-                        String status = jObj.getString("status");
-                        String lastlogin = jObj.getString("lastlogin");
-                        String logintimes = jObj.getString("logintimes");
-
-                        /*
-                        values.put(meta.pro_sys_users.InstNode_id, InstNode_id);
-        values.put(meta.pro_sys_users.mobnode_id, mobnode_id);
-        values.put(meta.pro_sys_users.username, username);
-        values.put(meta.pro_sys_users.password, password);
-        values.put(meta.pro_sys_users.FullName, FullName);
-        values.put(meta.pro_sys_users.status, status);
-        values.put(meta.pro_sys_users.lastlogin, lastlogin);
-        values.put(meta.pro_sys_users.logintimes, logintimes);
-                        */
-
-                        // Inserting row in users table
-                        db.addUser(InstNode_id,mobnode_id,username,password,FullName,status,lastlogin,logintimes);
-
-                        // Launch main activity
-                        //Intent intent = new Intent(LoginActivity.this,
-                        //        MainActivity.class);
-                        //startActivity(intent);
-                        finish();
-                    } else {
-                        // Error in login. Get the error message
-                        String errorMsg = jObj.getString("error_msg");
-                        Toast.makeText(getApplicationContext(),
-                                errorMsg, Toast.LENGTH_LONG).show();
-                    }
-                } catch (JSONException e) {
-                    // JSON error
-                    e.printStackTrace();
-                    Toast.makeText(getApplicationContext(), "Json error: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                }
-
-            }
-        }, new Response.ErrorListener() {
-
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.e(TAG, "Login Error: " + error.getMessage());
-                Toast.makeText(getApplicationContext(),
-                        error.getMessage(), Toast.LENGTH_LONG).show();
-                //hideDialog();
-            }
-        }) {
-
-            @Override
-            protected Map<String, String> getParams() {
-                // Posting parameters to login url
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("mobnode_id", MainActivity.NODE_ID);
-                //params.put("password", password);
-
-                return params;
-            }
-
-        };
     }
 
 }

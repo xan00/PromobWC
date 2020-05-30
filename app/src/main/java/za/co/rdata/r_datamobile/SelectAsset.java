@@ -427,7 +427,7 @@ public class SelectAsset extends AppCompatActivity {
                 filteredTitles.clear();
                 if (!s.toString().equals("")) {
                     for (int i = 0; i < arrRooms.size(); i++) {
-                        if (arrRooms.get(i).getRoomnumber().toUpperCase().contains(s.toString().toUpperCase())) {
+                        if (arrRooms.get(i).getRoomnumber().toUpperCase().contains(s.toString().toUpperCase()) || arrRooms.get(i).getRoomname().toUpperCase().contains(s.toString().toUpperCase())) {
                             filteredTitles.add(arrRooms.get(i));
                         }
                     }
@@ -784,6 +784,7 @@ public class SelectAsset extends AppCompatActivity {
                     "       scan_location_entry as 'Registered Location',\n" +
                     "       scan_reader_id as Reader,\n" +
                     "       scan_datetime as 'Scan Date',\n" +
+                    "       scan_comments1 as 'Scan Comments',\n" +
                     "       scan_lattitude,\n" +
                     "       scan_longitude\n" +
                     "from pro_ar_scan left join pro_ar_register on scan_barcode = reg_barcode";

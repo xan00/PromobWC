@@ -10,14 +10,18 @@ public class model_pro_sys_users {
     private String password;
     private String FullName;
     private String status;
+    private String LastLogin;
+    private int LoginTimes;
 
-    public model_pro_sys_users(String fullName, String instNode_id, String mobnode_id, String password, String status, String username) {
-        FullName = fullName;
+    public model_pro_sys_users(String instNode_id, String mobnode_id, String username, String password, String fullName, String status, String lastLogin, int loginTimes) {
         InstNode_id = instNode_id;
         this.mobnode_id = mobnode_id;
-        this.password = password;
-        this.status = status;
         this.username = username;
+        this.password = password;
+        FullName = fullName;
+        this.status = status;
+        LastLogin = lastLogin;
+        LoginTimes = loginTimes;
     }
 
     public String getFullName() {
@@ -67,5 +71,21 @@ public class model_pro_sys_users {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getLastLogin() {
+        return LastLogin;
+    }
+
+    public void setLastLogin(String lastLogin) {
+        LastLogin = lastLogin;
+    }
+
+    public int getLoginTimes() {
+        return LoginTimes;
+    }
+
+    public void setLoginTimes(int loginTimes) {
+        LoginTimes = loginTimes;
     }
 }

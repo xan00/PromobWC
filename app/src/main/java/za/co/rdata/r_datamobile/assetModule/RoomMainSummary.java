@@ -558,7 +558,6 @@ public class RoomMainSummary extends AppCompatActivity {
         FloatingActionButton sendmail = findViewById(R.id.fltEmailCSV);
         sendmail.setOnClickListener(sendmainclick);
         registerForContextMenu(scannewasset);
-
     }
 
     /**

@@ -154,13 +154,18 @@ public class adapter_AssetRecycler extends RecyclerView.Adapter<adapter_AssetRec
 
     private String GetLocationName(String locationname) {
 
-        String locationnameresult;
+        String locationnameresult = currentRoom;
         Cursor roomcursor1 = MainActivity.sqliteDbHelper.getReadableDatabase().rawQuery("SELECT loc_name FROM pro_ar_locations WHERE loc_code = '" + locationname + "'", null);
         roomcursor1.moveToFirst();
 
-        locationnameresult = roomcursor1.getString(roomcursor1.getColumnIndex(meta.pro_ar_locations.loc_name));
-        roomcursor1.close();
-        return locationnameresult;
+        try {
+            locationnameresult = roomcursor1.getString(roomcursor1.getColumnIndex(meta.pro_ar_locations.loc_name));
+        } catch (CursorIndexOutOfBoundsException e) {
+            e.printStackTrace();
+        }
+            roomcursor1.close();
+            return locationnameresult;
+
     }
 
     private String GetRespPerson(String locationname) {

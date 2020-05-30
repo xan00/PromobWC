@@ -11,6 +11,7 @@ import java.util.HashMap;
 
 import za.co.rdata.r_datamobile.DBMeta.meta;
 import za.co.rdata.r_datamobile.MainActivity;
+import za.co.rdata.r_datamobile.Models.model_pro_sys_users;
 
 /**
  * Created by root on 11/10/15.
@@ -48,21 +49,6 @@ public class sqliteDBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String CREATE_LOGIN_TABLE = "CREATE TABLE IF NOT EXISTS pro_sys_users" +
-                "(" +
-                "    InstNode_id varchar(10) not null," +
-                "    mobnode_id  varchar(15) not null," +
-                "    username    varchar(50) not null," +
-                "    password    varchar(50)," +
-                "    FullName    varchar(50)," +
-                "    status      varchar(15)," +
-                "    lastlogin   datetime," +
-                "    logintimes  int," +
-                "    primary key (InstNode_id, mobnode_id, username)" +
-                ");";
-
-        db.execSQL(CREATE_LOGIN_TABLE);
-
         Log.d(TAG, "Database tables created");
 
     }
@@ -70,24 +56,27 @@ public class sqliteDBHelper extends SQLiteOpenHelper {
     /**
      * Storing user details in database
      * */
-    public void addUser(String InstNode_id, String mobnode_id, String username, String password, String FullName, String status, String lastlogin, String logintimes) {
+    public void addUser(model_pro_sys_users model_pro_sys_users) {
         SQLiteDatabase db = this.getWritableDatabase();
 
-        ContentValues values = new ContentValues();
-        values.put(meta.pro_sys_users.InstNode_id, InstNode_id);
-        values.put(meta.pro_sys_users.mobnode_id, mobnode_id);
-        values.put(meta.pro_sys_users.username, username);
-        values.put(meta.pro_sys_users.password, password);
-        values.put(meta.pro_sys_users.FullName, FullName);
-        values.put(meta.pro_sys_users.status, status);
-        values.put(meta.pro_sys_users.lastlogin, lastlogin);
-        values.put(meta.pro_sys_users.logintimes, logintimes);
+        /*ContentValues values = new ContentValues();
+        values.put(meta.pro_sys_users.InstNode_id, model_pro_sys_users.getInstNode_id());
+        values.put(meta.pro_sys_users.mobnode_id, model_pro_sys_users.getMobnode_id());
+        values.put(meta.pro_sys_users.username, model_pro_sys_users.getUsername());
+        values.put(meta.pro_sys_users.password, model_pro_sys_users.getPassword());
+        values.put(meta.pro_sys_users.FullName, model_pro_sys_users.getFullName());
+        values.put(meta.pro_sys_users.status, model_pro_sys_users.getStatus());
+        values.put(meta.pro_sys_users.lastlogin, model_pro_sys_users.getLastLogin());
+        values.put(meta.pro_sys_users.logintimes, model_pro_sys_users.getLoginTimes());*/
 
         // Inserting Row
-        long id = db.insert(TABLE_USER, null, values);
+        db.execSQL("insert into pro_sys_users values ("+model_pro_sys_users.getInstNode_id()+","+model_pro_sys_users.getMobnode_id()+","+model_pro_sys_users.getUsername()+","+model_pro_sys_users.getPassword()+"," +
+                                                        model_pro_sys_users.getFullName()+","+model_pro_sys_users.getStatus()+","+model_pro_sys_users.getLastLogin()+","+model_pro_sys_users.getLoginTimes()+")");
+
+        //long id = db.insert(TABLE_USER, null, values);
         db.close(); // Closing database connection
 
-        Log.d(TAG, "New user inserted into sqlite: " + id);
+       // Log.d(TAG, "New user inserted into sqlite: " + id);
     }
 
     /**

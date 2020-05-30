@@ -48,7 +48,7 @@ public class ExpandedSummaryOfRoom  extends AppCompatActivity {
         temp = bSaved.getString("Toast String");
         lightcolour = bSaved.getInt("LIGHT COLOUR");
         v = bSaved.getInt("Summary Choice");
-        //goToExpandedList(strSelectedRoom);
+        goToExpandedList(strSelectedRoom);
     }
 
     @Override
@@ -100,6 +100,9 @@ public class ExpandedSummaryOfRoom  extends AppCompatActivity {
             gotorooms.putExtra("came_from_expanded",TRUE);
             gotorooms.putExtra("roomorasset",FALSE);
             gotorooms.putExtra("ROOM SCAN", strSelectedRoom);
+            if (strCurrentRoom==null) {
+                strCurrentRoom = strSelectedRoom;
+            }
             gotorooms.putExtra(intentcodes.asset_activity.current_room, strCurrentRoom);
             //gotorooms.putExtra("Count Handler",counthandler);
             gotorooms.putExtra("Toast String",temp);
