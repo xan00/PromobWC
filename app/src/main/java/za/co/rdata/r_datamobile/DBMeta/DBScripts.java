@@ -16,4 +16,39 @@ public class DBScripts {
                     "\t\tprimary key (InstNode_id, mobnode_id, username)\n" +
                     ");";
         }
+
+        public static class pro_sys_menu {
+            public static String ddl = "create table if not exists pro_sys_menu\n" +
+                    "(\n" +
+                    "\tInstNode_id varchar(10) not null,\n" +
+                    "\tmobnode_id varchar(15) not null,\n" +
+                    "\tmodule varchar(50) not null,\n" +
+                    "\tuser varchar(50) not null,\n" +
+                    "\tmod_desc varchar(45) null,\n" +
+                    "\tconstraint pro_sys_menu_InstNode_id_mobnode_id_module_user_uindex\n" +
+                    "\t\tprimary key (InstNode_id, mobnode_id, module, user)\n" +
+                    ");";
+        }
+
+        public static class pro_sys_devices {
+            public static String ddl = "create table if not exists pro_sys_devices\n" +
+                    "(\n" +
+                    "\tInstNode_id varchar(254) not null,\n" +
+                    "\tmobnode_id varchar(254) not null,\n" +
+                    "\tdevice_id varchar(254) not null,\n" +
+                    "\tdescription varchar(254) null,\n" +
+                    "\tdevice_type varchar(254) null,\n" +
+                    "\tserial_number varchar(254) null,\n" +
+                    "\tstatus varchar(254) null,\n" +
+                    "\tdevice_guid varchar(254) null,\n" +
+                    "\tdevice_ip varchar(254) null,\n" +
+                    "\tsoft_version varchar(254) null,\n" +
+                    "\tdevice_enable varchar(254) null,\n" +
+                    "\tdevice_current_lat double default 0 null,\n" +
+                    "\tdevice_current_long double default 0 null,\n" +
+                    "\tdevice_loc_last_update varchar(254) null,\n" +
+                    "\tconstraint pro_sys_devices_InstNode_id_mobnode_id_device_id_uindex\n" +
+                    "\t\tprimary key (InstNode_id, mobnode_id, device_id)\n" +
+                    ");";
+        }
 }

@@ -7,10 +7,13 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import za.co.rdata.r_datamobile.DBMeta.meta;
 import za.co.rdata.r_datamobile.MainActivity;
+import za.co.rdata.r_datamobile.Models.model_pro_sys_devices;
+import za.co.rdata.r_datamobile.Models.model_pro_sys_menu;
 import za.co.rdata.r_datamobile.Models.model_pro_sys_users;
 
 /**
@@ -52,6 +55,16 @@ public class sqliteDBHelper extends SQLiteOpenHelper {
         Log.d(TAG, "Database tables created");
 
     }
+    
+    private String queryvaluebuilder(ArrayList obj) {
+        StringBuilder builtquery = null;
+        for (Object o: obj
+             ) {
+            builtquery.append("'").append(o.toString()).append("',");
+        }
+        builtquery.deleteCharAt(builtquery.length()-1);
+        return builtquery.toString();
+    }
 
     /**
      * Storing user details in database
@@ -59,24 +72,34 @@ public class sqliteDBHelper extends SQLiteOpenHelper {
     public void addUser(model_pro_sys_users model_pro_sys_users) {
         SQLiteDatabase db = this.getWritableDatabase();
 
-        /*ContentValues values = new ContentValues();
-        values.put(meta.pro_sys_users.InstNode_id, model_pro_sys_users.getInstNode_id());
-        values.put(meta.pro_sys_users.mobnode_id, model_pro_sys_users.getMobnode_id());
-        values.put(meta.pro_sys_users.username, model_pro_sys_users.getUsername());
-        values.put(meta.pro_sys_users.password, model_pro_sys_users.getPassword());
-        values.put(meta.pro_sys_users.FullName, model_pro_sys_users.getFullName());
-        values.put(meta.pro_sys_users.status, model_pro_sys_users.getStatus());
-        values.put(meta.pro_sys_users.lastlogin, model_pro_sys_users.getLastLogin());
-        values.put(meta.pro_sys_users.logintimes, model_pro_sys_users.getLoginTimes());*/
-
         // Inserting Row
-        db.execSQL("insert into pro_sys_users values ("+model_pro_sys_users.getInstNode_id()+","+model_pro_sys_users.getMobnode_id()+","+model_pro_sys_users.getUsername()+","+model_pro_sys_users.getPassword()+"," +
-                                                        model_pro_sys_users.getFullName()+","+model_pro_sys_users.getStatus()+","+model_pro_sys_users.getLastLogin()+","+model_pro_sys_users.getLoginTimes()+")");
-
+        db.execSQL("insert into pro_sys_users values ("+model_pro_sys_users.getInstNode_id()+","+model_pro_sys_users.getMobnode_id()+",'"+model_pro_sys_users.getUsername()+"','"+model_pro_sys_users.getPassword()+"','" +
+                                                        model_pro_sys_users.getFullName()+"','"+model_pro_sys_users.getStatus()+"','"+model_pro_sys_users.getLastLogin()+"',"+model_pro_sys_users.getLoginTimes()+")");
         //long id = db.insert(TABLE_USER, null, values);
         db.close(); // Closing database connection
 
        // Log.d(TAG, "New user inserted into sqlite: " + id);
+    }
+
+    public void addMenu(model_pro_sys_menu model_pro_sys_menu) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        // Inserting Row
+        db.execSQL("insert into pro_sys_menu values ("+model_pro_sys_menu.getInstNode_id()+","+model_pro_sys_menu.getMobnode_id()+",'"+model_pro_sys_menu.getModule()+"','"+model_pro_sys_menu.getUser()+"','" +
+                model_pro_sys_menu.getMod_desc()+"'");
+        //long id = db.insert(TABLE_USER, null, values);
+        db.close(); // Closing database connection
+
+    }
+
+    public void addDevice(model_pro_sys_devices model_pro_sys_devices) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        // Inserting Row
+        String queryvalues = queryvaluebuilder(model_pro_sys_devices);
+        db.execSQL("insert into pro_sys_devices values ("+queryvalues+");");
+        db.close(); // Closing database connection
+
     }
 
     /**

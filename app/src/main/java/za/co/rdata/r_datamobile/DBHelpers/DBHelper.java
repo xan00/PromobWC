@@ -92,16 +92,16 @@ public class DBHelper {
     public static class pro_sys_users {
         public static Cursor getAllUsers() {
             Cursor cursor = null;
-            try {
+           // try {
                 cursor = MainActivity.sqliteDbHelper.getReadableDatabase().query(
                         meta.pro_sys_users.TableName,
                         null, null, null, null, null, null, null);
                 if (cursor != null) {
                     cursor.moveToFirst();
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+           // } catch (Exception e) {
+          //      e.printStackTrace();
+         //   }
             return cursor;
         }
 

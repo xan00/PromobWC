@@ -107,9 +107,10 @@ public class LoginActivity extends AppCompatActivity {
 
           //  if (isManagedUser)
            // {
-                if (!attemptLogin())
-                MainActivity.sqliteDbHelper.getReadableDatabase().execSQL("Update pro_sys_users SET lastlogin = strftime('%Y-%m-%d %H:%M:%S', datetime('now')), logintimes=logintimes+1 where mobnode_id = '" + MainActivity.NODE_ID + "'");
-                SendResult();
+                if (!attemptLogin()) {
+                    MainActivity.sqliteDbHelper.getReadableDatabase().execSQL("Update pro_sys_users SET lastlogin = strftime('%Y-%m-%d %H:%M:%S', datetime('now')), logintimes=logintimes+1 where mobnode_id = '" + MainActivity.NODE_ID + "'");
+                    SendResult();
+                }
           //  } else
            // {
          //       MainActivity.sqliteDbHelper.getWritableDatabase().execSQL(DBScripts.pro_sys_users.ddl,null);
@@ -140,28 +141,34 @@ public class LoginActivity extends AppCompatActivity {
         resultIntent.putExtra("result", true);
         setResult(Activity.RESULT_OK, resultIntent);
         LoginActivity.this.finish();
+        Intent intent = new Intent(LoginActivity.this,
+                MainActivity.class);
+        startActivity(intent);
     }
 
     private void populateAutoComplete() {
 
         Cursor cursor;
-        cursor = DBHelper.pro_sys_users.getAllUsers();
         List<String> userList = new ArrayList<>();
+
         try {
+        cursor = DBHelper.pro_sys_users.getAllUsers();
+
             cursor.moveToFirst();
         } catch (NullPointerException e) {
+            e.printStackTrace();
             MainActivity.sqliteDbHelper = sqliteDBHelper.getInstance(this.getApplicationContext());
             cursor = DBHelper.pro_sys_users.getAllUsers();
             cursor.moveToFirst();
         }
 
         while (!cursor.isAfterLast()) {
-            model_pro_sys_users user = new model_pro_sys_users(cursor.getString(cursor.getColumnIndex(meta.pro_sys_users.FullName)),
-                    cursor.getString(cursor.getColumnIndex(meta.pro_sys_users.InstNode_id)),
+            model_pro_sys_users user = new model_pro_sys_users(cursor.getString(cursor.getColumnIndex(meta.pro_sys_users.InstNode_id)),
                     cursor.getString(cursor.getColumnIndex(meta.pro_sys_users.mobnode_id)),
-                    cursor.getString(cursor.getColumnIndex(meta.pro_sys_users.password)),
-                    cursor.getString(cursor.getColumnIndex(meta.pro_sys_users.status)),
                     cursor.getString(cursor.getColumnIndex(meta.pro_sys_users.username)),
+                    cursor.getString(cursor.getColumnIndex(meta.pro_sys_users.password)),
+                    cursor.getString(cursor.getColumnIndex(meta.pro_sys_users.FullName)),
+                    cursor.getString(cursor.getColumnIndex(meta.pro_sys_users.status)),
                     cursor.getString(cursor.getColumnIndex(meta.pro_sys_users.lastlogin)),
                     cursor.getInt(cursor.getColumnIndex(meta.pro_sys_users.logintimes)));
             users.add(user);
@@ -178,7 +185,7 @@ public class LoginActivity extends AppCompatActivity {
         mPasswordView.setError(null);
 
         // Store values at the time of the login attempt.
-        String username = mUsernameView.getText().toString();
+        String username = mUsernameView.getText().toString().toUpperCase();
         String password = mPasswordView.getText().toString();
 
         boolean cancel = false;

@@ -27,6 +27,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -42,6 +43,8 @@ import za.co.rdata.r_datamobile.DBHelpers.sqliteDBHelper;
 import za.co.rdata.r_datamobile.DBMeta.DBScripts;
 import za.co.rdata.r_datamobile.DBMeta.meta;
 import za.co.rdata.r_datamobile.DBMeta.sharedprefcodes;
+import za.co.rdata.r_datamobile.Models.model_pro_sys_devices;
+import za.co.rdata.r_datamobile.Models.model_pro_sys_menu;
 import za.co.rdata.r_datamobile.Models.model_pro_sys_users;
 import za.co.rdata.r_datamobile.fileTools.preference_saving;
 import za.co.rdata.r_datamobile.locationTools.DeviceLocationService;
@@ -68,7 +71,7 @@ public class StartUpActivity extends AppCompatActivity implements AsyncResponse 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start_up);
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-        node_id = sharedPref.getString("node id", "");
+        node_id = sharedPref.getString("node_id", "");
         serverURL = sharedPref.getString("serverURL", "");
         isManagedUser = sharedPref.getBoolean(sharedprefcodes.activity_startup.isManagedUser, true);
 
@@ -230,6 +233,8 @@ public class StartUpActivity extends AppCompatActivity implements AsyncResponse 
         db = sqliteDBHelper.getInstance(this.getApplicationContext());
         try {
             db.getWritableDatabase().execSQL(DBScripts.pro_sys_users.ddl);
+            db.getWritableDatabase().execSQL(DBScripts.pro_sys_menu.ddl);
+            db.getWritableDatabase().execSQL(DBScripts.pro_sys_devices.ddl);
 
             String combinedurl = AppConfig.URL_LOGIN + "?mobnode_id=" + node_id + "";
 
@@ -284,6 +289,64 @@ public class StartUpActivity extends AppCompatActivity implements AsyncResponse 
                         e.printStackTrace();
                         Toast.makeText(getApplicationContext(), "Json error: " + e.getMessage(), Toast.LENGTH_LONG).show();
                     }
+                }
+            }, new Response.ErrorListener() {
+
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.e(TAG, "Login Error: " + error.getMessage());
+                    Toast.makeText(getApplicationContext(),
+                            error.getMessage(), Toast.LENGTH_LONG).show();
+                    //hideDialog();
+                }
+            });
+            queue.add(strReq);
+
+            combinedurl = AppConfig.URL_MENU + "?mobnode_id=" + node_id + "";
+            StringRequest strReqMenu = new StringRequest(Request.Method.GET,
+                    combinedurl, new Response.Listener<String>() {
+
+                @Override
+                public void onResponse(String response) {
+                    try {
+                        JSONObject jObj = new JSONObject(response);
+                        boolean error = jObj.getBoolean("error");
+                        // Check for error node in json
+                        if (!error) {
+                            JSONObject menu = jObj.getJSONObject("menu");
+                            JSONArray menuarray = menu.getJSONArray("menu");
+
+                            int arrSize = menuarray.length();
+                            List<Integer> lat = new ArrayList<Integer>(arrSize);
+                            List<Integer> lon = new ArrayList<Integer>(arrSize);
+                            model_pro_sys_menu model_pro_sys_menu = null;
+                            for (int i = 0; i < arrSize; ++i) {
+                                menu = menuarray.getJSONObject(i);
+
+                                model_pro_sys_menu = new model_pro_sys_menu(
+                                        menu.getString("InstNode_id"),
+                                        menu.getString("mobnode_id"),
+                                        menu.getString("module"),
+                                        menu.getString("user"),
+                                        menu.getString("mod_desc")
+                                );
+                                db.addMenu(model_pro_sys_menu);
+                            }
+                            //Intent intent = new Intent(StartUpActivity.this,
+                            //       LoginActivity.class);
+                            //startActivity(intent);
+                            //finish();
+                        } else {
+                            // Error in login. Get the error message
+                            String errorMsg = jObj.getString("error_msg");
+                            Toast.makeText(getApplicationContext(),
+                                    errorMsg, Toast.LENGTH_LONG).show();
+                        }
+                    } catch (JSONException e) {
+                        // JSON error
+                        e.printStackTrace();
+                        Toast.makeText(getApplicationContext(), "Json error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    }
 
                 }
             }, new Response.ErrorListener() {
@@ -295,20 +358,69 @@ public class StartUpActivity extends AppCompatActivity implements AsyncResponse 
                             error.getMessage(), Toast.LENGTH_LONG).show();
                     //hideDialog();
                 }
-            }) /*{
+            });
+
+            combinedurl = AppConfig.URL_DEVICES + "?mobnode_id=" + node_id + "";
+            StringRequest strReqDevices = new StringRequest(Request.Method.GET,
+                    combinedurl, new Response.Listener<String>() {
 
                 @Override
-                protected Map<String, String> getParams() {
-                    // Posting parameters to login url
-                    Map<String, String> params = new HashMap<String, String>();
-                    params.put("username", node_id);
-                    //params.put("password", password);
+                public void onResponse(String response) {
+                    try {
+                        JSONObject jObj = new JSONObject(response);
+                        boolean error = jObj.getBoolean("error");
+                        // Check for error node in json
+                        if (!error) {
+                            JSONObject device = jObj.getJSONObject("device");
+                            //JSONArray menuarray = menu.getJSONArray("device");
 
-                    return params;
+                            model_pro_sys_devices model_pro_sys_device = new model_pro_sys_devices(
+                                        device.getString("InstNode_id"),
+                                        device.getString("mobnode_id"),
+                                        device.getString("device_id"),
+                                        device.getString("description"),
+                                        device.getString("device_type"),
+                                    device.getString("serial_number"),
+                                    device.getString("status"),
+                                    device.getString("device_guid"),
+                                    device.getString("device_ip"),
+                                    device.getString("soft_version"),
+                                    device.getString("device_enable"),
+                                    device.getDouble("device_current_lat"),
+                                    device.getDouble("device_current_long"),
+                                    device.getString("device_loc_last_update")
+                                );
+                                db.addDevice(model_pro_sys_device);
+
+                            //Intent intent = new Intent(StartUpActivity.this,
+                            //       LoginActivity.class);
+                            //startActivity(intent);
+                            //finish();
+                        } else {
+                            // Error in login. Get the error message
+                            String errorMsg = jObj.getString("error_msg");
+                            Toast.makeText(getApplicationContext(),
+                                    errorMsg, Toast.LENGTH_LONG).show();
+                        }
+                    } catch (JSONException e) {
+                        // JSON error
+                        e.printStackTrace();
+                        Toast.makeText(getApplicationContext(), "Json error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+
                 }
+            }, new Response.ErrorListener() {
 
-            }*/;
-            queue.add(strReq);
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.e(TAG, "Login Error: " + error.getMessage());
+                    Toast.makeText(getApplicationContext(),
+                            error.getMessage(), Toast.LENGTH_LONG).show();
+                    //hideDialog();
+                }
+            });
+
+
             // Adding request to request queue
             //AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
         } catch (Exception e) {
