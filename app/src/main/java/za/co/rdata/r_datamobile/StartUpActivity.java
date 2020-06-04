@@ -88,6 +88,7 @@ public class StartUpActivity extends AppCompatActivity implements AsyncResponse 
             }
         } else {
             Intent mainactivity = new Intent(StartUpActivity.this, LoginActivity.class);
+            checkLogin();
             startActivity(mainactivity);
         }
 
@@ -150,11 +151,11 @@ public class StartUpActivity extends AppCompatActivity implements AsyncResponse 
 
             case GET_NODE_ID_FOR_RESULT_CODE:
                 if (resultCode == Activity.RESULT_OK) {
-                    node_id = data.getStringExtra("node_id");
+                    node_id = data.getStringExtra(sharedprefcodes.activity_startup.node_id);
                     isManagedUser = data.getBooleanExtra(sharedprefcodes.activity_startup.isManagedUser, true);
                     SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
                     SharedPreferences.Editor editor = sharedPref.edit();
-                    editor.putString("node id", node_id);
+                    editor.putString(sharedprefcodes.activity_startup.node_id, node_id);
                     editor.putBoolean(sharedprefcodes.activity_startup.isManagedUser, isManagedUser);
                     editor.apply();
 
@@ -234,6 +235,7 @@ public class StartUpActivity extends AppCompatActivity implements AsyncResponse 
         try {
             db.getWritableDatabase().execSQL(DBScripts.pro_sys_users.ddl);
             db.getWritableDatabase().execSQL(DBScripts.pro_sys_menu.ddl);
+
             db.getWritableDatabase().execSQL(DBScripts.pro_sys_devices.ddl);
 
             String combinedurl = AppConfig.URL_LOGIN + "?mobnode_id=" + node_id + "";
@@ -313,29 +315,25 @@ public class StartUpActivity extends AppCompatActivity implements AsyncResponse 
                         boolean error = jObj.getBoolean("error");
                         // Check for error node in json
                         if (!error) {
-                            JSONObject menu = jObj.getJSONObject("menu");
-                            JSONArray menuarray = menu.getJSONArray("menu");
+                            JSONArray menuarray = jObj.getJSONArray("menu");
+                            JSONArray menuitem = new JSONArray();//array = menu.getJSONArray("menu");
 
                             int arrSize = menuarray.length();
-                            List<Integer> lat = new ArrayList<Integer>(arrSize);
-                            List<Integer> lon = new ArrayList<Integer>(arrSize);
-                            model_pro_sys_menu model_pro_sys_menu = null;
+                             model_pro_sys_menu model_pro_sys_menu = null;
                             for (int i = 0; i < arrSize; ++i) {
-                                menu = menuarray.getJSONObject(i);
 
-                                model_pro_sys_menu = new model_pro_sys_menu(
-                                        menu.getString("InstNode_id"),
-                                        menu.getString("mobnode_id"),
-                                        menu.getString("module"),
-                                        menu.getString("user"),
-                                        menu.getString("mod_desc")
+                                menuitem = menuarray.getJSONArray(i);
+                                //JSONObject menu = menuitem.getJSONObject(0);
+
+                                model_pro_sys_menu modelProSysMenu = new model_pro_sys_menu(
+                                    menuitem.get(0).toString(),
+                                            menuitem.get(1).toString(),
+                                            menuitem.get(2).toString(),
+                                            menuitem.get(3).toString(),
+                                            menuitem.get(4).toString()
                                 );
-                                db.addMenu(model_pro_sys_menu);
+                                db.addMenu(modelProSysMenu);
                             }
-                            //Intent intent = new Intent(StartUpActivity.this,
-                            //       LoginActivity.class);
-                            //startActivity(intent);
-                            //finish();
                         } else {
                             // Error in login. Get the error message
                             String errorMsg = jObj.getString("error_msg");
@@ -349,8 +347,8 @@ public class StartUpActivity extends AppCompatActivity implements AsyncResponse 
                     }
 
                 }
-            }, new Response.ErrorListener() {
 
+            }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     Log.e(TAG, "Login Error: " + error.getMessage());
@@ -359,6 +357,7 @@ public class StartUpActivity extends AppCompatActivity implements AsyncResponse 
                     //hideDialog();
                 }
             });
+            queue.add(strReqMenu);
 
             combinedurl = AppConfig.URL_DEVICES + "?mobnode_id=" + node_id + "";
             StringRequest strReqDevices = new StringRequest(Request.Method.GET,
@@ -375,11 +374,11 @@ public class StartUpActivity extends AppCompatActivity implements AsyncResponse 
                             //JSONArray menuarray = menu.getJSONArray("device");
 
                             model_pro_sys_devices model_pro_sys_device = new model_pro_sys_devices(
-                                        device.getString("InstNode_id"),
-                                        device.getString("mobnode_id"),
-                                        device.getString("device_id"),
-                                        device.getString("description"),
-                                        device.getString("device_type"),
+                                    device.getString("InstNode_id"),
+                                    device.getString("mobnode_id"),
+                                    device.getString("device_id"),
+                                    device.getString("description"),
+                                    device.getString("device_type"),
                                     device.getString("serial_number"),
                                     device.getString("status"),
                                     device.getString("device_guid"),
@@ -389,13 +388,8 @@ public class StartUpActivity extends AppCompatActivity implements AsyncResponse 
                                     device.getDouble("device_current_lat"),
                                     device.getDouble("device_current_long"),
                                     device.getString("device_loc_last_update")
-                                );
-                                db.addDevice(model_pro_sys_device);
-
-                            //Intent intent = new Intent(StartUpActivity.this,
-                            //       LoginActivity.class);
-                            //startActivity(intent);
-                            //finish();
+                            );
+                            db.addDevice(model_pro_sys_device);
                         } else {
                             // Error in login. Get the error message
                             String errorMsg = jObj.getString("error_msg");
@@ -407,7 +401,6 @@ public class StartUpActivity extends AppCompatActivity implements AsyncResponse 
                         e.printStackTrace();
                         Toast.makeText(getApplicationContext(), "Json error: " + e.getMessage(), Toast.LENGTH_LONG).show();
                     }
-
                 }
             }, new Response.ErrorListener() {
 
@@ -419,10 +412,8 @@ public class StartUpActivity extends AppCompatActivity implements AsyncResponse 
                     //hideDialog();
                 }
             });
+            queue.add(strReqDevices);
 
-
-            // Adding request to request queue
-            //AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
         } catch (Exception e) {
             e.printStackTrace();
         }

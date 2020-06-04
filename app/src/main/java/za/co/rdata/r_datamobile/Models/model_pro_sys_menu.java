@@ -1,5 +1,7 @@
 package za.co.rdata.r_datamobile.Models;
 
+import java.util.ArrayList;
+
 /**
  * Project: Promun
  * Created by wcrous on 06/02/2016.
@@ -10,6 +12,17 @@ public class model_pro_sys_menu {
     private String module;
     private String user;
     private String mod_desc;
+
+    public ArrayList<Object> getModelAsArrayList() {
+
+        ArrayList<Object> objectArrayList = new ArrayList<>();
+        objectArrayList.add(InstNode_id);
+        objectArrayList.add(mobnode_id);
+        objectArrayList.add(module);
+        objectArrayList.add(user);
+        objectArrayList.add(mod_desc);
+        return objectArrayList;
+    }
 
     public String getInstNode_id() {
         return InstNode_id;
@@ -51,12 +64,11 @@ public class model_pro_sys_menu {
         this.user = user;
     }
 
-    public model_pro_sys_menu(String instNode_id, String mobnode_id, String mod_desc, String module, String user) {
-
+    public model_pro_sys_menu(String instNode_id, String mobnode_id, String module, String user, String mod_desc) {
         InstNode_id = instNode_id;
         this.mobnode_id = mobnode_id;
-        this.mod_desc = mod_desc;
         this.module = module;
         this.user = user;
+        this.mod_desc = mod_desc;
     }
 }

@@ -53,9 +53,9 @@ public class DBHelper {
                         menuItems.add(new model_pro_sys_menu(
                                 cursor.getString(cursor.getColumnIndex(meta.pro_sys_menu.InstNode_id)),
                                 cursor.getString(cursor.getColumnIndex(meta.pro_sys_menu.mobnode_id)),
-                                cursor.getString(cursor.getColumnIndex(meta.pro_sys_menu.mod_desc)),
                                 cursor.getString(cursor.getColumnIndex(meta.pro_sys_menu.module)),
-                                cursor.getString(cursor.getColumnIndex(meta.pro_sys_menu.user))));
+                                cursor.getString(cursor.getColumnIndex(meta.pro_sys_menu.user)),
+                                cursor.getString(cursor.getColumnIndex(meta.pro_sys_menu.mod_desc))));
                         cursor.moveToNext();
                     }
                 }

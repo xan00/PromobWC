@@ -13,7 +13,8 @@ public class model_pro_sys_users {
     private String LastLogin;
     private int LoginTimes;
 
-    public model_pro_sys_users(String instNode_id, String mobnode_id, String username, String password, String fullName, String status, String lastLogin, int loginTimes) {
+    public model_pro_sys_users(String instNode_id, String mobnode_id, String username, String password, String fullName,
+                               String status, String lastLogin, int loginTimes) {
         InstNode_id = instNode_id;
         this.mobnode_id = mobnode_id;
         this.username = username;

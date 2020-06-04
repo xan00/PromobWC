@@ -3,6 +3,7 @@ package za.co.rdata.r_datamobile;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Application;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
@@ -74,6 +75,8 @@ public class LoginActivity extends AppCompatActivity {
         super.onBackPressed();
         MainActivity.sqliteDbHelper.Destroy();
         SymmetricDS_Helper.Stop_SymmetricDS(this.getApplicationContext());
+        finishAndRemoveTask();
+        System.exit(0);
     }
 
     @Override

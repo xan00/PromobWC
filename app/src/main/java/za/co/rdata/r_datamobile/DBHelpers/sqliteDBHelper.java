@@ -3,10 +3,15 @@ package za.co.rdata.r_datamobile.DBHelpers;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.SQLException;
+import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -53,17 +58,28 @@ public class sqliteDBHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         Log.d(TAG, "Database tables created");
-
     }
     
-    private String queryvaluebuilder(ArrayList obj) {
-        StringBuilder builtquery = null;
+    @NonNull
+    private String queryvaluebuilder(ArrayList<Object> obj) {
+        String builtquery = "";
         for (Object o: obj
              ) {
-            builtquery.append("'").append(o.toString()).append("',");
+            String s = null;
+            String symbol = "";
+            try {
+                s = o.toString();
+                symbol="'";
+            } catch (NullPointerException e) {
+                s = "null";
+
+            } finally {
+                builtquery = builtquery + symbol + s + symbol + ",";
+            }
         }
-        builtquery.deleteCharAt(builtquery.length()-1);
-        return builtquery.toString();
+        builtquery = builtquery.substring(0,builtquery.length()-1);
+        builtquery = builtquery.replaceAll("'null'","null");
+        return builtquery;
     }
 
     /**
@@ -73,8 +89,12 @@ public class sqliteDBHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         // Inserting Row
+        try {
         db.execSQL("insert into pro_sys_users values ("+model_pro_sys_users.getInstNode_id()+","+model_pro_sys_users.getMobnode_id()+",'"+model_pro_sys_users.getUsername()+"','"+model_pro_sys_users.getPassword()+"','" +
-                                                        model_pro_sys_users.getFullName()+"','"+model_pro_sys_users.getStatus()+"','"+model_pro_sys_users.getLastLogin()+"',"+model_pro_sys_users.getLoginTimes()+")");
+                                                  model_pro_sys_users.getFullName()+"','"+model_pro_sys_users.getStatus()+"','"+model_pro_sys_users.getLastLogin()+"',"+model_pro_sys_users.getLoginTimes()+")");
+        } catch (NullPointerException | SQLiteConstraintException e) {
+            e.printStackTrace();
+        }
         //long id = db.insert(TABLE_USER, null, values);
         db.close(); // Closing database connection
 
@@ -85,21 +105,26 @@ public class sqliteDBHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         // Inserting Row
-        db.execSQL("insert into pro_sys_menu values ("+model_pro_sys_menu.getInstNode_id()+","+model_pro_sys_menu.getMobnode_id()+",'"+model_pro_sys_menu.getModule()+"','"+model_pro_sys_menu.getUser()+"','" +
-                model_pro_sys_menu.getMod_desc()+"'");
-        //long id = db.insert(TABLE_USER, null, values);
+        try {
+        String queryvalues = queryvaluebuilder(model_pro_sys_menu.getModelAsArrayList());
+        db.execSQL("insert into pro_sys_menu values ("+queryvalues+");");
+        } catch (NullPointerException | SQLiteConstraintException e) {
+            e.printStackTrace();
+        }
         db.close(); // Closing database connection
-
     }
 
     public void addDevice(model_pro_sys_devices model_pro_sys_devices) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         // Inserting Row
-        String queryvalues = queryvaluebuilder(model_pro_sys_devices);
+        try {
+        String queryvalues = queryvaluebuilder(model_pro_sys_devices.getModelAsArrayList());
         db.execSQL("insert into pro_sys_devices values ("+queryvalues+");");
+        } catch (NullPointerException | SQLiteConstraintException e) {
+            e.printStackTrace();
+        }
         db.close(); // Closing database connection
-
     }
 
     /**

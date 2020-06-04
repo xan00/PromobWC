@@ -2,10 +2,13 @@ package za.co.rdata.r_datamobile.Models;
 
 import java.util.ArrayList;
 
-public class model_pro_sys_devices  extends ArrayList {
+public class model_pro_sys_devices {
     private String InstNode_id;
 
-    public model_pro_sys_devices(String instNode_id, String mobnode_id, String device_id, String description, String device_type, String serial_number, String status, String device_guid, String device_ip, String soft_version, String device_enable, double device_current_lat, double device_current_long, String device_loc_last_update) {
+    public model_pro_sys_devices(String instNode_id, String mobnode_id, String device_id, String description,
+                                 String device_type, String serial_number, String status, String device_guid,
+                                 String device_ip, String soft_version, String device_enable, double device_current_lat,
+                                 double device_current_long, String device_loc_last_update) {
         InstNode_id = instNode_id;
         this.mobnode_id = mobnode_id;
         this.device_id = device_id;
@@ -20,6 +23,27 @@ public class model_pro_sys_devices  extends ArrayList {
         this.device_current_lat = device_current_lat;
         this.device_current_long = device_current_long;
         this.device_loc_last_update = device_loc_last_update;
+    }
+
+    public ArrayList<Object> getModelAsArrayList() {
+
+        ArrayList<Object> objectArrayList = new ArrayList<>();
+        objectArrayList.add(InstNode_id);
+        objectArrayList.add(mobnode_id);
+        objectArrayList.add(device_id);
+        objectArrayList.add(description);
+        objectArrayList.add(device_type);
+        objectArrayList.add(serial_number);
+        objectArrayList.add(status);
+        objectArrayList.add(device_guid);
+        objectArrayList.add(device_ip);
+        objectArrayList.add(soft_version);
+        objectArrayList.add(device_enable);
+        objectArrayList.add(device_current_lat);
+        objectArrayList.add(device_current_long);
+        objectArrayList.add(device_loc_last_update);
+
+        return objectArrayList;
     }
 
     private String mobnode_id;

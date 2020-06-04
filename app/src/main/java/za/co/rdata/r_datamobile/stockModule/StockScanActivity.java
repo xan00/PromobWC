@@ -444,20 +444,26 @@ public class StockScanActivity extends AppCompatActivity {
         //Log.d(TAG, displaywarehousecode);
 
         stockinfo.setWhse_code(displaywarehousecode);
-        stockinfo.setStk_code(bincursor.getString(bincursor.getColumnIndex(meta.pro_stk_stock.stk_code)));
-        stockinfo.setStk_descrip(bincursor.getString(bincursor.getColumnIndex(meta.pro_stk_stock.stk_descrip)));
-        stockinfo.setStk_bin(bincursor.getString(bincursor.getColumnIndex(meta.pro_stk_stock.stk_bin)));
-        stockinfo.setStk_qty(bincursor.getInt(bincursor.getColumnIndex(meta.pro_stk_stock.stk_qty)));
-        stockinfo.setStk_reorder(bincursor.getInt(bincursor.getColumnIndex(meta.pro_stk_stock.stk_reorder)));
+        try {
+            stockinfo.setStk_code(bincursor.getString(bincursor.getColumnIndex(meta.pro_stk_stock.stk_code)));
+            stockinfo.setStk_descrip(bincursor.getString(bincursor.getColumnIndex(meta.pro_stk_stock.stk_descrip)));
+            stockinfo.setStk_bin(bincursor.getString(bincursor.getColumnIndex(meta.pro_stk_stock.stk_bin)));
+            stockinfo.setStk_qty(bincursor.getInt(bincursor.getColumnIndex(meta.pro_stk_stock.stk_qty)));
+            stockinfo.setStk_reorder(bincursor.getInt(bincursor.getColumnIndex(meta.pro_stk_stock.stk_reorder)));
 
-        stockinfo.setStk_max_level(bincursor.getInt(bincursor.getColumnIndex(meta.pro_stk_stock.stk_max_level)));
+            stockinfo.setStk_max_level(bincursor.getInt(bincursor.getColumnIndex(meta.pro_stk_stock.stk_max_level)));
 
-        stockinfo.setStk_fuel(bincursor.getString(bincursor.getColumnIndex(meta.pro_stk_stock.stk_fuel)));
-        stockinfo.setStk_category(bincursor.getString(bincursor.getColumnIndex(meta.pro_stk_stock.stk_category)));
-        stockinfo.setStk_unit_desc(bincursor.getString(bincursor.getColumnIndex(meta.pro_stk_stock.stk_unit_desc)));
-        stockinfo.setStk_display_qty(bincursor.getInt(bincursor.getColumnIndex(meta.pro_stk_stock.stk_display_qty)));
+            stockinfo.setStk_fuel(bincursor.getString(bincursor.getColumnIndex(meta.pro_stk_stock.stk_fuel)));
+            stockinfo.setStk_category(bincursor.getString(bincursor.getColumnIndex(meta.pro_stk_stock.stk_category)));
+            stockinfo.setStk_unit_desc(bincursor.getString(bincursor.getColumnIndex(meta.pro_stk_stock.stk_unit_desc)));
+            stockinfo.setStk_display_qty(bincursor.getInt(bincursor.getColumnIndex(meta.pro_stk_stock.stk_display_qty)));
 
-        bincursor.close();
+            bincursor.close();
+        } catch (IndexOutOfBoundsException e) {
+            e.printStackTrace();
+            finish();
+            Toast.makeText(this,"Bin not found",Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void CommentChanger() {

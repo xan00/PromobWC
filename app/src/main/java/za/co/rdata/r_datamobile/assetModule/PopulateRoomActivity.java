@@ -1018,14 +1018,14 @@ public class PopulateRoomActivity extends AppCompatActivity {
 
         Intent gotogallery = new Intent(PopulateRoomActivity.this, GalleryActivity.class);
         gotogallery.putExtra("PHOTO ID",barcode);
-        String sql = "SELECT scan_location, scan_lattitude, scan_longitude FROM pro_ar_scan WHERE scan_barcode = '"+barcode+"'";
+        String sql = "SELECT scan_barcode, scan_lattitude, scan_longitude FROM pro_ar_scan WHERE scan_barcode = '"+barcode+"'";
         gotogallery.putExtra(intentcodes.asset_activity.current_room,strCurrentroom);
-        gotogallery.putExtra("ROOM SCAN",strSelectedRoom);
+        gotogallery.putExtra("ROOM SCAN",strSelectedRoom +" : "+ barcode);
         gotogallery.putExtra("PIC TEXT SQL STRING",sql);
         gotogallery.putExtra("DETAIL1 TITLE",strDetailName2);
         gotogallery.putExtra("DETAIL2 TITLE",strDetailName);
         gotogallery.putExtra("PICTURE TYPE","A");
-        gotogallery.putExtra(intentcodes.asset_activity.asset_barcode,strSelectedBarcode);
+        gotogallery.putExtra(intentcodes.asset_activity.asset_barcode,barcode);
         startActivity(gotogallery);
     }
 
