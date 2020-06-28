@@ -17,6 +17,7 @@ import java.util.HashMap;
 
 import za.co.rdata.r_datamobile.DBMeta.meta;
 import za.co.rdata.r_datamobile.MainActivity;
+import za.co.rdata.r_datamobile.Models.model_pro_hr_options;
 import za.co.rdata.r_datamobile.Models.model_pro_sys_devices;
 import za.co.rdata.r_datamobile.Models.model_pro_sys_menu;
 import za.co.rdata.r_datamobile.Models.model_pro_sys_users;
@@ -164,6 +165,19 @@ public class sqliteDBHelper extends SQLiteOpenHelper {
 
         // Create tables again
         onCreate(db);
+    }
+
+    public void addHRMenu(model_pro_hr_options model_pro_hr_options) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        // Inserting Row
+        try {
+            String queryvalues = queryvaluebuilder(model_pro_hr_options.getModelAsArrayList());
+            db.execSQL("insert into pro_hr_options values ("+queryvalues+");");
+        } catch (NullPointerException | SQLiteConstraintException e) {
+            e.printStackTrace();
+        }
+        db.close(); // Closing database connection
     }
 }
 

@@ -11,6 +11,7 @@ import za.co.rdata.r_datamobile.DBMeta.meta;
 import za.co.rdata.r_datamobile.MainActivity;
 import za.co.rdata.r_datamobile.Models.model_pro_ar_cond;
 import za.co.rdata.r_datamobile.Models.model_pro_ar_desc;
+import za.co.rdata.r_datamobile.Models.model_pro_hr_options;
 import za.co.rdata.r_datamobile.Models.model_pro_mr_no_access;
 import za.co.rdata.r_datamobile.Models.model_pro_mr_notes;
 import za.co.rdata.r_datamobile.Models.model_pro_mr_route_header;
@@ -20,6 +21,7 @@ import za.co.rdata.r_datamobile.Models.model_pro_sys_menu;
 /**
  * Created by Dev on 24/01/2016.
  */
+
 public class DBHelper {
 
     public static class generic {
@@ -68,6 +70,37 @@ public class DBHelper {
         }
     }
 
+    public static class pro_hr_options {
+        public static ArrayList<model_pro_hr_options> GetHRMenuByUser(String user) {
+
+            ArrayList<model_pro_hr_options> menuItems = new ArrayList<>();
+            Cursor cursor;// = null;
+            try {
+                cursor = MainActivity.sqliteDbHelper.getReadableDatabase().query(
+                        meta.pro_sys_menu.TableName,
+                        null, meta.pro_sys_menu.user + " = ?", new String[]{user}, null, null, meta.pro_sys_menu.mod_desc, null);
+
+                if (cursor != null && cursor.getCount() > 0) {
+                    cursor.moveToFirst();
+                    while (!cursor.isAfterLast()) {
+                        menuItems.add(new model_pro_hr_options(
+                                cursor.getString(cursor.getColumnIndex(meta.pro_hr_options.InstNode_id)),
+                                cursor.getString(cursor.getColumnIndex(meta.pro_hr_options.mobnode_id)),
+                                cursor.getString(cursor.getColumnIndex(meta.pro_hr_options.hr_menu_item)),
+                                cursor.getString(cursor.getColumnIndex(meta.pro_hr_options.hr_menu_desc)),
+                                cursor.getString(cursor.getColumnIndex(meta.pro_hr_options.hr_menu_module))));
+                        cursor.moveToNext();
+                    }
+                }
+                if (cursor != null)
+                    cursor.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return menuItems;
+        }
+    }
+
     public static class pro_sys_images {
         public static byte[] GetImageByNodeID(String node_id) {
             byte[] image = null;
@@ -91,8 +124,10 @@ public class DBHelper {
 
     public static class pro_sys_users {
         public static Cursor getAllUsers() {
+
             Cursor cursor = null;
            // try {
+//                        MainActivity.sqliteDbHelper = sqliteDBHelper.getInstance(this.getApplicationContext());
                 cursor = MainActivity.sqliteDbHelper.getReadableDatabase().query(
                         meta.pro_sys_users.TableName,
                         null, null, null, null, null, null, null);

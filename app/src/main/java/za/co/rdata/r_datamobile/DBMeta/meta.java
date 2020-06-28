@@ -313,4 +313,13 @@ public class meta {
         public static String pro_fo_latitude = "pro_fo_latitude";
     }
 
+    public static class pro_hr_options{
+        public static String TableName = "pro_hr_options";
+        public static String InstNode_id="InstNode_id";
+        public static String mobnode_id="mobnode_id";
+        public static String hr_menu_item="hr_menu_item";
+        public static String hr_menu_desc="hr_menu_desc";
+        public static String hr_menu_module="hr_menu_module";
+    }
+
 }

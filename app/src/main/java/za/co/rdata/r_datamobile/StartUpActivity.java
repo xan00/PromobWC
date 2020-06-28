@@ -231,12 +231,12 @@ public class StartUpActivity extends AppCompatActivity implements AsyncResponse 
         RequestQueue queue = Volley.newRequestQueue(this);
         //pDialog.setMessage("Logging in ...");
         //showDialog();
-        db = sqliteDBHelper.getInstance(this.getApplicationContext());
+        MainActivity.sqliteDbHelper = sqliteDBHelper.getInstance(this.getApplicationContext());
         try {
-            db.getWritableDatabase().execSQL(DBScripts.pro_sys_users.ddl);
-            db.getWritableDatabase().execSQL(DBScripts.pro_sys_menu.ddl);
+            MainActivity.sqliteDbHelper.getWritableDatabase().execSQL(DBScripts.pro_sys_users.ddl);
+            MainActivity.sqliteDbHelper.getWritableDatabase().execSQL(DBScripts.pro_sys_menu.ddl);
 
-            db.getWritableDatabase().execSQL(DBScripts.pro_sys_devices.ddl);
+            MainActivity.sqliteDbHelper.getWritableDatabase().execSQL(DBScripts.pro_sys_devices.ddl);
 
             String combinedurl = AppConfig.URL_LOGIN + "?mobnode_id=" + node_id + "";
 
@@ -274,7 +274,7 @@ public class StartUpActivity extends AppCompatActivity implements AsyncResponse 
                             );
 
                             // Inserting row in users table
-                            db.addUser(model_pro_sys_users);
+                            MainActivity.sqliteDbHelper.addUser(model_pro_sys_users);
 
                             //Intent intent = new Intent(StartUpActivity.this,
                             //       LoginActivity.class);
@@ -332,7 +332,7 @@ public class StartUpActivity extends AppCompatActivity implements AsyncResponse 
                                             menuitem.get(3).toString(),
                                             menuitem.get(4).toString()
                                 );
-                                db.addMenu(modelProSysMenu);
+                                MainActivity.sqliteDbHelper.addMenu(modelProSysMenu);
                             }
                         } else {
                             // Error in login. Get the error message
@@ -389,7 +389,7 @@ public class StartUpActivity extends AppCompatActivity implements AsyncResponse 
                                     device.getDouble("device_current_long"),
                                     device.getString("device_loc_last_update")
                             );
-                            db.addDevice(model_pro_sys_device);
+                            MainActivity.sqliteDbHelper.addDevice(model_pro_sys_device);
                         } else {
                             // Error in login. Get the error message
                             String errorMsg = jObj.getString("error_msg");

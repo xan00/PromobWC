@@ -160,7 +160,7 @@ public class LoginActivity extends AppCompatActivity {
             cursor.moveToFirst();
         } catch (NullPointerException e) {
             e.printStackTrace();
-            MainActivity.sqliteDbHelper = sqliteDBHelper.getInstance(this.getApplicationContext());
+            //MainActivity.sqliteDbHelper = sqliteDBHelper.getInstance(this.getApplicationContext());
             cursor = DBHelper.pro_sys_users.getAllUsers();
             cursor.moveToFirst();
         }

@@ -219,5 +219,6 @@
     <string name="job_information">Job Information</string>
     <string name="node_settings">NODE SETTINGS</string>
     <string name="managed_user">Managed User</string>
+    <string name="title_activity_select_employee">Employee Portal</string>
 
 </resources>
