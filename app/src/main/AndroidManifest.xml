@@ -168,6 +168,8 @@
         <activity android:name=".ImageUploadActivity" />
         <activity android:name=".SelectJob" />
         <activity android:name=".jobModule.activity_job_card_holder" />
+        <activity android:name=".HRModule.SelectLeave" />
+        <activity android:name=".HRModule.SelectApprove" />
 
         <provider
             android:name="androidx.core.content.FileProvider"

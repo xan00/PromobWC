@@ -12,11 +12,13 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import java.lang.reflect.Array;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import za.co.rdata.r_datamobile.DBMeta.meta;
 import za.co.rdata.r_datamobile.MainActivity;
+import za.co.rdata.r_datamobile.Models.model_pro_hr_leavereq;
 import za.co.rdata.r_datamobile.Models.model_pro_hr_options;
 import za.co.rdata.r_datamobile.Models.model_pro_sys_devices;
 import za.co.rdata.r_datamobile.Models.model_pro_sys_menu;
@@ -64,8 +66,7 @@ public class sqliteDBHelper extends SQLiteOpenHelper {
     @NonNull
     private String queryvaluebuilder(ArrayList<Object> obj) {
         String builtquery = "";
-        for (Object o: obj
-             ) {
+        for (Object o: obj) {
             String s = null;
             String symbol = "";
             try {
@@ -82,6 +83,33 @@ public class sqliteDBHelper extends SQLiteOpenHelper {
         builtquery = builtquery.replaceAll("'null'","null");
         return builtquery;
     }
+
+    @NonNull
+    private String queryupdatevaluebuilder(ArrayList<Object> obj, ArrayList<String> fields) {
+        String builtquery = "";
+        int columncount = 0;
+
+        for (Object o: obj) {
+            String s = null;
+            String symbol = "";
+
+            try {
+                s = o.toString();
+                symbol="'";
+            } catch (NullPointerException e) {
+                s = "null";
+
+            } finally {
+
+                builtquery = builtquery + fields.get(columncount) + "=" + symbol + s + symbol + ",";
+                columncount++;
+            }
+        }
+        builtquery = builtquery.substring(0,builtquery.length()-1);
+        builtquery = builtquery.replaceAll("'null'","null");
+        return builtquery;
+    }
+
 
     /**
      * Storing user details in database
@@ -175,6 +203,48 @@ public class sqliteDBHelper extends SQLiteOpenHelper {
             String queryvalues = queryvaluebuilder(model_pro_hr_options.getModelAsArrayList());
             db.execSQL("insert into pro_hr_options values ("+queryvalues+");");
         } catch (NullPointerException | SQLiteConstraintException e) {
+            e.printStackTrace();
+        }
+        db.close(); // Closing database connection
+    }
+
+    public void addHRLeaveReq(model_pro_hr_leavereq model_pro_hr_leavereq) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        // Inserting Row
+        try {
+            String queryvalues = queryvaluebuilder(model_pro_hr_leavereq.getModelAsArrayList());
+            db.execSQL("insert into pro_hr_leave_requests values ("+queryvalues+");");
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+
+        } catch (SQLiteConstraintException e1) {
+            updateHRLeaveReq(model_pro_hr_leavereq);
+        }
+        db.close(); // Closing database connection
+    }
+
+    public void updateHRLeaveReq(model_pro_hr_leavereq model_pro_hr_leavereq) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Field[] fields = model_pro_hr_leavereq.class.getDeclaredFields();
+        // Updating Row
+        try {
+            String queryvalues = queryupdatevaluebuilder(model_pro_hr_leavereq.getModelAsArrayList(),meta.pro_hr_leave_requests.getfieldnames());
+            db.execSQL("update pro_hr_leave_requests set "+queryvalues+" where leave_request_id = "+model_pro_hr_leavereq.getLeave_request_id()+";");
+        } catch (NullPointerException | SQLiteConstraintException e) {
+            e.printStackTrace();
+        }
+        db.close(); // Closing database connection
+    }
+
+    public void deleteHRLeaveReq(model_pro_hr_leavereq model_pro_hr_leavereq) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        // Inserting Row
+        try {
+            String queryvalues = queryvaluebuilder(model_pro_hr_leavereq.getModelAsArrayList());
+            db.execSQL("insert into pro_hr_leave_requests values ("+queryvalues+");");
+        } catch (NullPointerException e) {
             e.printStackTrace();
         }
         db.close(); // Closing database connection

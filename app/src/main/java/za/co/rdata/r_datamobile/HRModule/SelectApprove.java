@@ -1,11 +1,17 @@
 package za.co.rdata.r_datamobile.HRModule;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteConstraintException;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -40,7 +46,7 @@ import za.co.rdata.r_datamobile.Models.model_pro_hr_options;
 import za.co.rdata.r_datamobile.R;
 import za.co.rdata.r_datamobile.SelectEmployee;
 
-public class SelectLeave extends AppCompatActivity {
+public class SelectApprove extends AppCompatActivity {
 
     private String TAG = null;
     private List<model_pro_hr_leavereq> leavereqItems = new ArrayList<>();
@@ -48,17 +54,15 @@ public class SelectLeave extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_hr_select_leave);
+        setContentView(R.layout.activity_hr_select_approve);
         getleavereq();
 
         leavereqItems = DBHelperHR.pro_hr_leave_requests.GetHRLeaveRequestsByUser(MainActivity.NODE_ID);
-
-        ArrayAdapter<model_pro_hr_leavereq> adapter = new SelectLeave.hrItems_ListAdapter();
-        ListView listView = findViewById(R.id.leaveActivity_LVleaveItems);
-        adapter.notifyDataSetChanged();
+        ArrayAdapter<model_pro_hr_leavereq> adapter = new SelectApprove.hrItems_ListAdapter();
+        ListView listView = findViewById(R.id.approveActivity_LVapproveItems);
         listView.setAdapter(adapter);
 
-
+        registerForContextMenu(listView);
     }
 
     @Override
@@ -68,17 +72,50 @@ public class SelectLeave extends AppCompatActivity {
     }
 
     @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        if (v.getId() == R.id.approveActivity_LVapproveItems) {
+            AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
+            String[] menuItems = {"Approve", "Reject"};
+            for (int i = 0; i < menuItems.length; i++) {
+                menu.add(Menu.NONE, i, i, menuItems[i]);
+            }
+        }
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        ListView listView = findViewById(R.id.approveActivity_LVapproveItems);
+        //info.position - listView.getFirstVisiblePosition()
+        View view = listView.getChildAt(info.position - listView.getFirstVisiblePosition());
+
+        switch ((String) item.getTitle()) {
+            case "Approve":
+                leavereqItems.get(info.position).setApproved(1);
+                break;
+            case "Reject":
+                leavereqItems.get(info.position).setApproved(-1);
+                break;
+
+        }
+        MainActivity.sqliteDbHelper.updateHRLeaveReq(leavereqItems.get(info.position));
+        setleaveapprove(leavereqItems.get(info.position));
+        return true;
+    }
+
+    @Override
     public void onBackPressed() {
         super.onBackPressed();
         finish();
-        Intent gotomain = new Intent(SelectLeave.this, SelectEmployee.class);
+        Intent gotomain = new Intent(SelectApprove.this, SelectEmployee.class);
         startActivity(gotomain);
     }
 
     private class hrItems_ListAdapter extends ArrayAdapter<model_pro_hr_leavereq> {
 
         hrItems_ListAdapter() {
-            super(SelectLeave.this, R.layout.select_leave_item, leavereqItems);
+            super(SelectApprove.this, R.layout.select_leave_item, leavereqItems);
         }
 
         @NonNull
@@ -90,13 +127,14 @@ public class SelectLeave extends AppCompatActivity {
                 itemView = getLayoutInflater().inflate(R.layout.select_leave_item, parent, false);
 
             model_pro_hr_leavereq leavereq = leavereqItems.get(position);
-            ConstraintLayout cl_activity_hr_select_leave = itemView.findViewById(R.id.cl_activity_hr_select_leave);
+            //id is from selectleave but is reused for selectapprove
+            ConstraintLayout cl_activity_hr_select_approve = itemView.findViewById(R.id.cl_activity_hr_select_leave);
 
             getleavereq();
             leavereqItems = DBHelperHR.pro_hr_leave_requests.GetHRLeaveRequestsByUser(MainActivity.NODE_ID);
 
             if (leavereq.getApproved() == 1) {
-                cl_activity_hr_select_leave.setBackgroundResource(R.drawable.approved_leave);
+                cl_activity_hr_select_approve.setBackgroundResource(R.drawable.approved_leave);
             }
 
             try {
@@ -106,6 +144,16 @@ public class SelectLeave extends AppCompatActivity {
                 e.printStackTrace();
             }
 
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+
+
+
+                    return false;
+                }
+            });
+
             return itemView;
         }
     }
@@ -114,13 +162,10 @@ public class SelectLeave extends AppCompatActivity {
 
         String tag_string_req = "req_leave";
         RequestQueue queue = Volley.newRequestQueue(this);
-        //pDialog.setMessage("Logging in ...");
-        //showDialog();
+
         MainActivity.sqliteDbHelper = sqliteDBHelper.getInstance(this.getApplicationContext());
         try {
             MainActivity.sqliteDbHelper.getWritableDatabase().execSQL(DBScripts.pro_hr_leave_requests.ddl);
-
-
             String combinedurl = AppConfig.URL_HRLEAVEREQ + "?mobnode_id=" + MainActivity.NODE_ID + "";
             StringRequest strReqMenu = new StringRequest(Request.Method.GET,
                     combinedurl, new Response.Listener<String>() {
@@ -140,7 +185,6 @@ public class SelectLeave extends AppCompatActivity {
                             for (int i = 0; i < arrSize; ++i) {
 
                                 leaveitem = leavearray.getJSONArray(i);
-                                //JSONObject leave = leaveitem.getJSONObject(0);
 
                                 model_pro_hr_leavereq = new model_pro_hr_leavereq(
                                         leaveitem.get(0).toString(),
@@ -170,6 +214,55 @@ public class SelectLeave extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), "Json error: " + e.getMessage(), Toast.LENGTH_LONG).show();
                     } catch (SQLiteConstraintException e) {
                         e.printStackTrace();
+                    }
+
+                }
+
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.e(TAG, "Login Error: " + error.getMessage());
+                    Toast.makeText(getApplicationContext(),
+                            error.getMessage(), Toast.LENGTH_LONG).show();
+                    //hideDialog();
+                }
+            });
+            queue.add(strReqMenu);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void setleaveapprove(model_pro_hr_leavereq model_pro_hr_leavereq) {
+        String tag_string_req = "req_leave";
+        RequestQueue queue = Volley.newRequestQueue(this);
+
+        MainActivity.sqliteDbHelper = sqliteDBHelper.getInstance(this.getApplicationContext());
+        try {
+            String combinedurl = AppConfig.URL_HRLEAVEREQ + "?instnode="+model_pro_hr_leavereq.getInstNode_id() +
+                                                            "&mobnode="+model_pro_hr_leavereq.getMobnode_id() +
+                                                            "&empid="+model_pro_hr_leavereq.getEmployee_id() +
+                                                            "&type="+model_pro_hr_leavereq.getLeave_type()+
+                                                            "&from="+model_pro_hr_leavereq.getDate_created()+
+                                                            "&days="+model_pro_hr_leavereq.getLeave_count_requested()+
+                                                            "&reason="+model_pro_hr_leavereq.getLeave_reason()+
+                                                            "&approved="+model_pro_hr_leavereq.getApproved()+
+                                                            "&rej="+model_pro_hr_leavereq.getReject_reason()+
+                                                            "&doa="+model_pro_hr_leavereq.getDate_of_approval();
+
+            StringRequest strReqMenu = new StringRequest(Request.Method.PUT,
+                    combinedurl, new Response.Listener<String>() {
+
+                @Override
+                public void onResponse(String response) {
+                    try {
+                        JSONObject jObj = new JSONObject(response);
+                        boolean error = jObj.getBoolean("error");
+                        // Check for error node in json
+                    } catch (JSONException | SQLiteConstraintException e) {
+                        // JSON error
+                        e.printStackTrace();
+                        //Toast.makeText(getApplicationContext(), "Json error: " + e.getMessage(), Toast.LENGTH_LONG).show();
                     }
 
                 }

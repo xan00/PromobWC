@@ -2,11 +2,11 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/cl_activity_hr_options"
+    android:id="@+id/cl_activity_hr_approve"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorCompliment"
-    tools:context=".SelectEmployee">
+    tools:context=".HRModule.SelectApprove">
 
     <TextView
         android:id="@+id/textView11"
@@ -15,19 +15,19 @@
         android:layout_alignParentStart="true"
         android:background="@color/roomcolour"
         android:gravity="center"
-        android:text="SELECT EMPLOYEE OPTION"
+        android:text="@string/requested_leave"
         android:textAlignment="center"
         android:textAllCaps="false"
         android:textColor="@color/black"
         android:textSize="21sp"
         android:typeface="sans"
-        app:layout_constraintBottom_toTopOf="@+id/mainActivity_LVmenuItems"
+        app:layout_constraintBottom_toTopOf="@+id/approveActivity_LVapproveItems"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ListView
-        android:id="@+id/selectemployee_LVmenuItems"
+        android:id="@+id/approveActivity_LVapproveItems"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="12dp"

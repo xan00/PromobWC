@@ -65,4 +65,27 @@ public class DBScripts {
                 "\t\tprimary key (InstNode_id, mobnode_id, device_id)\n" +
                 ");";
     }
+
+    public static class pro_hr_leave_requests {
+        public static String ddl = "create table if not exists pro_hr_leave_requests\n" +
+                "(\n" +
+                "\tInstNode_id varchar(5) not null,\n" +
+                "\tmobnode_id varchar(5) not null,\n" +
+                "\tleave_request_id int auto_increment,\n" +
+                "\temployee_id varchar(5) not null,\n" +
+                "\tleave_type varchar(254) not null,\n" +
+                "\tleave_date_from datetime null,\n" +
+                "\tleave_count_requested double null,\n" +
+                "\tleave_reason varchar(254) null,\n" +
+                "\tdate_created datetime default CURRENT_TIMESTAMP null,\n" +
+                "\tapproved tinyint(1) default 0 null,\n" +
+                "\treject_reason varchar(254) null,\n" +
+                "\tdate_of_approval datetime null,\n" +
+                "\tconstraint InstNode_id\n" +
+                "\t\tunique (InstNode_id, mobnode_id, leave_request_id),\n" +
+                "\tconstraint pro_hr_leave_requests_pk\n" +
+                "\t\tunique (leave_request_id)\n" +
+                ");";
+
+    }
 }

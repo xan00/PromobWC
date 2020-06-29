@@ -1,5 +1,9 @@
 package za.co.rdata.r_datamobile.DBMeta;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+
 /**
  * Created by Dev on 24/01/2016.
  */
@@ -320,6 +324,26 @@ public class meta {
         public static String hr_menu_item="hr_menu_item";
         public static String hr_menu_desc="hr_menu_desc";
         public static String hr_menu_module="hr_menu_module";
+    }
+
+    public static class pro_hr_leave_requests{
+        public static String TableName = "pro_hr_leave_requests";
+        public static String InstNode_id="InstNode_id";
+        public static String mobnode_id="mobnode_id";
+        public static String leave_request_id="leave_request_id";
+        public static String employee_id="employee_id";
+        public static String leave_type="leave_type";
+        public static String leave_date_from="leave_date_from";
+        public static String leave_count_requested="leave_count_requested";
+        public static String leave_reason="leave_reason";
+        public static String date_created="date_created";
+        public static String approved="approved";
+        public static String reject_reason="reject_reason";
+        public static String date_of_approval="date_of_approval";
+
+        public static ArrayList<String> getfieldnames() {
+                return new ArrayList<>(Arrays.asList(InstNode_id,mobnode_id,leave_request_id,employee_id,leave_type,leave_date_from,leave_count_requested,leave_reason,date_created,approved,reject_reason,date_of_approval));
+        }
     }
 
 }

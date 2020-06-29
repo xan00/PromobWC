@@ -1,6 +1,7 @@
 package za.co.rdata.r_datamobile;
 
 import android.content.Intent;
+import android.database.sqlite.SQLiteConstraintException;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -29,6 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import za.co.rdata.r_datamobile.DBHelpers.DBHelper;
+import za.co.rdata.r_datamobile.DBHelpers.DBHelperHR;
 import za.co.rdata.r_datamobile.DBHelpers.sqliteDBHelper;
 import za.co.rdata.r_datamobile.DBMeta.DBScripts;
 import za.co.rdata.r_datamobile.Models.model_pro_hr_options;
@@ -51,7 +53,7 @@ public class SelectEmployee extends AppCompatActivity {
         super.onResume();
         gethrmenus();
 
-        menuItems = DBHelper.pro_hr_options.GetHRMenuByUser(MainActivity.USER);
+        menuItems = DBHelperHR.pro_hr_options.GetHRMenuByUser(MainActivity.NODE_ID);
         ArrayAdapter<model_pro_hr_options> adapter = new SelectEmployee.hrItems_ListAdapter();
         ListView listView = findViewById(R.id.selectemployee_LVmenuItems);
         listView.setAdapter(adapter);
@@ -69,6 +71,14 @@ public class SelectEmployee extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+        Intent gotomain = new Intent(SelectEmployee.this, MainActivity.class);
+        startActivity(gotomain);
+    }
+
     public SelectEmployee() {
     }
 
@@ -83,7 +93,7 @@ public class SelectEmployee extends AppCompatActivity {
             MainActivity.sqliteDbHelper.getWritableDatabase().execSQL(DBScripts.pro_hr_options.ddl);
 
 
-        String combinedurl = AppConfig.URL_MENU + "?mobnode_id=" + MainActivity.NODE_ID + "";
+        String combinedurl = AppConfig.URL_HRMENU + "?mobnode_id=" + MainActivity.NODE_ID + "";
         StringRequest strReqMenu = new StringRequest(Request.Method.GET,
                 combinedurl, new Response.Listener<String>() {
 
@@ -123,6 +133,8 @@ public class SelectEmployee extends AppCompatActivity {
                     // JSON error
                     e.printStackTrace();
                     Toast.makeText(getApplicationContext(), "Json error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                } catch (SQLiteConstraintException e) {
+                    e.printStackTrace();
                 }
 
             }

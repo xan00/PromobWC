@@ -11,6 +11,7 @@
       <w>gotologin</w>
       <w>keeprunning</w>
       <w>lastlogin</w>
+      <w>leavereq</w>
       <w>listview</w>
       <w>logintimes</w>
       <w>mainactivity</w>
@@ -20,7 +21,10 @@
       <w>promob</w>
       <w>queryvalues</w>
       <w>redmeter</w>
+      <w>reqdate</w>
       <w>scande</w>
+      <w>selectapprove</w>
+      <w>selectleave</w>
       <w>senddb</w>
       <w>settingsback</w>
       <w>settingsintent</w>
