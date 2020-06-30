@@ -223,5 +223,7 @@
     <string name="requested_leave">REQUESTED LEAVE</string>
     <string name="type_of_leave">Type of Leave</string>
     <string name="apply_for_leave">APPLY FOR LEAVE</string>
+    <string name="start_date_of_leave">Start Date of Leave</string>
+    <string name="end_date_of_leave">End Date of Leave</string>
 
 </resources>

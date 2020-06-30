@@ -102,4 +102,25 @@ public class DBScripts {
                 "\t\tunique (leave_type_id)\n" +
                 ");";
     }
+
+    public static class pro_hr_employee {
+        public static String ddl = "create table if not exists pro_hr_employee\n" +
+                "(\n" +
+                "\tInstNode_id varchar(5) not null,\n" +
+                "\tmobnode_id varchar(5) not null,\n" +
+                "\temployee_id varchar(5) not null,\n" +
+                "\temployee_fullname varchar(254) not null,\n" +
+                "\temployee_approver_id varchar(254) not null,\n" +
+                "\tconstraint pro_hr_employee_InstNode_id_mobnode_id_employee_id_uindex\n" +
+                "\t\tunique (InstNode_id, mobnode_id, employee_id),\n" +
+                "\tconstraint pro_hr_employee_employee_id_uindex\n" +
+                "\t\tunique (employee_id),\n" +
+                "\tconstraint pro_hr_employee_pro_hr_employee_employee_id_fk\n" +
+                "\t\tforeign key (employee_approver_id) references mdata.pro_hr_employee (employee_id)\n" +
+                ");\n" +
+                "\n" +
+                "alter table mdata.pro_hr_employee\n" +
+                "\tadd primary key (InstNode_id, mobnode_id, employee_id);\n" +
+                "\n";
+    }
 }
