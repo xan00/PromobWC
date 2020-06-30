@@ -12,6 +12,10 @@ public class AppConfig {    // Server user login url
 
     public static String URL_HRLEAVEREQ = "http://192.168.100.103/mdata/hr/hr_get_leave.php";
 
+    public static String URL_HRLEAVEUPDATE = "http://192.168.100.103/mdata/hr/hr_leave_request.php";
+
+    public static String URL_HRLEAVETYPES = "http://192.168.100.103/mdata/hr/hr_leave_type.php";
+
     // Server user register url
     public static String URL_REGISTER = "http://localhost/mdata/register.php";
 }

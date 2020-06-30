@@ -19,6 +19,7 @@ import java.util.HashMap;
 import za.co.rdata.r_datamobile.DBMeta.meta;
 import za.co.rdata.r_datamobile.MainActivity;
 import za.co.rdata.r_datamobile.Models.model_pro_hr_leavereq;
+import za.co.rdata.r_datamobile.Models.model_pro_hr_leavetypes;
 import za.co.rdata.r_datamobile.Models.model_pro_hr_options;
 import za.co.rdata.r_datamobile.Models.model_pro_sys_devices;
 import za.co.rdata.r_datamobile.Models.model_pro_sys_menu;
@@ -220,6 +221,20 @@ public class sqliteDBHelper extends SQLiteOpenHelper {
 
         } catch (SQLiteConstraintException e1) {
             updateHRLeaveReq(model_pro_hr_leavereq);
+        }
+        db.close(); // Closing database connection
+    }
+
+    public void addHRLeaveTypes(model_pro_hr_leavetypes model_pro_hr_leavetypes) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        // Inserting Row
+        try {
+            String queryvalues = queryvaluebuilder(model_pro_hr_leavetypes.getModelAsArrayList());
+            db.execSQL("insert into pro_hr_leave_types values ("+queryvalues+");");
+        } catch (NullPointerException | SQLiteConstraintException e) {
+            e.printStackTrace();
+
         }
         db.close(); // Closing database connection
     }

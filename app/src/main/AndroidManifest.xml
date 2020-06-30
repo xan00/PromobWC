@@ -170,6 +170,7 @@
         <activity android:name=".jobModule.activity_job_card_holder" />
         <activity android:name=".HRModule.SelectLeave" />
         <activity android:name=".HRModule.SelectApprove" />
+        <activity android:name=".HRModule.SelectApplyForLeave" />
 
         <provider
             android:name="androidx.core.content.FileProvider"

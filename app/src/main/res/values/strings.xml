@@ -168,7 +168,7 @@
     <string name="user">User</string>
     <string name="available_modules">AVAILABLE MODULES</string>
     <string name="logged_in">Logged In As:</string>
-    <string name="welcome_to_promun">Welcome to Promun</string>
+    <string name="welcome_to_promun">Welcome to M-Data</string>
     <string name="route_title">Route:</string>
     <string name="select_route_to_read">SELECT ROUTE TO READ</string>
     <string name="meter_information">Meter Information</string>
@@ -221,5 +221,7 @@
     <string name="managed_user">Managed User</string>
     <string name="title_activity_select_employee">Employee Portal</string>
     <string name="requested_leave">REQUESTED LEAVE</string>
+    <string name="type_of_leave">Type of Leave</string>
+    <string name="apply_for_leave">APPLY FOR LEAVE</string>
 
 </resources>

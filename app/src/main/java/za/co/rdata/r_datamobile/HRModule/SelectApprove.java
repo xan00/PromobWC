@@ -238,11 +238,13 @@ public class SelectApprove extends AppCompatActivity {
         RequestQueue queue = Volley.newRequestQueue(this);
 
         MainActivity.sqliteDbHelper = sqliteDBHelper.getInstance(this.getApplicationContext());
+
         try {
-            String combinedurl = AppConfig.URL_HRLEAVEREQ + "?instnode="+model_pro_hr_leavereq.getInstNode_id() +
+            String combinedurl = AppConfig.URL_HRLEAVEUPDATE + "?instnode="+model_pro_hr_leavereq.getInstNode_id() +
                                                             "&mobnode="+model_pro_hr_leavereq.getMobnode_id() +
                                                             "&empid="+model_pro_hr_leavereq.getEmployee_id() +
                                                             "&type="+model_pro_hr_leavereq.getLeave_type()+
+                                                            "&reqid="+model_pro_hr_leavereq.getLeave_request_id()+
                                                             "&from="+model_pro_hr_leavereq.getDate_created()+
                                                             "&days="+model_pro_hr_leavereq.getLeave_count_requested()+
                                                             "&reason="+model_pro_hr_leavereq.getLeave_reason()+

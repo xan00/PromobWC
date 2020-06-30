@@ -88,4 +88,18 @@ public class DBScripts {
                 ");";
 
     }
+
+    public static class pro_hr_leave_types {
+        public static String ddl = "create table if not exists pro_hr_leave_types\n" +
+                "(\n" +
+                "\tInstNode_id varchar(5) not null,\n" +
+                "\tmobnode_id varchar(5) not null,\n" +
+                "\tleave_type_id varchar(5) not null,\n" +
+                "\tleave_type_desc varchar(254) not null,\n" +
+                "\tconstraint pro_hr_leave_types_InstNode_id_mobnode_id_leave_type_id_uindex\n" +
+                "\t\tunique (InstNode_id, mobnode_id, leave_type_id),\n" +
+                "\tconstraint pro_hr_leave_types_leave_type_id_uindex\n" +
+                "\t\tunique (leave_type_id)\n" +
+                ");";
+    }
 }
