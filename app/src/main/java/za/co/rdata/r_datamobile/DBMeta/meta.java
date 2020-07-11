@@ -9,6 +9,8 @@ import java.util.Date;
  */
 public class meta {
 
+
+
     public static class pro_sys_devices{
         public static String TableName = "pro_sys_devices";
         public static String InstNode_id = "InstNode_id";
@@ -328,22 +330,40 @@ public class meta {
 
     public static class pro_hr_leave_requests{
         public static String TableName = "pro_hr_leave_requests";
+
         public static String InstNode_id="InstNode_id";
         public static String mobnode_id="mobnode_id";
         public static String leave_request_id="leave_request_id";
         public static String employee_id="employee_id";
         public static String leave_type="leave_type";
-        public static String leave_date_from="leave_date_from";
-        public static String leave_count_requested="leave_count_requested";
+
         public static String leave_reason="leave_reason";
+        public static String leave_date_from="leave_date_from";
+        public static String starthalf="starthalf";
+        public static String leave_date_to="leave_date_to";
+        public static String endhalf="endhalf";
+
+        public static String leave_count_requested="leave_count_requested";
         public static String date_created="date_created";
         public static String approved="approved";
         public static String reject_reason="reject_reason";
         public static String date_of_approval="date_of_approval";
 
+        public static String isdeleted = "isdeleted";
+        public static String date_of_delete = "date_of_delete";
+
         public static ArrayList<String> getfieldnames() {
-                return new ArrayList<>(Arrays.asList(InstNode_id,mobnode_id,leave_request_id,employee_id,leave_type,leave_date_from,leave_count_requested,leave_reason,date_created,approved,reject_reason,date_of_approval));
+                return new ArrayList<>(Arrays.asList(InstNode_id,mobnode_id,leave_request_id,employee_id,leave_type,leave_reason,leave_date_from,starthalf,leave_date_to ,endhalf ,leave_count_requested,date_created,approved,reject_reason,date_of_approval,isdeleted,date_of_delete));
         }
+    }
+
+    public static class pro_stk_options{
+        public static String TableName = "pro_stk_options";
+        public static String InstNode_id="InstNode_id";
+        public static String mobnode_id="mobnode_id";
+        public static String stk_menu_item="stk_menu_item";
+        public static String stk_menu_desc="stk_menu_desc";
+        public static String stk_menu_module="stk_menu_module";
     }
 
 }

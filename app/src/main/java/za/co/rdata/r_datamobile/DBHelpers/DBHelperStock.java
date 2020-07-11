@@ -4,10 +4,14 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import java.util.ArrayList;
+
 import za.co.rdata.r_datamobile.DBMeta.meta;
 import za.co.rdata.r_datamobile.MainActivity;
+import za.co.rdata.r_datamobile.Models.model_pro_stk_options;
 import za.co.rdata.r_datamobile.Models.model_pro_stk_scan;
-import za.co.rdata.r_datamobile.SelectWarehouse;
+import za.co.rdata.r_datamobile.Models.model_pro_stk_stock;
+import za.co.rdata.r_datamobile.stockModule.SelectWarehouse;
 
 /**
  * Created by James de Scande on 22/08/2017.
@@ -64,7 +68,122 @@ public class DBHelperStock extends DBHelper {
             db.close();
     }
 
+    public static class pro_stk_options {
+        public static ArrayList<model_pro_stk_options> GetStockMenuByUser(String user) {
 
+            ArrayList<model_pro_stk_options> menuItems = new ArrayList<>();
+            Cursor cursor = null;
+            try {
+                cursor = MainActivity.sqliteDbHelper.getReadableDatabase().query(
+                        meta.pro_stk_options.TableName,
+                        null, meta.pro_stk_options.mobnode_id + " = ?", new String[]{user}, null, null, meta.pro_stk_options.stk_menu_desc, null);
+
+                if (cursor != null && cursor.getCount() > 0) {
+                    cursor.moveToFirst();
+                    while (!cursor.isAfterLast()) {
+                        menuItems.add(new model_pro_stk_options(
+                                cursor.getString(cursor.getColumnIndex(meta.pro_stk_options.InstNode_id)),
+                                cursor.getString(cursor.getColumnIndex(meta.pro_stk_options.mobnode_id)),
+                                cursor.getString(cursor.getColumnIndex(meta.pro_stk_options.stk_menu_item)),
+                                cursor.getString(cursor.getColumnIndex(meta.pro_stk_options.stk_menu_desc)),
+                                cursor.getString(cursor.getColumnIndex(meta.pro_stk_options.stk_menu_module))));
+                        cursor.moveToNext();
+                    }
+                }
+                if (cursor != null)
+                    cursor.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return menuItems;
+        }
+    }
+
+    public static class pro_stk_store {
+        public static ArrayList<model_pro_stk_stock> GetStockByWhse(String whse) {
+
+            ArrayList<model_pro_stk_stock> menuItems = new ArrayList<>();
+            Cursor cursor = null;
+            try {
+                cursor = MainActivity.sqliteDbHelper.getReadableDatabase().query(
+                        meta.pro_stk_stock.TableName,
+                        null, meta.pro_stk_stock.whse_code + " = ?", new String[]{whse}, null, null, meta.pro_stk_stock.whse_code, null);
+
+                if (cursor != null && cursor.getCount() > 0) {
+                    cursor.moveToFirst();
+                    while (!cursor.isAfterLast()) {
+                        menuItems.add(new model_pro_stk_stock(
+                                cursor.getString(cursor.getColumnIndex(meta.pro_stk_stock.InstNode_id)),
+                                cursor.getString(cursor.getColumnIndex(meta.pro_stk_stock.mobnode_id)),
+                                cursor.getString(cursor.getColumnIndex(meta.pro_stk_stock.whse_code)),
+                                cursor.getString(cursor.getColumnIndex(meta.pro_stk_stock.stk_code)),
+                                cursor.getString(cursor.getColumnIndex(meta.pro_stk_stock.stk_descrip)),
+                                cursor.getString(cursor.getColumnIndex(meta.pro_stk_stock.stk_bin)),
+                                cursor.getInt(cursor.getColumnIndex(meta.pro_stk_stock.stk_qty)),
+                                cursor.getInt(cursor.getColumnIndex(meta.pro_stk_stock.stk_reorder)),
+                                cursor.getInt(cursor.getColumnIndex(meta.pro_stk_stock.stk_max_level)),
+                                cursor.getDouble(cursor.getColumnIndex(meta.pro_stk_stock.stk_cost)),
+                                cursor.getString(cursor.getColumnIndex(meta.pro_stk_stock.stk_fuel)),
+                                cursor.getString(cursor.getColumnIndex(meta.pro_stk_stock.stk_category)),
+                                cursor.getString(cursor.getColumnIndex(meta.pro_stk_stock.stk_unit_desc)),
+                                cursor.getInt(cursor.getColumnIndex(meta.pro_stk_stock.stk_display_qty))));
+                        cursor.moveToNext();
+                    }
+                }
+                if (cursor != null)
+                    cursor.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return menuItems;
+        }
+    }
+
+    public static class pro_stk_scan {
+        public static ArrayList<model_pro_stk_scan> GetStockScanByStockCode(String stkcode) {
+
+            ArrayList<model_pro_stk_scan> stockscanItems = new ArrayList<>();
+            Cursor cursor = null;
+            try {
+                cursor = MainActivity.sqliteDbHelper.getReadableDatabase().query(
+                        meta.pro_stk_scan.TableName,
+                        null, meta.pro_stk_scan.stk_code + " = ?", new String[]{stkcode}, null, null, meta.pro_stk_scan.stk_code, null);
+
+                if (cursor != null && cursor.getCount() > 0) {
+                    cursor.moveToFirst();
+                    while (!cursor.isAfterLast()) {
+                        stockscanItems.add(new model_pro_stk_scan(
+                                cursor.getString(cursor.getColumnIndex(meta.pro_stk_scan.InstNode_id)),
+                                cursor.getString(cursor.getColumnIndex(meta.pro_stk_scan.mobnode_id)),
+                                cursor.getInt(cursor.getColumnIndex(meta.pro_stk_scan.stk_take_cycle)),
+                                cursor.getString(cursor.getColumnIndex(meta.pro_stk_scan.whse_code)),
+                                cursor.getString(cursor.getColumnIndex(meta.pro_stk_scan.stk_bin)),
+                                cursor.getString(cursor.getColumnIndex(meta.pro_stk_scan.stk_code)),
+                                cursor.getString(cursor.getColumnIndex(meta.pro_stk_scan.stk_bin_scan_type)),
+                                cursor.getInt(cursor.getColumnIndex(meta.pro_stk_scan.stk_take_qty)),
+                                cursor.getString(cursor.getColumnIndex(meta.pro_stk_scan.stk_scan_date)),
+                                cursor.getString(cursor.getColumnIndex(meta.pro_stk_scan.stk_na_code)),
+                                cursor.getString(cursor.getColumnIndex(meta.pro_stk_scan.stk_note_code)),
+                                cursor.getString(cursor.getColumnIndex(meta.pro_stk_scan.stk_diff_reason)),
+                                cursor.getString(cursor.getColumnIndex(meta.pro_stk_scan.stk_comments)),
+                                cursor.getDouble(cursor.getColumnIndex(meta.pro_stk_scan.stk_gps_master_lat)),
+                                cursor.getDouble(cursor.getColumnIndex(meta.pro_stk_scan.stk_gps_master_long)),
+                                cursor.getDouble(   cursor.getColumnIndex(meta.pro_stk_scan.stk_gps_read_lat)),
+                                cursor.getDouble(cursor.getColumnIndex(meta.pro_stk_scan.stk_gps_read_long)),
+                                cursor.getString(cursor.getColumnIndex(meta.pro_stk_scan.stk_user_code)),
+                                cursor.getInt(cursor.getColumnIndex(meta.pro_stk_scan.stk_status))));
+                        cursor.moveToNext();
+                    }
+                }
+                if (cursor != null)
+                    cursor.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return stockscanItems;
+        }
+    }
+    
     public static void updateStockNotes(String notes, String stkbin) {
         boolean success = false;
         try {

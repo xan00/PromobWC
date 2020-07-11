@@ -4,13 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/default_back">
+    android:background="@color/colorCompliment">
 
     <TextView
         android:id="@+id/activity_select_warehouse"
         android:layout_width="0dp"
         android:layout_height="50dp"
-        android:background="@android:color/darker_gray"
+        android:background="@color/roomcolour"
         android:gravity="center"
         android:text="@string/select_warehouse"
         android:textAppearance="?android:attr/textAppearanceLarge"
@@ -23,10 +23,9 @@
         android:id="@+id/activity_warehouse_list_listView"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginBottom="8dp"
         android:layout_marginTop="10dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="8dp"
         android:divider="@android:color/transparent"
         android:dividerHeight="10.0sp"
         android:footerDividersEnabled="false"

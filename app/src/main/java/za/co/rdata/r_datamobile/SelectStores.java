@@ -12,7 +12,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.Request;
@@ -29,27 +28,24 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import za.co.rdata.r_datamobile.DBHelpers.DBHelper;
-import za.co.rdata.r_datamobile.DBHelpers.DBHelperHR;
+import za.co.rdata.r_datamobile.DBHelpers.DBHelperStock;
 import za.co.rdata.r_datamobile.DBHelpers.sqliteDBHelper;
 import za.co.rdata.r_datamobile.DBMeta.DBScripts;
-import za.co.rdata.r_datamobile.Models.model_pro_hr_options;
-import za.co.rdata.r_datamobile.Models.model_pro_sys_menu;
-import za.co.rdata.r_datamobile.Models.model_pro_sys_users;
+import za.co.rdata.r_datamobile.Models.model_pro_stk_options;
 
-public class SelectEmployee extends AppCompatActivity {
+public class SelectStores extends AppCompatActivity {
 
     private String TAG = null;
-    private List<model_pro_hr_options> menuItems = new ArrayList<>();
+    private List<model_pro_stk_options> menuItems = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_hr_options);
-        gethrmenus();
+        setContentView(R.layout.activity_stk_options);
+        getstkmenus();
 
-        menuItems = DBHelperHR.pro_hr_options.GetHRMenuByUser(MainActivity.NODE_ID);
-        ArrayAdapter<model_pro_hr_options> adapter = new SelectEmployee.hrItems_ListAdapter();
+        menuItems = DBHelperStock.pro_stk_options.GetStockMenuByUser(MainActivity.NODE_ID);
+        ArrayAdapter<model_pro_stk_options> adapter = new SelectStores.stkItems_ListAdapter();
         ListView listView = findViewById(R.id.selectemployee_LVmenuItems);
         adapter.notifyDataSetChanged();
         listView.setAdapter(adapter);
@@ -57,7 +53,7 @@ public class SelectEmployee extends AppCompatActivity {
         listView.setOnItemClickListener((parent, view, position, id) -> {
             TextView TVmodule = view.findViewById(R.id.menu_list_item_program);
             try {
-                Intent intent = new Intent(SelectEmployee.this, Class.forName(TVmodule.getText().toString()));
+                Intent intent = new Intent(SelectStores.this, Class.forName(TVmodule.getText().toString()));
                 finish();
                 startActivity(intent);
             } catch (ClassNotFoundException e) {
@@ -77,14 +73,14 @@ public class SelectEmployee extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         finish();
-        Intent gotomain = new Intent(SelectEmployee.this, MainActivity.class);
+        Intent gotomain = new Intent(SelectStores.this, MainActivity.class);
         startActivity(gotomain);
     }
 
-    public SelectEmployee() {
+    public SelectStores() {
     }
 
-    private void gethrmenus() {
+    private void getstkmenus() {
 
         String tag_string_req = "req_login";
         RequestQueue queue = Volley.newRequestQueue(this);
@@ -92,10 +88,10 @@ public class SelectEmployee extends AppCompatActivity {
         //showDialog();
         MainActivity.sqliteDbHelper = sqliteDBHelper.getInstance(this.getApplicationContext());
         try {
-            MainActivity.sqliteDbHelper.getWritableDatabase().execSQL(DBScripts.pro_hr_options.ddl);
+            MainActivity.sqliteDbHelper.getWritableDatabase().execSQL(DBScripts.pro_stk_options.ddl);
 
 
-        String combinedurl = AppConfig.URL_HRMENU + "?mobnode_id=" + MainActivity.NODE_ID + "";
+        String combinedurl = AppConfig.URL_STKOPTIONS + "?mobnode_id=" + MainActivity.NODE_ID + "";
         StringRequest strReqMenu = new StringRequest(Request.Method.GET,
                 combinedurl, new Response.Listener<String>() {
 
@@ -110,20 +106,20 @@ public class SelectEmployee extends AppCompatActivity {
                         JSONArray menuitem = new JSONArray();//array = menu.getJSONArray("menu");
 
                         int arrSize = menuarray.length();
-                        model_pro_hr_options model_pro_hr_options = null;
+                        model_pro_stk_options model_pro_stk_options = null;
                         for (int i = 0; i < arrSize; ++i) {
 
                             menuitem = menuarray.getJSONArray(i);
                             //JSONObject menu = menuitem.getJSONObject(0);
 
-                            model_pro_hr_options = new model_pro_hr_options(
+                            model_pro_stk_options = new model_pro_stk_options(
                                     menuitem.get(0).toString(),
                                     menuitem.get(1).toString(),
                                     menuitem.get(2).toString(),
                                     menuitem.get(3).toString(),
                                     menuitem.get(4).toString()
                             );
-                            MainActivity.sqliteDbHelper.addHRMenu(model_pro_hr_options);
+                            MainActivity.sqliteDbHelper.addStockMenu(model_pro_stk_options);
                         }
                     } else {
                         // Error in login. Get the error message
@@ -156,10 +152,10 @@ public class SelectEmployee extends AppCompatActivity {
         }
     }
 
-    private class hrItems_ListAdapter extends ArrayAdapter<model_pro_hr_options> {
+    private class stkItems_ListAdapter extends ArrayAdapter<model_pro_stk_options> {
 
-        hrItems_ListAdapter() {
-            super(SelectEmployee.this, R.layout.select_menu_list_item, menuItems);
+        stkItems_ListAdapter() {
+            super(SelectStores.this, R.layout.select_menu_list_item, menuItems);
         }
 
         @NonNull
@@ -170,7 +166,7 @@ public class SelectEmployee extends AppCompatActivity {
             if (itemView == null)
                 itemView = getLayoutInflater().inflate(R.layout.select_menu_list_item, parent, false);
 
-            model_pro_hr_options menuItem = menuItems.get(position);
+            model_pro_stk_options menuItem = menuItems.get(position);
 
             try {
                 TextView textview_menu_description = itemView.findViewById(R.id.menu_list_item_description);

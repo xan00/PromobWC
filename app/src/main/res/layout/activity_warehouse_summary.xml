@@ -4,15 +4,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/default_back">
+    android:background="@color/colorCompliment">
 
     <TextView
         android:id="@+id/lblWarehouseSummTitle"
         android:layout_width="0dp"
         android:layout_height="50dp"
-        android:background="@android:color/darker_gray"
+        android:background="@color/roomcolour"
         android:gravity="center"
-        android:text="WAREHOUSE: "
+        android:text="@string/warehouse"
+        android:textColor="@color/black"
         android:textAppearance="?android:attr/textAppearanceLarge"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -41,7 +42,7 @@
         android:clickable="true"
         android:focusable="true"
         android:padding="8dp"
-        app:backgroundTint="@android:color/darker_gray"
+        app:backgroundTint="@color/NotScanned"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.95"

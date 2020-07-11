@@ -5,7 +5,7 @@
     android:id="@+id/cl_activity_hr_select_leave"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/note_views"
+    android:background="@drawable/listitem_leave"
     android:bottomLeftRadius="7dp"
     android:bottomRightRadius="7dp"
     android:focusable="true"
@@ -18,7 +18,7 @@
     tools:clickable="true">
 
     <TextView
-        android:id="@+id/leave_req_date_from"
+        android:id="@+id/txt_leave_req_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -42,6 +42,110 @@
         android:textColor="@color/black"
         android:textSize="18sp"
         app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView78"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/leave_type"
+        android:textColor="@color/black"
+        android:textSize="9sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView6"
+        tools:ignore="SmallSp" />
+
+    <TextView
+        android:id="@+id/txtSelectLeaveReqType"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="11dp"
+        android:text="@string/textview"
+        android:textColor="@color/black"
+        android:textSize="9sp"
+        android:textStyle="bold"
+        app:layout_constraintBaseline_toBaselineOf="@+id/textView78"
+        app:layout_constraintStart_toEndOf="@+id/textView78"
+        tools:ignore="SmallSp" />
+
+    <TextView
+        android:id="@+id/txtSelectLeaveStart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="11dp"
+        android:text="@string/textview"
+        android:textColor="@color/black"
+        android:textSize="@dimen/select_leave_small_font_size"
+        android:textStyle="bold"
+        app:layout_constraintBaseline_toBaselineOf="@+id/textView82"
+        app:layout_constraintStart_toEndOf="@+id/textView82" />
+
+    <TextView
+        android:id="@+id/txtSelectLeaveEnd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="11dp"
+        android:text="@string/textview"
+        android:textColor="@color/black"
+        android:textSize="@dimen/select_leave_small_font_size"
+        android:textStyle="bold"
+        app:layout_constraintBaseline_toBaselineOf="@+id/textView83"
+        app:layout_constraintStart_toEndOf="@+id/textView83" />
+
+    <TextView
+        android:id="@+id/textView80"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:text="@string/leave_days_requested"
+        android:textColor="@color/black"
+        android:textSize="@dimen/select_leave_small_font_size"
+        app:layout_constraintBaseline_toBaselineOf="@+id/txtSelectLeaveReqType"
+        app:layout_constraintStart_toEndOf="@+id/txtSelectLeaveReqType" />
+
+    <TextView
+        android:id="@+id/textView83"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:text="@string/end_date"
+        android:textColor="@color/black"
+        android:textSize="@dimen/select_leave_small_font_size"
+        app:layout_constraintBaseline_toBaselineOf="@+id/txtSelectLeaveStart"
+        app:layout_constraintStart_toEndOf="@+id/txtSelectLeaveStart" />
+
+    <TextView
+        android:id="@+id/txtSelectLeaveReqDays"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="11dp"
+        android:text="@string/textview"
+        android:textColor="@color/black"
+        android:textSize="@dimen/select_leave_small_font_size"
+        android:textStyle="bold"
+        app:layout_constraintBaseline_toBaselineOf="@+id/textView80"
+        app:layout_constraintStart_toEndOf="@+id/textView80" />
+
+    <TextView
+        android:id="@+id/textView82"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/start_date"
+        android:textColor="@color/black"
+        android:textSize="@dimen/select_leave_small_font_size"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView78" />
+
+    <TextView
+        android:id="@+id/txtSelectLeaveReqID"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        android:textSize="10sp"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

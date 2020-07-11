@@ -77,7 +77,7 @@
             />
 
         <activity
-            android:name=".SelectWarehouse"
+            android:name=".stockModule.SelectWarehouse"
             android:label="@string/select_warehouse"
             />
 
@@ -171,6 +171,7 @@
         <activity android:name=".HRModule.SelectLeave" />
         <activity android:name=".HRModule.SelectApprove" />
         <activity android:name=".HRModule.SelectApplyForLeave" />
+        <activity android:name=".SelectStores" />
 
         <provider
             android:name="androidx.core.content.FileProvider"

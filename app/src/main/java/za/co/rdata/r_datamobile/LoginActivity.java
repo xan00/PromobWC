@@ -252,7 +252,9 @@ public class LoginActivity extends AppCompatActivity {
                 new ArrayAdapter<>(LoginActivity.this,
                         android.R.layout.simple_dropdown_item_1line, usersCollection);
 
+        adapter.notifyDataSetChanged();
         mUsernameView.setAdapter(adapter);
+
     }
 
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;

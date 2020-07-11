@@ -4,31 +4,49 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
+import android.database.sqlite.SQLiteConstraintException;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import androidx.core.content.PermissionChecker;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 
+import za.co.rdata.r_datamobile.AppConfig;
 import za.co.rdata.r_datamobile.DBHelpers.sqliteDBHelper;
+import za.co.rdata.r_datamobile.DBMeta.DBScripts;
 import za.co.rdata.r_datamobile.DBMeta.meta;
+import za.co.rdata.r_datamobile.DBMeta.sharedprefcodes;
+import za.co.rdata.r_datamobile.Models.model_pro_stk_stock;
+import za.co.rdata.r_datamobile.Models.model_pro_stk_warehouse;
 import za.co.rdata.r_datamobile.locationTools.GetLocation;
 import za.co.rdata.r_datamobile.MainActivity;
 import za.co.rdata.r_datamobile.Models.model_pro_stk_scan;
 import za.co.rdata.r_datamobile.R;
-import za.co.rdata.r_datamobile.SelectAsset;
-import za.co.rdata.r_datamobile.SelectWarehouse;
 
 /**
  * Created by James de Scande on 20/11/2017 at 09:15.
@@ -39,6 +57,7 @@ public class WareHouseSummary extends AppCompatActivity {
     String strWarehousecode;
     String strWarehousedesc;
     public sqliteDBHelper sqliteDbHelper;
+    String mob;
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -50,107 +69,10 @@ public class WareHouseSummary extends AppCompatActivity {
         setContentView(R.layout.activity_warehouse_summary);
         sqliteDbHelper = new sqliteDBHelper(getBaseContext());
 
-        Cursor curStock = sqliteDbHelper.getReadableDatabase().rawQuery("SELECT * FROM pro_stk_stock WHERE whse_code = '"+strWarehousecode+"' ORDER BY stk_bin",null);
-        curStock.moveToFirst();
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        mob = sharedPref.getString(sharedprefcodes.activity_startup.node_id, "");
 
-        SelectWarehouse selectWarehouse = new SelectWarehouse();
-
-        ArrayList<model_pro_stk_scan> arrStockScans = new ArrayList<>();
-
-        if (curStock.getCount() != 0) {
-            do {
-
-                Cursor curStockScan = null;
-                try {
-                    curStockScan = sqliteDbHelper.getReadableDatabase().rawQuery("SELECT * FROM pro_stk_scan WHERE stk_bin = '" + curStock.getString(curStock.getColumnIndex(meta.pro_stk_stock.stk_bin)) + "' ORDER BY stk_bin", null);
-                    curStockScan.moveToFirst();
-                } catch (NullPointerException | CursorIndexOutOfBoundsException ignore) {
-                }
-
-                String comments = "";
-                try {
-                    comments = curStockScan.getString(curStockScan.getColumnIndex(meta.pro_stk_scan.stk_comments));
-                } catch (NullPointerException | CursorIndexOutOfBoundsException ignore) {
-                }
-
-                String diffreasons = "";
-                try {
-                    diffreasons = curStockScan.getString(curStockScan.getColumnIndex(meta.pro_stk_scan.stk_diff_reason));
-                } catch (NullPointerException | CursorIndexOutOfBoundsException ignore) {
-                }
-
-                String nacode = "";
-                try {
-                    nacode = curStockScan.getString(curStockScan.getColumnIndex(meta.pro_stk_scan.stk_na_code));
-                } catch (NullPointerException | CursorIndexOutOfBoundsException ignore) {
-                }
-
-                String note_code = "";
-                try {
-                    note_code = curStockScan.getString(curStockScan.getColumnIndex(meta.pro_stk_scan.stk_note_code));
-                } catch (NullPointerException | CursorIndexOutOfBoundsException ignore) {
-                }
-
-                Double[] coord = GetLocationHere(getBaseContext());
-                try {
-                    coord[0] = curStockScan.getDouble(curStockScan.getColumnIndex(meta.pro_stk_scan.stk_gps_master_lat));
-                    coord[1] = curStockScan.getDouble(curStockScan.getColumnIndex(meta.pro_stk_scan.stk_gps_master_long));
-                } catch (NullPointerException | CursorIndexOutOfBoundsException ignore) {
-                }
-
-                int stockqty = 0;
-                try {
-                    stockqty = curStockScan.getInt(curStockScan.getColumnIndex(meta.pro_stk_scan.stk_take_qty));
-                } catch (NullPointerException | CursorIndexOutOfBoundsException ignore) {
-                }
-
-                try {
-                    arrStockScans.add(new model_pro_stk_scan(curStock.getString(curStock.getColumnIndex(meta.pro_stk_stock.InstNode_id)),
-                            "",
-                            curStock.getString(curStock.getColumnIndex(meta.pro_stk_stock.stk_bin)),
-                            "",
-                            curStock.getString(curStock.getColumnIndex(meta.pro_stk_stock.stk_code)),
-                            comments,
-                            diffreasons,
-                            coord[0],
-                            coord[1],
-                            coord[2],
-                            coord[3],
-                            nacode,
-                            note_code,
-                            selectWarehouse.MakeDate(),
-                            1,
-                            0,
-                            stockqty,
-                            MainActivity.NODE_ID,
-                            strWarehousecode));
-                    curStockScan.close();
-                    curStock.moveToNext();
-                } catch (NullPointerException | CursorIndexOutOfBoundsException ignore) {
-                }
-            }
-            while (!curStock.isLast());
-        }
-        curStock.close();
-
-        ArrayAdapter<model_pro_stk_scan> adapter = new adapter_WarehouseSummary(arrStockScans);
-
-        final ListView listView = findViewById(R.id.lstWarehosueSumm);
-        listView.setAdapter(adapter);
-
-        TextView lblWareSumm = findViewById(R.id.lblWarehouseSummTitle);
-        lblWareSumm.setText("WAREHOUSE: "+strWarehousedesc);
-
-        FloatingActionButton fltScanStock = findViewById(R.id.flbScan);
-        fltScanStock.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent stockscan = new Intent(WareHouseSummary.this, StockScanActivity.class);
-                stockscan.putExtra("WAREHOUSE NAME", strWarehousecode);
-                stockscan.putExtra("WAREHOUSE DESC", strWarehousedesc);
-                startActivity(stockscan);
-            }
-        });
+        getstock();
 
     }
 
@@ -238,4 +160,196 @@ public class WareHouseSummary extends AppCompatActivity {
         intentwarehouse.putExtra("WAREHOUSE DESC", strWarehousedesc);
         startActivity(intentwarehouse);
     }
+
+    private void getstock() {
+
+        String TAG = "req_leave";
+        RequestQueue queue = Volley.newRequestQueue(this);
+        //pDialog.setMessage("Logging in ...");
+        //showDialog();
+        String instnode = "";
+        if (MainActivity.NODE_ID.length() == 4) {
+            instnode = MainActivity.NODE_ID.substring(0, 2);
+        } else {
+            instnode = MainActivity.NODE_ID.substring(0, 1);
+        }
+        MainActivity.sqliteDbHelper = sqliteDBHelper.getInstance(this.getApplicationContext());
+        try {
+            MainActivity.sqliteDbHelper.getWritableDatabase().execSQL(DBScripts.pro_stk_stock.ddl);
+            String combinedurl = AppConfig.URL_STK + "?instnode=" + instnode + "" +
+                    "&whse=" + strWarehousecode;
+            StringRequest strReqMenu = new StringRequest(Request.Method.GET,
+                    combinedurl, new Response.Listener<String>() {
+
+                @Override
+                public void onResponse(String response) {
+                    try {
+                        JSONObject jObj = new JSONObject(response);
+                        boolean error = jObj.getBoolean("error");
+                        // Check for error node in json
+                        if (!error) {
+                            JSONArray stockarray = jObj.getJSONArray("stock");
+                            JSONArray stockitem = new JSONArray();//array = menu.getJSONArray("menu");
+
+                            int arrSize = stockarray.length();
+                            model_pro_stk_stock model_pro_stk_stock = null;
+                            for (int i = 0; i < arrSize; ++i) {
+
+                                stockitem = stockarray.getJSONArray(i);
+                                //JSONObject leave = leaveitem.getJSONObject(0);
+
+                                model_pro_stk_stock = new model_pro_stk_stock(
+                                        stockitem.get(0).toString(),
+                                        stockitem.get(1).toString(),
+                                        stockitem.getString(2),
+                                        stockitem.getString(3),
+                                        stockitem.getString(4),
+                                        stockitem.getString(5),
+                                        stockitem.getInt(6),
+                                        stockitem.getInt(7),
+                                        stockitem.getInt(8),
+                                        stockitem.getDouble(9),
+                                        stockitem.getString(10),
+                                        stockitem.getString(11),
+                                        stockitem.getString(12),
+                                        stockitem.getInt(13)
+                                );
+                                MainActivity.sqliteDbHelper.addStk(model_pro_stk_stock);
+                            }
+                        } else {
+                            // Error in login. Get the error message
+                            String errorMsg = jObj.getString("error_msg");
+                            //Toast.makeText(getApplicationContext(), errorMsg, Toast.LENGTH_LONG).show();
+                        }
+                    } catch (JSONException e) {
+                        // JSON error
+                        e.printStackTrace();
+                        //Toast.makeText(getApplicationContext(), "Json error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    } catch (SQLiteConstraintException e) {
+                        e.printStackTrace();
+                    }// finally {
+                        populatestocklist();
+                    //}
+
+                }
+
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.e(TAG, "Login Error: " + error.getMessage());
+                    //Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_LONG).show();
+                    //hideDialog();
+                }
+            });
+            queue.add(strReqMenu);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void populatestocklist() {
+        Cursor curStock = sqliteDbHelper.getReadableDatabase().rawQuery("SELECT * FROM pro_stk_stock WHERE whse_code = '"+strWarehousecode+"' ORDER BY stk_bin",null);
+        curStock.moveToFirst();
+
+        SelectWarehouse selectWarehouse = new SelectWarehouse();
+
+        ArrayList<model_pro_stk_scan> arrStockScans = new ArrayList<>();
+
+        if (curStock.getCount() != 0) {
+            do {
+
+                Cursor curStockScan = null;
+                try {
+                    curStockScan = sqliteDbHelper.getReadableDatabase().rawQuery("SELECT * FROM pro_stk_scan WHERE stk_bin = '" + curStock.getString(curStock.getColumnIndex(meta.pro_stk_stock.stk_bin)) + "' ORDER BY stk_bin", null);
+                    curStockScan.moveToFirst();
+                } catch (NullPointerException | CursorIndexOutOfBoundsException ignore) {
+                }
+
+                String comments = "";
+                try {
+                    comments = curStockScan.getString(curStockScan.getColumnIndex(meta.pro_stk_scan.stk_comments));
+                } catch (NullPointerException | CursorIndexOutOfBoundsException ignore) {
+                }
+
+                String diffreasons = "";
+                try {
+                    diffreasons = curStockScan.getString(curStockScan.getColumnIndex(meta.pro_stk_scan.stk_diff_reason));
+                } catch (NullPointerException | CursorIndexOutOfBoundsException ignore) {
+                }
+
+                String nacode = "";
+                try {
+                    nacode = curStockScan.getString(curStockScan.getColumnIndex(meta.pro_stk_scan.stk_na_code));
+                } catch (NullPointerException | CursorIndexOutOfBoundsException ignore) {
+                }
+
+                String note_code = "";
+                try {
+                    note_code = curStockScan.getString(curStockScan.getColumnIndex(meta.pro_stk_scan.stk_note_code));
+                } catch (NullPointerException | CursorIndexOutOfBoundsException ignore) {
+                }
+
+                Double[] coord = new Double[3]; //GetLocationHere(getBaseContext());
+                try {
+                    coord[0] = curStockScan.getDouble(curStockScan.getColumnIndex(meta.pro_stk_scan.stk_gps_master_lat));
+                    coord[1] = curStockScan.getDouble(curStockScan.getColumnIndex(meta.pro_stk_scan.stk_gps_master_long));
+                } catch (NullPointerException | CursorIndexOutOfBoundsException ignore) {
+                }
+
+                int stockqty = 0;
+                try {
+                    stockqty = curStockScan.getInt(curStockScan.getColumnIndex(meta.pro_stk_scan.stk_take_qty));
+                } catch (NullPointerException | CursorIndexOutOfBoundsException ignore) {
+                }
+
+                try {
+                    arrStockScans.add(new model_pro_stk_scan(curStock.getString(curStock.getColumnIndex(
+                            meta.pro_stk_stock.InstNode_id)),
+                            "",
+                            0,
+                            strWarehousecode,
+                            curStock.getString(curStock.getColumnIndex(meta.pro_stk_stock.stk_bin)),
+                            curStock.getString(curStock.getColumnIndex(meta.pro_stk_stock.stk_code)),
+                            "",
+                            stockqty,
+                            "",
+                            nacode,
+                            note_code,
+                            diffreasons,
+                            comments,
+                            coord[0],
+                            coord[1],
+                            0d,
+                            0d,
+                            MainActivity.NODE_ID,
+                            0));
+                    curStockScan.close();
+                    curStock.moveToNext();
+                } catch (NullPointerException | CursorIndexOutOfBoundsException ignore) {
+                }
+            }
+            while (!curStock.isLast());
+        }
+        curStock.close();
+
+        ArrayAdapter<model_pro_stk_scan> adapter = new adapter_WarehouseSummary(arrStockScans);
+
+        final ListView listView = findViewById(R.id.lstWarehosueSumm);
+        listView.setAdapter(adapter);
+
+        TextView lblWareSumm = findViewById(R.id.lblWarehouseSummTitle);
+        lblWareSumm.setText("WAREHOUSE: "+strWarehousedesc);
+
+        FloatingActionButton fltScanStock = findViewById(R.id.flbScan);
+        fltScanStock.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent stockscan = new Intent(WareHouseSummary.this, StockScanActivity.class);
+                stockscan.putExtra("WAREHOUSE NAME", strWarehousecode);
+                stockscan.putExtra("WAREHOUSE DESC", strWarehousedesc);
+                startActivity(stockscan);
+            }
+        });
+    }
+
 }

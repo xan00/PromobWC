@@ -30,5 +30,6 @@
     <color name="greenmeter">#48D048</color>
 
     <color name="incomplete_room">#393E41</color>
+    <color name="rejectedleave">#B0C4DE</color>
 
 </resources>

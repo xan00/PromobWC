@@ -1,5 +1,7 @@
 package za.co.rdata.r_datamobile.Models;
 
+import java.util.ArrayList;
+
 /**
  * Project: Promun
  * Created by wcrous on 03/08/2016.
@@ -25,7 +27,14 @@ public class model_pro_stk_scan {
     private String stk_user_code;
     private Integer stk_status;
 
-    public model_pro_stk_scan(String instNode_id, String mobnode_id, String stk_bin, String stk_bin_scan_type, String stk_code, String stk_comments, String stk_diff_reason, Double stk_gps_master_lat, Double stk_gps_master_long, Double stk_gps_read_lat, Double stk_gps_read_long, String stk_na_code, String stk_note_code, String stk_scan_date, Integer stk_status, Integer stk_take_cycle, Integer stk_take_qty, String stk_user_code, String whse_code) {
+    public model_pro_stk_scan(String instNode_id, String mobnode_id, Integer stk_take_cycle, String whse_code,
+                              String stk_bin, String stk_code, String stk_bin_scan_type,
+                              Integer stk_take_qty, String stk_scan_date, String stk_na_code, String stk_note_code,
+                              String stk_diff_reason, String stk_comments,
+                              Double stk_gps_master_lat, Double stk_gps_master_long, Double stk_gps_read_lat,
+                              Double stk_gps_read_long,
+                              String stk_user_code, Integer stk_status
+                               ) {
         InstNode_id = instNode_id;
         this.mobnode_id = mobnode_id;
         this.stk_bin = stk_bin;
@@ -197,5 +206,30 @@ public class model_pro_stk_scan {
 
     public void setWhse_code(String whse_code) {
         this.whse_code = whse_code;
+    }
+
+    public ArrayList<Object> getModelAsArrayList() {
+
+        ArrayList<Object> objectArrayList = new ArrayList<>();
+        objectArrayList.add(InstNode_id);
+        objectArrayList.add(mobnode_id);
+        objectArrayList.add(stk_take_cycle);
+        objectArrayList.add(whse_code);
+        objectArrayList.add(stk_bin);
+        objectArrayList.add(stk_code);
+        objectArrayList.add(stk_bin_scan_type);
+        objectArrayList.add(stk_take_qty);
+        objectArrayList.add(stk_scan_date);
+        objectArrayList.add(stk_na_code);
+        objectArrayList.add(stk_note_code);
+        objectArrayList.add(stk_diff_reason);
+        objectArrayList.add(stk_comments);
+        objectArrayList.add(stk_gps_master_lat);
+        objectArrayList.add(stk_gps_master_long);
+        objectArrayList.add(stk_gps_read_lat);
+        objectArrayList.add(stk_gps_read_long);
+        objectArrayList.add(stk_user_code);
+        objectArrayList.add(stk_status);
+        return objectArrayList;
     }
 }

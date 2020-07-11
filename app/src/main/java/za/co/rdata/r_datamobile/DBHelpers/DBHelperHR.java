@@ -43,14 +43,16 @@ public class DBHelperHR extends DBHelper {
     }
 
     public static class pro_hr_leave_requests {
-        public static ArrayList<model_pro_hr_leavereq> GetHRLeaveRequestsByUser(String user) {
+        public static ArrayList<model_pro_hr_leavereq> GetHRLeaveRequestsByUser(String user, Boolean withdeleted) {
 
             ArrayList<model_pro_hr_leavereq> menuItems = new ArrayList<>();
             Cursor cursor = null;
+            String isdeleted = "";
+
+            if (!withdeleted) isdeleted = "and " + meta.pro_hr_leave_requests.isdeleted + "= 0";
+
             try {
-                cursor = MainActivity.sqliteDbHelper.getReadableDatabase().query(
-                        meta.pro_hr_leave_requests.TableName,
-                        null, meta.pro_hr_leave_requests.mobnode_id + " = ?", new String[]{user}, null, null, null, null);
+                cursor = MainActivity.sqliteDbHelper.getReadableDatabase().rawQuery("Select * from pro_hr_leave_requests where "+meta.pro_hr_leave_requests.mobnode_id+"="+user+" "+ isdeleted ,null);
 
                 if (cursor != null && cursor.getCount() > 0) {
                     cursor.moveToFirst();
@@ -61,13 +63,19 @@ public class DBHelperHR extends DBHelper {
                                 cursor.getInt(cursor.getColumnIndex(meta.pro_hr_leave_requests.leave_request_id)),
                                 cursor.getString(cursor.getColumnIndex(meta.pro_hr_leave_requests.employee_id)),
                                 cursor.getInt(cursor.getColumnIndex(meta.pro_hr_leave_requests.leave_type)),
-                                cursor.getString(cursor.getColumnIndex(meta.pro_hr_leave_requests.leave_date_from)),
-                                cursor.getDouble(cursor.getColumnIndex(meta.pro_hr_leave_requests.leave_count_requested)),
                                 cursor.getString(cursor.getColumnIndex(meta.pro_hr_leave_requests.leave_reason)),
+                                cursor.getString(cursor.getColumnIndex(meta.pro_hr_leave_requests.leave_date_from)),
+                                cursor.getInt(cursor.getColumnIndex(meta.pro_hr_leave_requests.starthalf)),
+                                cursor.getString(cursor.getColumnIndex(meta.pro_hr_leave_requests.leave_date_to)),
+                                cursor.getInt(cursor.getColumnIndex(meta.pro_hr_leave_requests.endhalf)),
+                                cursor.getDouble(cursor.getColumnIndex(meta.pro_hr_leave_requests.leave_count_requested)),
                                 cursor.getString(cursor.getColumnIndex(meta.pro_hr_leave_requests.date_created)),
                                 cursor.getInt(cursor.getColumnIndex(meta.pro_hr_leave_requests.approved)),
                                 cursor.getString(cursor.getColumnIndex(meta.pro_hr_leave_requests.reject_reason)),
-                                cursor.getString(cursor.getColumnIndex(meta.pro_hr_leave_requests.date_of_approval))));
+                                cursor.getString(cursor.getColumnIndex(meta.pro_hr_leave_requests.date_of_approval)),
+                                cursor.getInt(cursor.getColumnIndex(meta.pro_hr_leave_requests.isdeleted)),
+                                cursor.getString(cursor.getColumnIndex(meta.pro_hr_leave_requests.date_of_delete))
+                                ));
                         cursor.moveToNext();
                     }
                 }

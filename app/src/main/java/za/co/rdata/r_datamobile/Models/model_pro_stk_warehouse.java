@@ -1,5 +1,7 @@
 package za.co.rdata.r_datamobile.Models;
 
+import java.util.ArrayList;
+
 /**
  * Project: Promun
  * Created by wcrous on 03/08/2016.
@@ -47,5 +49,15 @@ public class model_pro_stk_warehouse {
 
     public void setWhse_description(String whse_description) {
         this.whse_description = whse_description;
+    }
+
+    public ArrayList<Object> getModelAsArrayList() {
+
+        ArrayList<Object> objectArrayList = new ArrayList<>();
+        objectArrayList.add(InstNode_id);
+        objectArrayList.add(mobnode_id);
+        objectArrayList.add(whse_code);
+        objectArrayList.add(whse_description);
+        return objectArrayList;
     }
 }

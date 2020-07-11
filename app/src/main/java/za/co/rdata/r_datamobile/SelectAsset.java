@@ -155,75 +155,10 @@ public class SelectAsset extends AppCompatActivity {
         ScanAsset();                          ///////Starts Instance of New Asset Scan In Current Room
     };
 
-    /*
-    View.OnClickListener listenerItem = v -> {
-        intentcode = 1;
-        goToExpandedList(v, strCurrentRoom);           ///////Starts Instance of New Asset Scan In Current Room
-
-    };
-*/
-    /*
-    View.OnClickListener listenerMoreRooms = v -> {
-        getRoomItemLists getRoomItemLists = new getRoomItemLists();
-        getRoomItemLists.setPosition(0);
-        //getRoomItemLists.setNumberofentries(false);
-        //getRoomItemLists.execute();
-        final FloatingActionButton fltMoreRooms = findViewById(R.id.fltMoreRooms);
-        fltMoreRooms.setAlpha(0.0f);
-
-    };
-    */
     public View.OnClickListener listenernewroom = v -> {
         ScanRoom();     ///////Clears Current Room and Contained Assets
     };
 
-    /*
-    View.OnClickListener listenerRooms = v -> {
-        intentcode = 5;
-        goToRooms();                         ///////Starts Instance of New Asset Scan In Current Room
-    };
-    //private LocationManager locationManager;
-    //private za.co.rdata.r_datamobile.fileTools.FileActions FileActions;
-/*
-    public static boolean CompareOneDBValues(Cursor firstcursorname, String columnfirstname, String checkvalue) {  ////////DB Entry Comparison
-
-        String valueone;
-
-        try {
-            valueone = firstcursorname.getString(firstcursorname.getColumnIndex(columnfirstname));
-
-            return valueone.equals(checkvalue);
-        } catch (NullPointerException e) {
-            return false;
-        } catch (CursorIndexOutOfBoundsException e) {
-            return true;
-        }
-    }
-
-    public static boolean CompareTwoDBValues(Cursor firstcursorname, Cursor onebeingcomparedwith, String columnfirstname, String columnsecondname) {  ////////DB Entry Comparison
-
-        int valueone;
-        int valuetwo;
-        try {
-            //firstcursorname.move(checkvalue);
-            //onebeingcomparedwith.move(checkvalue);
-            valueone = firstcursorname.getInt(firstcursorname.getColumnIndex(columnfirstname));
-            valuetwo = onebeingcomparedwith.getInt(onebeingcomparedwith.getColumnIndex(columnsecondname));
-
-            //noinspection RedundantIfStatement
-            if (valueone==valuetwo) {
-                return true;
-            } else {
-                return false;
-            }
-
-            //for (int i = 0; i < firstcursorname.getCount(); i++) {
-            //}
-        } catch (NullPointerException | CursorIndexOutOfBoundsException e) {
-            return false;
-        }
-    }
-*/
     public static int GetCycle() {
         int cycle;
         try {
@@ -284,26 +219,8 @@ public class SelectAsset extends AppCompatActivity {
             savescan=bSaved.getBoolean("SAVE SCAN");
         } catch (NullPointerException | AssertionError ignore) {}
 
-        /*roomcount = MainActivity.sqliteDbHelper.getReadableDatabase().query(
-                meta.pro_ar_locations.TableName,
-                null, "loc_code like ?", new String[]{strSearch}, null, null, null, null);
-        roomcount.moveToFirst();*/
-
         arrRooms.clear();
         arrCompletedRooms.clear();
-        //arrSearch.clear();
-
-        /*String roomassetcount = "SELECT reg_location_code, count(reg_barcode) AS row_count\n" +
-                "FROM pro_ar_register\n" +
-                "where reg_location_code like 'R%'\n" +
-                "group by reg_location_code\n" +
-                "order by reg_location_code;";
-
-        String roomscancount = "SELECT scan_location, count(scan_barcode) AS scan_count\n" +
-                "FROM pro_ar_scan\n" +
-                "where scan_location_entry <> 'R0000' and InstNode_id = 16\n" +
-                "group by scan_location\n" +
-                "order by scan_location;";*/
 
         String roomassetcount = "select ifnull(upper(reg_location_code), '')   AS reg_location_code\n" +
                 "     , ifnull(loc_name, '')                   AS loc_name\n" +
@@ -332,90 +249,52 @@ public class SelectAsset extends AppCompatActivity {
                 "     ) loc on loc.loc_code = asset.reg_location_code\n" +
                 " order by asset.reg_location_code;";
 
-     /*   String roomscancount = "select ifnull(upper(reg_location_code), '')   AS reg_location_code\n" +
-                "     , ifnull(loc_name, '')                   AS loc_name\n" +
-                "     , ifnull(loc_building, '')               AS loc_building\n" +
-                "     , ifnull(loc_person, '')                 AS loc_person\n" +
-                "     , ifnull(scan_count, 0)  AS scan_count\n" +
-                "     , ifnull(Asset_count, 0) AS Asset_count\n" +
-                " from (\n" +
-                "         SELECT reg_location_code\n" +
-                "              , count(reg_barcode) AS Asset_count\n" +
-                "         FROM pro_ar_register\n" +
-                "         group by reg_location_code\n" +
-                "     ) asset\n" +
-                "         left join\n" +
-                "     (SELECT scan_location_entry, count(scan_barcode) AS scan_count\n" +
-                "      FROM pro_ar_scan\n" +
-                "      where scan_location_entry <> 'R0000'\n" +
-                "        and InstNode_id = 16\n" +
-                "      group by scan_location_entry\n" +
-                "     ) scan on scan.scan_location_entry = asset.reg_location_code\n" +
-                "         left join\n" +
-                "     (SELECT loc_code\n" +
-                "           , loc_name\n" +
-                "           , loc_building\n" +
-                "           , loc_person\n" +
-                "      FROM pro_ar_locations\n" +
-                "     ) loc on loc.loc_code = asset.reg_location_code\n" +
-                "   group by reg_location_code\n"+
-                " having scan_count <> Asset_count\n" +
-                " order by asset.reg_location_code;";*/
-
         Cursor incompleterooms;
-        incompleterooms = sqliteDbHelper.getReadableDatabase().rawQuery(roomassetcount, null);
-        incompleterooms.moveToFirst();
+
+        try {
+            incompleterooms = sqliteDbHelper.getReadableDatabase().rawQuery(roomassetcount, null);
+            incompleterooms.moveToFirst();
 
         /*Cursor completerooms = sqliteDbHelper.getReadableDatabase().rawQuery(roomassetcount, null);
         completerooms.moveToFirst();*/
 
-        @SuppressLint("CutPasteId") FloatingActionButton flbAllMail = findViewById(R.id.flbAllMail);
-        registerForContextMenu(flbAllMail);
 
-        @SuppressLint("CutPasteId") FloatingActionButton fltAllMail = findViewById(R.id.flbAllMail);
-        fltAllMail.setOnClickListener(sendallmailclick);
-        Button scannewroom = findViewById(R.id.btnScanNewRoomfromList);
-        scannewroom.setOnClickListener(listenernewroom);
+            try {
+                do {
+                    arrRooms.add(new model_pro_ar_asset_room(incompleterooms.getString(incompleterooms.getColumnIndex(meta.pro_ar_register.reg_location_code)),
+                            incompleterooms.getString(incompleterooms.getColumnIndex(meta.pro_ar_locations.loc_name)),
+                            incompleterooms.getString(incompleterooms.getColumnIndex(meta.pro_ar_locations.loc_building)),
+                            incompleterooms.getString(incompleterooms.getColumnIndex(meta.pro_ar_locations.loc_person)),
+                            String.valueOf(incompleterooms.getInt(incompleterooms.getColumnIndex("scan_count")))
+                                    + '/'
+                                    + incompleterooms.getInt(incompleterooms.getColumnIndex("Asset_count"))));
+                    incompleterooms.moveToNext();
+                }
+                while (!incompleterooms.isAfterLast());
 
-        try {
-            do {
-                arrRooms.add(new model_pro_ar_asset_room(incompleterooms.getString(incompleterooms.getColumnIndex(meta.pro_ar_register.reg_location_code)),
-                        incompleterooms.getString(incompleterooms.getColumnIndex(meta.pro_ar_locations.loc_name)),
-                        incompleterooms.getString(incompleterooms.getColumnIndex(meta.pro_ar_locations.loc_building)),
-                        incompleterooms.getString(incompleterooms.getColumnIndex(meta.pro_ar_locations.loc_person)),
-                        String.valueOf(incompleterooms.getInt(incompleterooms.getColumnIndex("scan_count")))
-                                + '/'
-                                + incompleterooms.getInt(incompleterooms.getColumnIndex("Asset_count"))));
-                incompleterooms.moveToNext();
+            } catch (CursorIndexOutOfBoundsException ex) {
+                Toast.makeText(getBaseContext(), "No Rooms Found, Please check Asset Register", Toast.LENGTH_LONG).show();
             }
-            while (!incompleterooms.isAfterLast());
 
-        } catch (CursorIndexOutOfBoundsException ex) {
-            Toast.makeText(getBaseContext(), "No Rooms Found, Please check Asset Register", Toast.LENGTH_LONG).show();
+            incompleterooms.close();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
-        /*do {
-            arrCompletedRooms.add(new model_pro_ar_asset_room(completerooms.getString(completerooms.getColumnIndex(meta.pro_ar_locations.loc_code)),
-                    completerooms.getString(completerooms.getColumnIndex(meta.pro_ar_locations.loc_name)),
-                    completerooms.getString(completerooms.getColumnIndex(meta.pro_ar_locations.loc_building)),
-                    completerooms.getString(completerooms.getColumnIndex(meta.pro_ar_locations.loc_building)),
+            arrtoshow.addAll(arrRooms);
+            arrtoshow.addAll(arrCompletedRooms);
+            adapter_roomRecycler.notifyDataSetChanged();
 
-                    String.valueOf(completerooms.getInt(completerooms.getColumnIndex("scan_count")))
-                            +'/'
-                            +String.valueOf(completerooms.getInt(completerooms.getColumnIndex("Asset_count")))));
-            completerooms.moveToNext();
-        }
-        while (!completerooms.isAfterLast());
-*/
-        //completerooms.close();
-        incompleterooms.close();
+            @SuppressLint("CutPasteId") FloatingActionButton flbAllMail = findViewById(R.id.flbAllMail);
+            registerForContextMenu(flbAllMail);
 
-        arrtoshow.addAll(arrRooms);
-        arrtoshow.addAll(arrCompletedRooms);
-        adapter_roomRecycler.notifyDataSetChanged();
+            @SuppressLint("CutPasteId") FloatingActionButton fltAllMail = findViewById(R.id.flbAllMail);
+            fltAllMail.setOnClickListener(sendallmailclick);
+            Button scannewroom = findViewById(R.id.btnScanNewRoomfromList);
+            scannewroom.setOnClickListener(listenernewroom);
 
-        EditText edtSearch = findViewById(R.id.edtSearchRoom);
-        edtSearch.addTextChangedListener(new TextWatcher() {
+            EditText edtSearch = findViewById(R.id.edtSearchRoom);
+            edtSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
                 arrtoshow.clear();
@@ -431,12 +310,6 @@ public class SelectAsset extends AppCompatActivity {
                             filteredTitles.add(arrRooms.get(i));
                         }
                     }
-
-                /*    for (int i = 0; i < arrCompletedRooms.size(); i++) {
-                        if (arrCompletedRooms.get(i).getRoomnumber().toUpperCase().contains(s.toString().toUpperCase())) {
-                            filteredTitles.add(arrCompletedRooms.get(i));
-                        }
-                    }*/
 
                     arrtoshow.addAll(filteredTitles);
                     adapter_roomRecycler.notifyDataSetChanged();
@@ -454,19 +327,7 @@ public class SelectAsset extends AppCompatActivity {
         });
 
     }
-/*
-    public double calculateBillAmount(String expression){
 
-        String delim = "/";
-        String[] stringTokens = expression.split(delim);
-        double result = 0;
-
-        for (String stringToken : stringTokens) {
-            result += Double.parseDouble(stringToken);
-        }
-        return result;
-    }
-*/
     @Override
     protected void onResume() {
         super.onResume();
@@ -578,23 +439,7 @@ public class SelectAsset extends AppCompatActivity {
                 if (strSelectedRoom == null | !strSelectedRoom.startsWith("R")) {
                     Inputbox(0, this);
                 } else {
-/*
-                    try {
-                        GetLocation getget = new GetLocation(mContext);
-                        double lat = getget.getLatitude();
-                        double lng = getget.getLongitude();
 
-
-                        MainActivity.sqliteDbHelper.getReadableDatabase().execSQL("update pro_ar_locations set gps_master_long = "+lng+", gps_master_lat = "+lat+ " where loc_code = "+ selectedroom);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
-                    Intent gotomainsummary = new Intent(SelectAsset.this,RoomMainSummary.class);
-                    gotomainsummary.putExtra("ROOM SCAN",strSelectedRoom);
-                    startActivity(gotomainsummary);
-                //MakeExpandedList(strSelectedRoom);
-                */
                     gotoroommainsummary(strSelectedRoom);
 
                 }
@@ -911,18 +756,6 @@ public class SelectAsset extends AppCompatActivity {
         i.setType("message/rfc822");
         i.putExtra(Intent.EXTRA_EMAIL, new String[]{email});
         i.putExtra(Intent.EXTRA_SUBJECT, "Room: " + "" + all + "" + " Scanned Data Report");
-        /*
-        i.putExtra(Intent.EXTRA_TEXT, "This is a report for room " + all + " as at " + date.substring(0, 10) + "." + "\n\n"
-                + notyetscannedCount + " asset(s) have yet to be scanned." + "\n"
-                + alreadyscannedCount + " asset(s) have already been scanned." + "\n"
-                + missingfromregisteryCount + " asset(s) are not in the registry." + "\n"
-                + wronglocationCount + " asset(s) are in the wrong location." + "\n"
-                + manualscanningCount + " asset(s) are in the manual mode." + "\n"
-                + previouslydisposedcount + " asset(s) are disposed." + "\n\n"
-                +String.valueOf(total) + " asset(s) are registered in "+all+"."
-                + "\n\n"
-                + "Regards/Groete.");
-*/
 
         i.putExtra(Intent.EXTRA_TEXT, "Good day"+"\n\n"
                 + "An Asset Count was done at your office, " + all + ", on " + date.substring(0, 10) + "." + "\n\n"
@@ -1233,108 +1066,6 @@ public class SelectAsset extends AppCompatActivity {
             return null;
         }
     }
-/*
-    public static class SaveManualState extends AsyncTask<String, Integer, Long> {
 
-        String barcode;
-
-        public void setBarcode(String barcode) {
-            this.barcode = barcode;
-        }
-
-        @Override
-        protected Long doInBackground(String... strings) {
-            DBHelperAssets.pro_ar_asset_rows.updateManualState(strings[0], barcode);
-            return null;
-        }
-    }
-
-    private static class SaveNewLoca extends AsyncTask<String, Integer, Long> {
-
-        String locaX;
-        String locaY;
-        String barcode;
-        String insta;
-
-        public void setBarcode(String barcode) {
-            this.barcode = barcode;
-        }
-
-        @SuppressWarnings("unused")
-        public void setLocaX(String locaX) {
-            this.locaX = locaX;
-        }
-
-        @SuppressWarnings("unused")
-        public void setLocaY(String locaY) {
-            this.locaY = locaY;
-        }
-
-        @SuppressWarnings("unused")
-        public void setInsta(String insta) {
-            this.insta = insta;
-        }
-
-        @Override
-        protected Long doInBackground(String... strings) {
-            DBHelperAssets.pro_ar_asset_rows.updateLocationGPS(locaY, locaX, barcode, insta);
-            return null;
-        }
-    }
-
-    private static class SaveNewAssetLocation extends AsyncTask<String, Integer, Long> {
-
-        String barcode, locaX, locaY;
-
-        public void setLocaX(String locaX) {
-            this.locaX = locaX;
-        }
-
-        public void setLocaY(String locaY) {
-            this.locaY = locaY;
-        }
-
-
-        public void setBarcode(String barcode) {
-            this.barcode = barcode;
-        }
-
-        @Override
-        protected Long doInBackground(String... strings) {
-
-            Cursor locationcursor = MainActivity.sqliteDbHelper.getReadableDatabase().query(
-                    meta.pro_ar_scan.TableName,
-                    null, meta.pro_ar_scan.scan_barcode + " = ?", new String[]{strSelectedBarcode}, null, null, null, null);
-            locationcursor.moveToLast();
-
-            try {
-                //if (!location.equals(null) || !location.equals("")) {
-                    DBHelperAssets.pro_ar_asset_rows.updateAssetHeaderLocation(location, strSelectedBarcode);
-                    DBHelperAssets.pro_ar_asset_rows.updateAssetHeaderLocationEntry(assetcursor.getString(assetcursor.getColumnIndex(meta.pro_ar_register.reg_location_code)), barcode);
-                //}
-
-                if (locationcursor.getString(locationcursor.getColumnIndex(meta.pro_ar_scan.scan_adj_remainder)) == null) {
-                    DBHelperAssets.pro_ar_asset_rows.updateAssetHeaderAdjRemainder("0", barcode);
-                }
-
-                DBHelperAssets.pro_ar_asset_rows.updateAssetHeaderRouteNr(locationcursor.getString(assetcursor.getColumnIndex(meta.pro_ar_register.reg_route_nr)), barcode);
-
-
-            } catch (NullPointerException ignore) {
-            } catch (CursorIndexOutOfBoundsException e) {
-                DBHelperAssets.pro_ar_asset_rows.updateAssetHeaderLocationEntry("R0000", barcode);
-            }
-
-            try {
-                DBHelperAssets.pro_ar_asset_rows.updateAssetHeaderCoords(locaY, locaX, barcode);
-            } catch (Exception ignore) {
-            }
-
-            locationcursor.close();
-
-            return null;
-        }
-    }
-*/
     }
 

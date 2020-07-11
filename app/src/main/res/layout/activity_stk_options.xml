@@ -2,11 +2,11 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/cl_activity_hr_approve"
+    android:id="@+id/cl_activity_hr_options"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorCompliment"
-    tools:context=".HRModule.SelectApprove">
+    tools:context=".SelectEmployee">
 
     <TextView
         android:id="@+id/textView11"
@@ -15,19 +15,19 @@
         android:layout_alignParentStart="true"
         android:background="@color/roomcolour"
         android:gravity="center"
-        android:text="@string/requested_leave"
+        android:text="SELECT STORE OPTION"
         android:textAlignment="center"
         android:textAllCaps="false"
         android:textColor="@color/black"
         android:textSize="21sp"
         android:typeface="sans"
-        app:layout_constraintBottom_toTopOf="@+id/approveActivity_LVapproveItems"
+        app:layout_constraintBottom_toTopOf="@+id/mainActivity_LVmenuItems"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/approveActivity_LVapproveItems"
+    <ListView
+        android:id="@+id/selectemployee_LVmenuItems"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="12dp"

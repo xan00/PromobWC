@@ -1,5 +1,7 @@
 package za.co.rdata.r_datamobile.Models;
 
+import java.util.ArrayList;
+
 /**
  * Project: Promun
  * Created by wcrous on 03/08/2016.
@@ -20,7 +22,11 @@ public class model_pro_stk_stock {
     private String stk_unit_desc;
     private Integer stk_display_qty;
 
-    public model_pro_stk_stock(String instNode_id, String mobnode_id, String stk_bin, String stk_category, String stk_code, Double stk_cost, String stk_descrip, Integer stk_display_qty, String stk_fuel, Integer stk_max_level, Integer stk_qty, Integer stk_reorder, String stk_unit_desc, String whse_code) {
+    public model_pro_stk_stock(String instNode_id, String mobnode_id, String whse_code, String stk_code,
+                               String stk_descrip, String stk_bin, Integer stk_qty,
+                               Integer stk_reorder, Integer stk_max_level, Double stk_cost,
+                               String stk_fuel, String stk_category,
+                               String stk_unit_desc, Integer stk_display_qty) {
         InstNode_id = instNode_id;
         this.mobnode_id = mobnode_id;
         this.stk_bin = stk_bin;
@@ -147,5 +153,25 @@ public class model_pro_stk_stock {
 
     public void setWhse_code(String whse_code) {
         this.whse_code = whse_code;
+    }
+
+    public ArrayList<Object> getModelAsArrayList() {
+
+        ArrayList<Object> objectArrayList = new ArrayList<>();
+        objectArrayList.add(InstNode_id);
+        objectArrayList.add(mobnode_id);
+        objectArrayList.add(whse_code);
+        objectArrayList.add(stk_code);
+        objectArrayList.add(stk_descrip);
+        objectArrayList.add(stk_bin);
+        objectArrayList.add(stk_qty);
+        objectArrayList.add(stk_reorder);
+        objectArrayList.add(stk_max_level);
+        objectArrayList.add(stk_cost);
+        objectArrayList.add(stk_fuel);
+        objectArrayList.add(stk_category);
+        objectArrayList.add(stk_unit_desc);
+        objectArrayList.add(stk_display_qty);
+        return objectArrayList;
     }
 }

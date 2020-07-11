@@ -1,4 +1,4 @@
-package za.co.rdata.r_datamobile;
+package za.co.rdata.r_datamobile.stockModule;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -7,12 +7,15 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.SQLException;
+import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -20,17 +23,36 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
+import za.co.rdata.r_datamobile.AppConfig;
+import za.co.rdata.r_datamobile.DBHelpers.DBHelperHR;
+import za.co.rdata.r_datamobile.DBHelpers.sqliteDBHelper;
+import za.co.rdata.r_datamobile.DBMeta.DBScripts;
 import za.co.rdata.r_datamobile.DBMeta.meta;
+import za.co.rdata.r_datamobile.DBMeta.sharedprefcodes;
+import za.co.rdata.r_datamobile.MainActivity;
+import za.co.rdata.r_datamobile.Models.model_pro_hr_leavereq;
+import za.co.rdata.r_datamobile.R;
+import za.co.rdata.r_datamobile.SelectStores;
 import za.co.rdata.r_datamobile.locationTools.GetLocation;
 import za.co.rdata.r_datamobile.Models.model_pro_stk_scan;
 import za.co.rdata.r_datamobile.Models.model_pro_stk_stock;
 import za.co.rdata.r_datamobile.Models.model_pro_stk_warehouse;
-import za.co.rdata.r_datamobile.stockModule.WareHouseSummary;
 
 /**
  * Created by James de Scande on 22/08/2017 at 12:50.
@@ -63,10 +85,15 @@ public class SelectWarehouse extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-        mob = sharedPref.getString("node id", "");
+        mob = sharedPref.getString(sharedprefcodes.activity_startup.node_id, "");
 
+        getwhse();
 
+    }
+
+    private void populatewarehouselist() {
         SQLiteDatabase db = MainActivity.sqliteDbHelper.getReadableDatabase();
+
         try {
             Cursor warehouses = db.rawQuery("SELECT * FROM pro_stk_warehouse ORDER BY " + meta.pro_stk_warehouse.whse_code, null);
             warehouses.moveToFirst();
@@ -94,6 +121,83 @@ public class SelectWarehouse extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
     }
+
+    private void getwhse() {
+
+        String tag_string_req = "req_leave";
+        RequestQueue queue = Volley.newRequestQueue(this);
+        //pDialog.setMessage("Logging in ...");
+        //showDialog();
+        String instnode = "";
+        if (MainActivity.NODE_ID.length() == 4) {
+            instnode = MainActivity.NODE_ID.substring(0, 2);
+        } else {
+            instnode = MainActivity.NODE_ID.substring(0, 1);
+        }
+        MainActivity.sqliteDbHelper = sqliteDBHelper.getInstance(this.getApplicationContext());
+        try {
+        MainActivity.sqliteDbHelper.getWritableDatabase().execSQL(DBScripts.pro_stk_warehouse.ddl);
+            String combinedurl = AppConfig.URL_STKWHSE + "?instnode=" + instnode + "";
+            StringRequest strReqMenu = new StringRequest(Request.Method.GET,
+                    combinedurl, new Response.Listener<String>() {
+
+                @Override
+                public void onResponse(String response) {
+                    try {
+                        JSONObject jObj = new JSONObject(response);
+                        boolean error = jObj.getBoolean("error");
+                        // Check for error node in json
+                        if (!error) {
+                            JSONArray whsearray = jObj.getJSONArray("whse");
+                            JSONArray whseitem = new JSONArray();//array = menu.getJSONArray("menu");
+
+                            int arrSize = whsearray.length();
+                            model_pro_stk_warehouse model_pro_stk_warehouse = null;
+                            for (int i = 0; i < arrSize; ++i) {
+
+                                whseitem = whsearray.getJSONArray(i);
+                                //JSONObject leave = leaveitem.getJSONObject(0);
+
+                                model_pro_stk_warehouse = new model_pro_stk_warehouse(
+                                        whseitem.get(0).toString(),
+                                        whseitem.get(1).toString(),
+                                        whseitem.getInt(2),
+                                        whseitem.getString(3)
+                                );
+                                if (model_pro_stk_warehouse.getWhse_code()!=0)
+                                    MainActivity.sqliteDbHelper.addStkWhse(model_pro_stk_warehouse);
+                            }
+                        } else {
+                            // Error in login. Get the error message
+                            String errorMsg = jObj.getString("error_msg");
+                            //Toast.makeText(getApplicationContext(), errorMsg, Toast.LENGTH_LONG).show();
+                        }
+                    } catch (JSONException e) {
+                        // JSON error
+                        e.printStackTrace();
+                        //Toast.makeText(getApplicationContext(), "Json error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    } catch (SQLiteConstraintException e) {
+                        e.printStackTrace();
+                    } finally {
+                        populatewarehouselist();
+                    }
+
+                }
+
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.e(TAG, "Login Error: " + error.getMessage());
+                    //Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_LONG).show();
+                    //hideDialog();
+                }
+            });
+            queue.add(strReqMenu);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 
     private void ChooseWarehouse() {
 
@@ -426,7 +530,7 @@ public class SelectWarehouse extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        Intent mainmenu = new Intent(this, MainActivity.class);
+        Intent mainmenu = new Intent(this, SelectStores.class);
         switch (currentlayout) {
             case 0:
                 startActivity(mainmenu);

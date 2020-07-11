@@ -21,6 +21,10 @@ import za.co.rdata.r_datamobile.MainActivity;
 import za.co.rdata.r_datamobile.Models.model_pro_hr_leavereq;
 import za.co.rdata.r_datamobile.Models.model_pro_hr_leavetypes;
 import za.co.rdata.r_datamobile.Models.model_pro_hr_options;
+import za.co.rdata.r_datamobile.Models.model_pro_stk_options;
+import za.co.rdata.r_datamobile.Models.model_pro_stk_scan;
+import za.co.rdata.r_datamobile.Models.model_pro_stk_stock;
+import za.co.rdata.r_datamobile.Models.model_pro_stk_warehouse;
 import za.co.rdata.r_datamobile.Models.model_pro_sys_devices;
 import za.co.rdata.r_datamobile.Models.model_pro_sys_menu;
 import za.co.rdata.r_datamobile.Models.model_pro_sys_users;
@@ -45,34 +49,34 @@ public class sqliteDBHelper extends SQLiteOpenHelper {
     }
 
     public static synchronized sqliteDBHelper getInstance(Context context) {
-        if(mInstance==null) {
+        if (mInstance == null) {
             mInstance = new sqliteDBHelper(context.getApplicationContext());
         }
         return mInstance;
     }
 
-    public void Destroy()
-    {
+    public void Destroy() {
         try {
             mInstance.close();
             mInstance = null;
-        } catch (NullPointerException ignore) {}
+        } catch (NullPointerException ignore) {
+        }
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
         Log.d(TAG, "Database tables created");
     }
-    
+
     @NonNull
     private String queryvaluebuilder(ArrayList<Object> obj) {
         String builtquery = "";
-        for (Object o: obj) {
+        for (Object o : obj) {
             String s = null;
             String symbol = "";
             try {
                 s = o.toString();
-                symbol="'";
+                symbol = "'";
             } catch (NullPointerException e) {
                 s = "null";
 
@@ -80,8 +84,8 @@ public class sqliteDBHelper extends SQLiteOpenHelper {
                 builtquery = builtquery + symbol + s + symbol + ",";
             }
         }
-        builtquery = builtquery.substring(0,builtquery.length()-1);
-        builtquery = builtquery.replaceAll("'null'","null");
+        builtquery = builtquery.substring(0, builtquery.length() - 1);
+        builtquery = builtquery.replaceAll("'null'", "null");
         return builtquery;
     }
 
@@ -90,45 +94,44 @@ public class sqliteDBHelper extends SQLiteOpenHelper {
         String builtquery = "";
         int columncount = 0;
 
-        for (Object o: obj) {
+        for (Object o : obj) {
             String s = null;
             String symbol = "";
 
             try {
                 s = o.toString();
-                symbol="'";
+                symbol = "'";
             } catch (NullPointerException e) {
                 s = "null";
 
             } finally {
-
                 builtquery = builtquery + fields.get(columncount) + "=" + symbol + s + symbol + ",";
                 columncount++;
             }
         }
-        builtquery = builtquery.substring(0,builtquery.length()-1);
-        builtquery = builtquery.replaceAll("'null'","null");
+        builtquery = builtquery.substring(0, builtquery.length() - 1);
+        builtquery = builtquery.replaceAll("'null'", "null");
         return builtquery;
     }
 
 
     /**
      * Storing user details in database
-     * */
+     */
     public void addUser(model_pro_sys_users model_pro_sys_users) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         // Inserting Row
         try {
-        db.execSQL("insert into pro_sys_users values ("+model_pro_sys_users.getInstNode_id()+","+model_pro_sys_users.getMobnode_id()+",'"+model_pro_sys_users.getUsername()+"','"+model_pro_sys_users.getPassword()+"','" +
-                                                  model_pro_sys_users.getFullName()+"','"+model_pro_sys_users.getStatus()+"','"+model_pro_sys_users.getLastLogin()+"',"+model_pro_sys_users.getLoginTimes()+")");
+            db.execSQL("insert into pro_sys_users values (" + model_pro_sys_users.getInstNode_id() + "," + model_pro_sys_users.getMobnode_id() + ",'" + model_pro_sys_users.getUsername() + "','" + model_pro_sys_users.getPassword() + "','" +
+                    model_pro_sys_users.getFullName() + "','" + model_pro_sys_users.getStatus() + "','" + model_pro_sys_users.getLastLogin() + "'," + model_pro_sys_users.getLoginTimes() + ")");
         } catch (NullPointerException | SQLiteConstraintException e) {
             e.printStackTrace();
         }
         //long id = db.insert(TABLE_USER, null, values);
         db.close(); // Closing database connection
 
-       // Log.d(TAG, "New user inserted into sqlite: " + id);
+        // Log.d(TAG, "New user inserted into sqlite: " + id);
     }
 
     public void addMenu(model_pro_sys_menu model_pro_sys_menu) {
@@ -136,8 +139,8 @@ public class sqliteDBHelper extends SQLiteOpenHelper {
 
         // Inserting Row
         try {
-        String queryvalues = queryvaluebuilder(model_pro_sys_menu.getModelAsArrayList());
-        db.execSQL("insert into pro_sys_menu values ("+queryvalues+");");
+            String queryvalues = queryvaluebuilder(model_pro_sys_menu.getModelAsArrayList());
+            db.execSQL("insert into pro_sys_menu values (" + queryvalues + ");");
         } catch (NullPointerException | SQLiteConstraintException e) {
             e.printStackTrace();
         }
@@ -149,8 +152,8 @@ public class sqliteDBHelper extends SQLiteOpenHelper {
 
         // Inserting Row
         try {
-        String queryvalues = queryvaluebuilder(model_pro_sys_devices.getModelAsArrayList());
-        db.execSQL("insert into pro_sys_devices values ("+queryvalues+");");
+            String queryvalues = queryvaluebuilder(model_pro_sys_devices.getModelAsArrayList());
+            db.execSQL("insert into pro_sys_devices values (" + queryvalues + ");");
         } catch (NullPointerException | SQLiteConstraintException e) {
             e.printStackTrace();
         }
@@ -159,10 +162,10 @@ public class sqliteDBHelper extends SQLiteOpenHelper {
 
     /**
      * Getting user data from database
-     * */
+     */
     public HashMap<String, String> getUserDetails() {
         HashMap<String, String> user = new HashMap<String, String>();
-        String selectQuery = "SELECT * FROM " + TABLE_USER + " WHERE "+meta.pro_sys_users.mobnode_id + " = " + MainActivity.NODE_ID.toString();
+        String selectQuery = "SELECT * FROM " + TABLE_USER + " WHERE " + meta.pro_sys_users.mobnode_id + " = " + MainActivity.NODE_ID.toString();
 
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -186,7 +189,7 @@ public class sqliteDBHelper extends SQLiteOpenHelper {
 
         return user;
     }
-    
+
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // Drop older table if existed
@@ -202,11 +205,37 @@ public class sqliteDBHelper extends SQLiteOpenHelper {
         // Inserting Row
         try {
             String queryvalues = queryvaluebuilder(model_pro_hr_options.getModelAsArrayList());
-            db.execSQL("insert into pro_hr_options values ("+queryvalues+");");
+            db.execSQL("insert into pro_hr_options values (" + queryvalues + ");");
         } catch (NullPointerException | SQLiteConstraintException e) {
             e.printStackTrace();
         }
         db.close(); // Closing database connection
+    }
+
+    public void addStockMenu(model_pro_stk_options model_pro_stk_options) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        // Inserting Row
+        try {
+            String queryvalues = queryvaluebuilder(model_pro_stk_options.getModelAsArrayList());
+            db.execSQL("insert into pro_stk_options values (" + queryvalues + ");");
+        } catch (NullPointerException | SQLiteConstraintException e) {
+            e.printStackTrace();
+        }
+        db.close(); // Closing database connection
+    }
+
+    public void removeHRLeaveReq(model_pro_hr_leavereq model_pro_hr_leavereq) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        // Deleting Row
+        try {
+            db.execSQL("delete from pro_hr_leave_requests where " + model_pro_hr_leavereq.getLeave_request_id() + ";");
+
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
+        db.close(); // Closing database connection
+
     }
 
     public void addHRLeaveReq(model_pro_hr_leavereq model_pro_hr_leavereq) {
@@ -215,13 +244,15 @@ public class sqliteDBHelper extends SQLiteOpenHelper {
         // Inserting Row
         try {
             String queryvalues = queryvaluebuilder(model_pro_hr_leavereq.getModelAsArrayList());
-            db.execSQL("insert into pro_hr_leave_requests values ("+queryvalues+");");
+            db.execSQL("insert into pro_hr_leave_requests values (" + queryvalues + ");");
         } catch (NullPointerException e) {
             e.printStackTrace();
-
         } catch (SQLiteConstraintException e1) {
             updateHRLeaveReq(model_pro_hr_leavereq);
+        } catch (SQLException e2) {
+            e2.printStackTrace();
         }
+
         db.close(); // Closing database connection
     }
 
@@ -231,7 +262,7 @@ public class sqliteDBHelper extends SQLiteOpenHelper {
         // Inserting Row
         try {
             String queryvalues = queryvaluebuilder(model_pro_hr_leavetypes.getModelAsArrayList());
-            db.execSQL("insert into pro_hr_leave_types values ("+queryvalues+");");
+            db.execSQL("insert into pro_hr_leave_types values (" + queryvalues + ");");
         } catch (NullPointerException | SQLiteConstraintException e) {
             e.printStackTrace();
 
@@ -244,24 +275,65 @@ public class sqliteDBHelper extends SQLiteOpenHelper {
         Field[] fields = model_pro_hr_leavereq.class.getDeclaredFields();
         // Updating Row
         try {
-            String queryvalues = queryupdatevaluebuilder(model_pro_hr_leavereq.getModelAsArrayList(),meta.pro_hr_leave_requests.getfieldnames());
-            db.execSQL("update pro_hr_leave_requests set "+queryvalues+" where leave_request_id = "+model_pro_hr_leavereq.getLeave_request_id()+";");
+            String queryvalues = queryupdatevaluebuilder(model_pro_hr_leavereq.getModelAsArrayList(), meta.pro_hr_leave_requests.getfieldnames());
+            db.execSQL("update pro_hr_leave_requests set " + queryvalues + " where leave_request_id = " + model_pro_hr_leavereq.getLeave_request_id() + ";");
         } catch (NullPointerException | SQLiteConstraintException e) {
             e.printStackTrace();
         }
         db.close(); // Closing database connection
     }
 
-    public void deleteHRLeaveReq(model_pro_hr_leavereq model_pro_hr_leavereq) {
+    public void addStkWhse(model_pro_stk_warehouse model_pro_stk_warehouse) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         // Inserting Row
         try {
-            String queryvalues = queryvaluebuilder(model_pro_hr_leavereq.getModelAsArrayList());
-            db.execSQL("insert into pro_hr_leave_requests values ("+queryvalues+");");
+            String queryvalues = queryvaluebuilder(model_pro_stk_warehouse.getModelAsArrayList());
+            db.execSQL("insert into pro_stk_warehouse values (" + queryvalues + ");");
         } catch (NullPointerException e) {
             e.printStackTrace();
+        } catch (SQLiteConstraintException e1) {
+            e1.printStackTrace();
+        } catch (SQLException e2) {
+            e2.printStackTrace();
         }
+
+        db.close(); // Closing database connection
+    }
+
+    public void addStk(model_pro_stk_stock model_pro_stk_stock) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        // Inserting Row
+        try {
+            String queryvalues = queryvaluebuilder(model_pro_stk_stock.getModelAsArrayList());
+            db.execSQL("insert into pro_stk_stock values (" + queryvalues + ");");
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        } catch (SQLiteConstraintException e1) {
+            e1.printStackTrace();
+        } catch (SQLException e2) {
+            e2.printStackTrace();
+        }
+
+        db.close(); // Closing database connection
+    }
+
+    public void addStkScan(model_pro_stk_scan model_pro_stk_scan) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        // Inserting Row
+        try {
+            String queryvalues = queryvaluebuilder(model_pro_stk_scan.getModelAsArrayList());
+            db.execSQL("insert into pro_stk_scan values (" + queryvalues + ");");
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        } catch (SQLiteConstraintException e1) {
+            e1.printStackTrace();
+        } catch (SQLException e2) {
+            e2.printStackTrace();
+        }
+
         db.close(); // Closing database connection
     }
 }

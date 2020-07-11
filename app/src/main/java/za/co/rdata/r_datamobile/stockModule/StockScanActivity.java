@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
 import android.os.AsyncTask;
@@ -31,6 +30,7 @@ import android.widget.Toast;
 
 import za.co.rdata.r_datamobile.DBHelpers.DBHelperStock;
 import za.co.rdata.r_datamobile.DBMeta.meta;
+import za.co.rdata.r_datamobile.DBMeta.sharedprefcodes;
 import za.co.rdata.r_datamobile.fileTools.EmailCreator;
 import za.co.rdata.r_datamobile.locationTools.GetLocation;
 import za.co.rdata.r_datamobile.scanTools.IntentIntegrator;
@@ -40,7 +40,6 @@ import za.co.rdata.r_datamobile.Models.model_pro_stk_scan;
 import za.co.rdata.r_datamobile.Models.model_pro_stk_stock;
 import za.co.rdata.r_datamobile.R;
 import za.co.rdata.r_datamobile.SelectAsset;
-import za.co.rdata.r_datamobile.SelectWarehouse;
 import za.co.rdata.r_datamobile.stringTools.SelectNoteActivity;
 
 /**
@@ -74,7 +73,7 @@ public class StockScanActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-        mob = sharedPref.getString("node id", "");
+        mob = sharedPref.getString(sharedprefcodes.activity_startup.node_id, "");
 
         displaywarehousecode  = getIntent().getStringExtra("WAREHOUSE NAME");
         displaywarehousedesc  = getIntent().getStringExtra("WAREHOUSE DESC");

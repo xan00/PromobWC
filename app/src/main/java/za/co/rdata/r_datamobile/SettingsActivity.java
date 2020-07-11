@@ -222,15 +222,20 @@ public class SettingsActivity extends AppCompatActivity {
             );
         }
 
-        refresh = () -> {
-            txtIP.setText(MainActivity.SYMMETRICDS_REGISTRATION_URL);
-            lastsync.setText(String.valueOf(engine.getLastRestartTime()));
-            txtBatchCount.setText(String.valueOf(checkSymmetricDS()));
-            txtIncomingBatch.setText(String.valueOf(checkIncomingSymmetricDS()));
-            txtDataSync.setText(checkDataLoadSymmetricDS());
-            handler.postDelayed(refresh, 200);
-        };
-        handler.post(refresh);
+
+            refresh = () -> {
+                txtIP.setText(MainActivity.SYMMETRICDS_REGISTRATION_URL);
+                try {
+                lastsync.setText(String.valueOf(engine.getLastRestartTime()));
+                txtBatchCount.setText(String.valueOf(checkSymmetricDS()));
+                txtIncomingBatch.setText(String.valueOf(checkIncomingSymmetricDS()));
+                txtDataSync.setText(checkDataLoadSymmetricDS());
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
+                }
+                handler.postDelayed(refresh, 200);
+            };
+            handler.post(refresh);
 
         TextView version = findViewById(R.id.txtPreviousversion);
 
@@ -316,6 +321,8 @@ public class SettingsActivity extends AppCompatActivity {
 
     public void onBackPressed() {
         super.onBackPressed();
+        handler.removeCallbacks(refresh);
+        hanVersioncheck.removeCallbacks(runVersioncheck);
     }
 
     private static class GetFiles extends AsyncTask<String, Integer, String> {

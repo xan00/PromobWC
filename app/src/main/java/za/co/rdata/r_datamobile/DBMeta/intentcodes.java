@@ -2,6 +2,13 @@ package za.co.rdata.r_datamobile.DBMeta;
 
 public class intentcodes {
 
+    public static class hr_activity {
+        public static String newleaverequest = "newleaverequest";
+        public static String holdingleavetype = "holdingleavetype";
+        public static String leaverequestmodel = "leaverequestmodel";
+        public static String camefromselectleave = "camefromselectleave";
+    }
+
     public static class job_activity {
         public static String job_number = "job_number";
         public static String meter_number = "meter_number";
