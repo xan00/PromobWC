@@ -1,5 +1,7 @@
 package za.co.rdata.r_datamobile.Models;
 
+import java.util.ArrayList;
+
 /**
  * Project: Promun
  * Created by wcrous on 03/08/2016.
@@ -11,7 +13,7 @@ public class model_pro_stk_no_access {
     private String stk_na_descriptionl;
     private String pro_stk_no_accesscol;
 
-    public model_pro_stk_no_access(String instNode_id, String mobnode_id, String pro_stk_no_accesscol, String stk_na_code, String stk_na_descriptionl) {
+    public model_pro_stk_no_access(String instNode_id, String mobnode_id, String stk_na_code, String stk_na_descriptionl, String pro_stk_no_accesscol) {
         InstNode_id = instNode_id;
         this.mobnode_id = mobnode_id;
         this.pro_stk_no_accesscol = pro_stk_no_accesscol;
@@ -57,5 +59,16 @@ public class model_pro_stk_no_access {
 
     public void setStk_na_descriptionl(String stk_na_descriptionl) {
         this.stk_na_descriptionl = stk_na_descriptionl;
+    }
+
+    public ArrayList<Object> getModelAsArrayList() {
+
+        ArrayList<Object> objectArrayList = new ArrayList<>();
+        objectArrayList.add(InstNode_id);
+        objectArrayList.add(mobnode_id);
+        objectArrayList.add(stk_na_code);
+        objectArrayList.add(stk_na_descriptionl);
+        objectArrayList.add(pro_stk_no_accesscol);
+        return objectArrayList;
     }
 }

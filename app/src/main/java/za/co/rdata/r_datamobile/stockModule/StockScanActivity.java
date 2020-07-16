@@ -179,7 +179,11 @@ public class StockScanActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
-                ScanBin();
+
+                Intent intent = new Intent(StockScanActivity.this, WareHouseSummary.class);
+                intent.putExtra(sharedprefcodes.activity_stores.whcode, displaywarehousecode);
+                intent.putExtra(sharedprefcodes.activity_stores.whdesc, displaywarehousedesc);
+                startActivity(intent);
             }
         });
         builder.show();
@@ -354,11 +358,18 @@ public class StockScanActivity extends AppCompatActivity {
 
         /////////////Company Info Query
 
+        String instnode = "";
+        if (MainActivity.NODE_ID.length() == 4) {
+            instnode = MainActivity.NODE_ID.substring(0, 2);
+        } else {
+            instnode = MainActivity.NODE_ID.substring(0, 1);
+        }
+
         Log.d(TAG, "mobinst id is " + mob.substring(0, 1));
 
         Cursor companycursor = MainActivity.sqliteDbHelper.getReadableDatabase().query(
                 meta.pro_sys_company.TableName,
-                null, meta.pro_sys_company.InstNode_id + " = ?", new String[]{mob.substring(0, 1)}, null, null, null, null);
+                null, meta.pro_sys_company.InstNode_id + " = ?", new String[]{instnode}, null, null, null, null);
         companycursor.moveToLast();
 
         int stockcycle = companycursor.getInt(companycursor.getColumnIndex(meta.pro_sys_company.st_cycle));

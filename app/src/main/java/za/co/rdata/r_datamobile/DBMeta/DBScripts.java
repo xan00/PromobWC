@@ -203,4 +203,49 @@ public class DBScripts {
                 "\t\tprimary key (InstNode_id, mobnode_id, stk_code, stk_bin)\n" +
                 ");";
     }
+
+    public static class pro_sys_company {
+        public static String ddl = "create table if not exists pro_sys_company\n" +
+                "(\n" +
+                "\tInstNode_id varchar(10) not null,\n" +
+                "\tmobnode_id varchar(15) not null,\n" +
+                "\tcompany_name varchar(50) not null,\n" +
+                "\tsup_email varchar(50) null,\n" +
+                "\tstatus varchar(10) null,\n" +
+                "\tar_cycle int null,\n" +
+                "\tmr_cycle int null,\n" +
+                "\tst_cycle int null,\n" +
+                "\tconstraint pro_sys_company_InstNode_id_mobnode_id_company_name_uindex\n" +
+                "\t\tprimary key (InstNode_id, mobnode_id, company_name)\n" +
+                ");";
+    }
+
+    public static class pro_stk_no_access {
+        public static String ddl = "create table if not exists pro_stk_no_access\n" +
+                "(\n" +
+                "\tInstNode_id varchar(10) not null,\n" +
+                "\tmobnode_id varchar(15) null,\n" +
+                "\tstk_na_code varchar(15) not null,\n" +
+                "\tstk_na_description varchar(45) null,\n" +
+                "\tpro_stk_no_accesscol varchar(45) null,\n" +
+                "\tconstraint pro_stk_no_access_InstNode_id_mobnode_id_stk_na_code_uindex\n" +
+                "\tprimary key (InstNode_id, stk_na_code)\n" +
+                ");\n" +
+                "\n";
+    }
+
+    public static class pro_stk_notes {
+        public static String ddl = "create table if not exists pro_stk_notes\n" +
+                "(\n" +
+                "\tInstNode_id varchar(10) not null,\n" +
+                "\tmobnode_id varchar(15) null,\n" +
+                "\tpro_stk_no_code varchar(10) default '' not null,\n" +
+                "\tpro_stk_no_description varchar(50) null,\n" +
+                "\tnotes_reqpic varchar(1) default '0' null,\n" +
+                "\tconstraint pro_stk_notes_InstNode_id_mobnode_id_pro_stk_no_code_uindex\n" +
+                "\tprimary key (InstNode_id, pro_stk_no_code)\n" +
+                ");\n" +
+                "\n";
+    }
+
 }

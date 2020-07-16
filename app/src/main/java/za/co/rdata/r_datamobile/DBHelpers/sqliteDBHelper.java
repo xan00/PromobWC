@@ -21,10 +21,13 @@ import za.co.rdata.r_datamobile.MainActivity;
 import za.co.rdata.r_datamobile.Models.model_pro_hr_leavereq;
 import za.co.rdata.r_datamobile.Models.model_pro_hr_leavetypes;
 import za.co.rdata.r_datamobile.Models.model_pro_hr_options;
+import za.co.rdata.r_datamobile.Models.model_pro_stk_no_access;
+import za.co.rdata.r_datamobile.Models.model_pro_stk_notes;
 import za.co.rdata.r_datamobile.Models.model_pro_stk_options;
 import za.co.rdata.r_datamobile.Models.model_pro_stk_scan;
 import za.co.rdata.r_datamobile.Models.model_pro_stk_stock;
 import za.co.rdata.r_datamobile.Models.model_pro_stk_warehouse;
+import za.co.rdata.r_datamobile.Models.model_pro_sys_company;
 import za.co.rdata.r_datamobile.Models.model_pro_sys_devices;
 import za.co.rdata.r_datamobile.Models.model_pro_sys_menu;
 import za.co.rdata.r_datamobile.Models.model_pro_sys_users;
@@ -326,6 +329,60 @@ public class sqliteDBHelper extends SQLiteOpenHelper {
         try {
             String queryvalues = queryvaluebuilder(model_pro_stk_scan.getModelAsArrayList());
             db.execSQL("insert into pro_stk_scan values (" + queryvalues + ");");
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        } catch (SQLiteConstraintException e1) {
+            e1.printStackTrace();
+        } catch (SQLException e2) {
+            e2.printStackTrace();
+        }
+
+        db.close(); // Closing database connection
+    }
+
+    public void addCompany(model_pro_sys_company model_pro_sys_company) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        // Inserting Row
+        try {
+            String queryvalues = queryvaluebuilder(model_pro_sys_company.getModelAsArrayList());
+            db.execSQL("insert into pro_sys_company values (" + queryvalues + ");");
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        } catch (SQLiteConstraintException e1) {
+            e1.printStackTrace();
+        } catch (SQLException e2) {
+            e2.printStackTrace();
+        }
+
+        db.close(); // Closing database connection
+    }
+
+    public void addStkNote(model_pro_stk_notes model_pro_stk_notes) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        // Inserting Row
+        try {
+            String queryvalues = queryvaluebuilder(model_pro_stk_notes.getModelAsArrayList());
+            db.execSQL("insert into pro_stk_notes values (" + queryvalues + ");");
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        } catch (SQLiteConstraintException e1) {
+            e1.printStackTrace();
+        } catch (SQLException e2) {
+            e2.printStackTrace();
+        }
+
+        db.close(); // Closing database connection
+    }
+
+    public void addStockNa(model_pro_stk_no_access model_pro_stk_no_access) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        // Inserting Row
+        try {
+            String queryvalues = queryvaluebuilder(model_pro_stk_no_access.getModelAsArrayList());
+            db.execSQL("insert into pro_stk_no_access values (" + queryvalues + ");");
         } catch (NullPointerException e) {
             e.printStackTrace();
         } catch (SQLiteConstraintException e1) {

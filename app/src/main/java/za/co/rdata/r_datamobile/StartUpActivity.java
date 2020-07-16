@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -43,6 +44,7 @@ import za.co.rdata.r_datamobile.DBHelpers.sqliteDBHelper;
 import za.co.rdata.r_datamobile.DBMeta.DBScripts;
 import za.co.rdata.r_datamobile.DBMeta.meta;
 import za.co.rdata.r_datamobile.DBMeta.sharedprefcodes;
+import za.co.rdata.r_datamobile.Models.model_pro_sys_company;
 import za.co.rdata.r_datamobile.Models.model_pro_sys_devices;
 import za.co.rdata.r_datamobile.Models.model_pro_sys_menu;
 import za.co.rdata.r_datamobile.Models.model_pro_sys_users;
@@ -235,8 +237,12 @@ public class StartUpActivity extends AppCompatActivity implements AsyncResponse 
         try {
             MainActivity.sqliteDbHelper.getWritableDatabase().execSQL(DBScripts.pro_sys_users.ddl);
             MainActivity.sqliteDbHelper.getWritableDatabase().execSQL(DBScripts.pro_sys_menu.ddl);
-
+            MainActivity.sqliteDbHelper.getWritableDatabase().execSQL(DBScripts.pro_sys_company.ddl);
             MainActivity.sqliteDbHelper.getWritableDatabase().execSQL(DBScripts.pro_sys_devices.ddl);
+
+            /////////////////////////////
+            //////////Get User////////
+            /////////////////////////////
 
             String combinedurl = AppConfig.URL_LOGIN + "?mobnode_id=" + node_id + "";
 
@@ -304,6 +310,10 @@ public class StartUpActivity extends AppCompatActivity implements AsyncResponse 
             });
             queue.add(strReq);
 
+            /////////////////////////////
+            //////////Get Menu////////
+            /////////////////////////////
+
             combinedurl = AppConfig.URL_MENU + "?mobnode_id=" + node_id + "";
             StringRequest strReqMenu = new StringRequest(Request.Method.GET,
                     combinedurl, new Response.Listener<String>() {
@@ -359,6 +369,10 @@ public class StartUpActivity extends AppCompatActivity implements AsyncResponse 
             });
             queue.add(strReqMenu);
 
+            /////////////////////////////
+            //////////Get Device////////
+            /////////////////////////////
+
             combinedurl = AppConfig.URL_DEVICES + "?mobnode_id=" + node_id + "";
             StringRequest strReqDevices = new StringRequest(Request.Method.GET,
                     combinedurl, new Response.Listener<String>() {
@@ -413,6 +427,90 @@ public class StartUpActivity extends AppCompatActivity implements AsyncResponse 
                 }
             });
             queue.add(strReqDevices);
+
+            /////////////////////////////
+            //////////Get Company////////
+            /////////////////////////////
+
+            //SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+            //node_id = sharedPref.getString(sharedprefcodes.activity_startup.node_id, "");
+            String instnode = "";
+            if (node_id.length() == 4) {
+                instnode = node_id.substring(0, 2);
+            } else {
+                instnode = node_id.substring(0, 1);
+            }
+
+            //Cursor companycursor = MainActivity.sqliteDbHelper.getReadableDatabase().query(
+            //        meta.pro_sys_company.TableName,
+            //        null, meta.pro_sys_company.InstNode_id + " = ?", new String[]{instnode}, null, null, null, null);
+            //companycursor.moveToLast();
+
+            combinedurl = AppConfig.URL_COMPANY + "?instnode=" + instnode + "";
+
+            StringRequest strCompany = new StringRequest(Request.Method.GET,
+                    combinedurl, new Response.Listener<String>() {
+
+                @Override
+                public void onResponse(String response) {
+                    Log.d(TAG, "Login Response: " + response.toString());
+                    //hideDialog();
+
+                    try {
+                        JSONObject jObj = new JSONObject(response);
+                        boolean error = jObj.getBoolean("error");
+
+                        // Check for error node in json
+                        if (!error) {
+                            // user successfully logged in
+                            // Create login session
+                            //session.setLogin(true);
+
+                            // Now store the user in SQLite
+                            //String uid = jObj.getString("uid");
+                            JSONObject company = jObj.getJSONObject("company");
+
+                            model_pro_sys_company model_pro_sys_company = new model_pro_sys_company(
+                                    company.getString(meta.pro_sys_company.InstNode_id),
+                                    company.getString(meta.pro_sys_company.mobnode_id),
+                                    company.getString(meta.pro_sys_company.company_name),
+                                    company.getString(meta.pro_sys_company.sup_email),
+                                    company.getString(meta.pro_sys_company.status),
+                                    company.getInt(meta.pro_sys_company.ar_cycle),
+                                    company.getInt(meta.pro_sys_company.mr_cycle),
+                                    company.getInt(meta.pro_sys_company.st_cycle)
+                            );
+
+                            // Inserting row in users table
+                            MainActivity.sqliteDbHelper.addCompany(model_pro_sys_company);
+
+                            //Intent intent = new Intent(StartUpActivity.this,
+                            //       LoginActivity.class);
+                            //startActivity(intent);
+                            //finish();
+                        } else {
+                            // Error in login. Get the error message
+                            String errorMsg = jObj.getString("error_msg");
+                            Toast.makeText(getApplicationContext(),
+                                    errorMsg, Toast.LENGTH_LONG).show();
+                        }
+                    } catch (JSONException e) {
+                        // JSON error
+                        e.printStackTrace();
+                        Toast.makeText(getApplicationContext(), "Json error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                }
+            }, new Response.ErrorListener() {
+
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.e(TAG, "Login Error: " + error.getMessage());
+                    Toast.makeText(getApplicationContext(),
+                            error.getMessage(), Toast.LENGTH_LONG).show();
+                    //hideDialog();
+                }
+            });
+            queue.add(strCompany);
 
         } catch (Exception e) {
             e.printStackTrace();

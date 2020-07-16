@@ -176,6 +176,10 @@ public class WareHouseSummary extends AppCompatActivity {
         MainActivity.sqliteDbHelper = sqliteDBHelper.getInstance(this.getApplicationContext());
         try {
             MainActivity.sqliteDbHelper.getWritableDatabase().execSQL(DBScripts.pro_stk_stock.ddl);
+            MainActivity.sqliteDbHelper.getWritableDatabase().execSQL(DBScripts.pro_stk_scan.ddl);
+            MainActivity.sqliteDbHelper.getWritableDatabase().execSQL(DBScripts.pro_stk_notes.ddl);
+            MainActivity.sqliteDbHelper.getWritableDatabase().execSQL(DBScripts.pro_stk_no_access.ddl);
+
             String combinedurl = AppConfig.URL_STK + "?instnode=" + instnode + "" +
                     "&whse=" + strWarehousecode;
             StringRequest strReqMenu = new StringRequest(Request.Method.GET,
@@ -345,8 +349,8 @@ public class WareHouseSummary extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent stockscan = new Intent(WareHouseSummary.this, StockScanActivity.class);
-                stockscan.putExtra("WAREHOUSE NAME", strWarehousecode);
-                stockscan.putExtra("WAREHOUSE DESC", strWarehousedesc);
+                stockscan.putExtra(sharedprefcodes.activity_stores.whcode, strWarehousecode);
+                stockscan.putExtra(sharedprefcodes.activity_stores.whdesc, strWarehousedesc);
                 startActivity(stockscan);
             }
         });

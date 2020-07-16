@@ -1,5 +1,7 @@
 package za.co.rdata.r_datamobile.Models;
 
+import java.util.ArrayList;
+
 /**
  * Project: Promun
  * Created by wcrous on 03/08/2016.
@@ -47,5 +49,15 @@ public class model_pro_stk_notes {
 
     public void setPro_stk_no_description(String pro_stk_no_description) {
         this.pro_stk_no_description = pro_stk_no_description;
+    }
+
+    public ArrayList<Object> getModelAsArrayList() {
+
+        ArrayList<Object> objectArrayList = new ArrayList<>();
+        objectArrayList.add(InstNode_id);
+        objectArrayList.add(mobnode_id);
+        objectArrayList.add(pro_stk_no_code);
+        objectArrayList.add(pro_stk_no_description);
+        return objectArrayList;
     }
 }
