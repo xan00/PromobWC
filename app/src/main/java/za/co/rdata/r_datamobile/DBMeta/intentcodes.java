@@ -2,6 +2,13 @@ package za.co.rdata.r_datamobile.DBMeta;
 
 public class intentcodes {
 
+    public static class login_activity {
+        public static String ressetingwebsettings = "resettingwebsettings";
+
+        public static String qrcodelogin = "qrcodelogin";
+        public static String qrcodeid = "qrcodeid";
+    }
+
     public static class hr_activity {
         public static String newleaverequest = "newleaverequest";
         public static String holdingleavetype = "holdingleavetype";

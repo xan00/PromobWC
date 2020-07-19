@@ -38,7 +38,7 @@ public class GetNodeIDActivity extends AppCompatActivity {
 
     private void sendResult(String Snode_id) {
         Intent resultIntent = new Intent();
-        resultIntent.putExtra("node_id", Snode_id);
+        resultIntent.putExtra(sharedprefcodes.activity_startup.node_id, Snode_id);
 
         CheckBox chkIsManaged = findViewById(R.id.chkIsManagedUser);
 

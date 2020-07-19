@@ -248,4 +248,43 @@ public class DBScripts {
                 "\n";
     }
 
+    public static class pro_stk_basket {
+        public static String ddl = "create table if not exists pro_stk_basket\n" +
+                "(\n" +
+                "\tInstNode_id varchar(254) not null,\n" +
+                "\tmobnode_id varchar(254) not null,\n" +
+                "\tbasket_id int not null,\n" +
+                "\tjob_id int not null,\n" +
+                "\tcheckout_date datetime default CURRENT_TIMESTAMP not null,\n" +
+                "\tconstraint pro_stk_basket_InstNode_id_mobnode_id_basket_id_job_id_uindex\n" +
+                "\t\tprimary key (InstNode_id, mobnode_id, basket_id, job_id)\n" +
+                ");\n" +
+                "\n" +
+                "create index pro_stk_basket_basket_id_index\n" +
+                "\ton pro_stk_basket (basket_id);\n";
+    }
+
+    public static class pro_stk_basket_contents {
+        public static String ddl = "create table if not exists pro_stk_basket_contents\n" +
+                "(\n" +
+                "\tInstNode_id varchar(254) not null,\n" +
+                "\tmobnode_id varchar(254) not null,\n" +
+                "\tbasketid int not null,\n" +
+                "\tstkcode varchar(45) not null,\n" +
+                "\tstk_basket_qty int not null,\n" +
+                "\tstk_found tinyint(1) null,\n" +
+                "\tadded_date datetime default CURRENT_TIMESTAMP not null,\n" +
+                "\tmod_date datetime null,\n" +
+                "\tprimary key (InstNode_id, mobnode_id, basketid, stkcode),\n" +
+                "\tconstraint pro_stk_bde_stk_basket_qty_uindex\n" +
+                "\t\tunique (InstNode_id, mobnode_id, basketid, stkcode, stk_basket_qty),\n" +
+                "\tconstraint pro_stk_basket_contents_pro_stk_basket_basket_id_fk\n" +
+                "\t\tforeign key (basketid) references pro_stk_basket (basket_id),\n" +
+                "\tconstraint pro_stk_basket_contents_pro_stk_stock_stk_code_fk\n" +
+                "\t\tforeign key (stkcode) references pro_stk_stock (stk_code)\n" +
+                ");\n" +
+                "\n" +
+                "create index pro_stk_basket_contents_InstNode_id_mobnode_id_stkcode_index\n" +
+                "\ton pro_stk_basket_contents (InstNode_id, mobnode_id, stkcode);";
+    }
 }

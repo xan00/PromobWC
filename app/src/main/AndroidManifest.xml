@@ -172,6 +172,7 @@
         <activity android:name=".HRModule.SelectApprove" />
         <activity android:name=".HRModule.SelectApplyForLeave" />
         <activity android:name=".SelectStores" />
+        <activity android:name=".stockModule.SelectBasket" />
 
         <provider
             android:name="androidx.core.content.FileProvider"

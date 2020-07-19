@@ -1,14 +1,17 @@
 package za.co.rdata.r_datamobile;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Application;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteConstraintException;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -16,7 +19,10 @@ import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.ScaleAnimation;
 import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -30,15 +36,20 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.android.volley.Request;
+import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,11 +58,17 @@ import za.co.rdata.r_datamobile.DBHelpers.DBHelper;
 import za.co.rdata.r_datamobile.DBHelpers.SymmetricDS_Helper;
 import za.co.rdata.r_datamobile.DBHelpers.sqliteDBHelper;
 import za.co.rdata.r_datamobile.DBMeta.DBScripts;
+import za.co.rdata.r_datamobile.DBMeta.intentcodes;
 import za.co.rdata.r_datamobile.DBMeta.meta;
 import za.co.rdata.r_datamobile.DBMeta.sharedprefcodes;
+import za.co.rdata.r_datamobile.Models.model_pro_qr_code;
 import za.co.rdata.r_datamobile.Models.model_pro_sys_users;
+import za.co.rdata.r_datamobile.fileTools.FileActions;
+import za.co.rdata.r_datamobile.scanTools.IntentIntegrator;
+import za.co.rdata.r_datamobile.scanTools.IntentResult;
 
 import static za.co.rdata.r_datamobile.StartUpActivity.db;
+import static za.co.rdata.r_datamobile.stringTools.MakeDate.GetDate;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -68,7 +85,14 @@ public class LoginActivity extends AppCompatActivity {
     private String serverURL;
     private Boolean isManagedUser;
 
+    private Context mContext;
+    private Activity mActivity;
+
+    private String scanContent;
+
     private static final String TAG = LoginActivity.class.getSimpleName();
+
+    private String[] scansplit;
 
     @Override
     public void onBackPressed() {
@@ -88,14 +112,18 @@ public class LoginActivity extends AppCompatActivity {
         }
         setContentView(R.layout.activity_login);
 
+        mContext=LoginActivity.this;
+        mActivity= (Activity) mContext;
+
         mUsernameView = findViewById(R.id.login_activity_TVusername);
         populateAutoComplete();
 
         mPasswordView = findViewById(R.id.login_activity_TVpassword);
         mPasswordView.setOnEditorActionListener((textView, id, keyEvent) -> {
             if (id == R.id.login || id == EditorInfo.IME_NULL) {
-                if (!attemptLogin())
-                    SendResult();
+                if (!attemptLogin(mUsernameView.getText().toString().toUpperCase(), mPasswordView.getText().toString()))
+                    MainActivity.sqliteDbHelper.getReadableDatabase().execSQL("Update pro_sys_users SET lastlogin = strftime('%Y-%m-%d %H:%M:%S', datetime('now')), logintimes=logintimes+1 where mobnode_id = '" + MainActivity.NODE_ID + "'");
+                    SendResult(mUsernameView.getText().toString().toUpperCase());
             }
             return true;
         });
@@ -104,27 +132,132 @@ public class LoginActivity extends AppCompatActivity {
         mUserSignInButton.setOnClickListener(view -> {
 
             SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-            node_id = sharedPref.getString("node id", "");
+            node_id = sharedPref.getString(sharedprefcodes.activity_startup.node_id, "");
 
             isManagedUser = sharedPref.getBoolean(sharedprefcodes.activity_startup.isManagedUser, true);
 
-          //  if (isManagedUser)
-           // {
-                if (!attemptLogin()) {
+                if (!attemptLogin(mUsernameView.getText().toString().toUpperCase(), mPasswordView.getText().toString())) {
                     MainActivity.sqliteDbHelper.getReadableDatabase().execSQL("Update pro_sys_users SET lastlogin = strftime('%Y-%m-%d %H:%M:%S', datetime('now')), logintimes=logintimes+1 where mobnode_id = '" + MainActivity.NODE_ID + "'");
-                    SendResult();
+                    SendResult(mUsernameView.getText().toString().toUpperCase());
                 }
-          //  } else
-           // {
-         //       MainActivity.sqliteDbHelper.getWritableDatabase().execSQL(DBScripts.pro_sys_users.ddl,null);
-
-          //  }
-
 
         });
 
-//        mLoginFormView = findViewById(R.id.login_form);
-//        mProgressView = findViewById(R.id.login_progress);
+        @SuppressLint("CutPasteId") FloatingActionButton fltlogin = findViewById(R.id.ftlLogin);
+        registerForContextMenu(fltlogin);
+        fltlogin.setOnClickListener(moreloginoptions);
+
+    }
+
+    private void getqrid(String valuetocompare, String node_id) {
+
+        String tag_string_req = "req_qrid";
+        RequestQueue queue = Volley.newRequestQueue(this);
+        //pDialog.setMessage("Logging in ...");
+        //showDialog();
+        //MainActivity.sqliteDbHelper = sqliteDBHelper.getInstance(this.getApplicationContext());
+        try {
+            //MainActivity.sqliteDbHelper.getWritableDatabase().execSQL(DBScripts.pro_hr_leave_requests.ddl);
+            String combinedurl = AppConfig.URL_GETQRVALUE + "?mob=" + node_id + "";
+            StringRequest strReqMenu = new StringRequest(Request.Method.GET,
+                    combinedurl, new Response.Listener<String>() {
+
+                @Override
+                public void onResponse(String response) {
+                    try {
+                        JSONObject jObj = new JSONObject(response);
+                        boolean error = jObj.getBoolean("error");
+                        // Check for error node in json
+                        if (!error) {
+                            JSONObject qritem = jObj.getJSONObject("qr");
+                            //JSONArray qritem = new JSONArray();
+
+                            //int arrSize = qrarray.length();
+                            model_pro_qr_code model_pro_qr_code = null;
+                            //for (int i = 0; i < arrSize; ++i) {
+
+                                //qritem = qrarray.getJSONArray(i);
+
+                                model_pro_qr_code = new model_pro_qr_code(
+                                        qritem.getInt("qr_id"),
+                                        qritem.getString("qr_value")
+                                );
+
+                            //}
+
+                            if (valuetocompare.equals(model_pro_qr_code.getqr_value())) {
+                                if (!attemptLogin(scansplit[2], scansplit[3])) {
+                                    MainActivity.sqliteDbHelper.getReadableDatabase().execSQL("Update pro_sys_users SET lastlogin = strftime('%Y-%m-%d %H:%M:%S', datetime('now')), logintimes=logintimes+1 where mobnode_id = '" + MainActivity.NODE_ID + "'");
+                                    SendResult(scansplit[2], model_pro_qr_code.getQr_id());
+                                }
+                            } else {
+                                Toast.makeText(getApplicationContext(), "QR code expired.",Toast.LENGTH_SHORT).show();
+                            }
+
+                        } else {
+                            // Error in login. Get the error message
+                            String errorMsg = jObj.getString("error_msg");
+                            //Toast.makeText(getApplicationContext(), errorMsg, Toast.LENGTH_LONG).show();
+                        }
+                    } catch (JSONException e) {
+                        // JSON error
+                        e.printStackTrace();
+                        //Toast.makeText(getApplicationContext(), "Json error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    } catch (SQLiteConstraintException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.e(TAG, "Login Error: " + error.getMessage());
+                    //Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_LONG).show();
+                    //hideDialog();
+                }
+            });
+            queue.add(strReqMenu);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public void setuser() {
+
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+
+/////////////////New Asset Results//////////////////////////////////////////////////////////////////////////////////////////////
+
+        super.onActivityResult(requestCode, resultCode, intent);
+        super.onActivityResult(requestCode, resultCode, intent);
+        //if (intentcode == 1) {
+            IntentResult scanningResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
+            try {
+                scanContent = scanningResult.getContents();
+                //noinspection RegExpEmptyAlternationBranch
+                scansplit = scanContent.split("|");
+            } catch (NullPointerException e) {
+                scansplit = new String[]{"2","204","MR204","rd","9B#ag8Bi1g0SE=-e&Sf,j>]]!4hQS0-a1RoCu1d6xm:9w$i-nSv{Po<t$<*8LgPteRgxy+.O6+8Km}R-1)hgVSSr"};
+                scanContent = TextUtils.join("|", scansplit);
+            }
+
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(sharedprefcodes.activity_startup.user, scansplit[2]);
+        editor.apply();
+
+        node_id = sharedPref.getString(sharedprefcodes.activity_startup.node_id, "");
+        isManagedUser = sharedPref.getBoolean(sharedprefcodes.activity_startup.isManagedUser, true);
+
+        getqrid(scanContent, node_id);
+
+
+
     }
 
     @Override
@@ -132,20 +265,84 @@ public class LoginActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        menu.add(0, v.getId(), 0, "Web Settings");
+    }
 
-    private void SendResult() {
+    @SuppressLint("SetTextI18n")
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        //SelectAsset selectAsset = new SelectAsset();
+        if (item.getTitle() == "Web Settings") {
+            Intent intent = new Intent(LoginActivity.this, StartUpActivity.class);
+            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+
+            SharedPreferences.Editor editor = sharedPref.edit();
+            editor.putString(sharedprefcodes.activity_startup.bu_node_id, sharedPref.getString(sharedprefcodes.activity_startup.node_id,""));
+            editor.putString(sharedprefcodes.activity_startup.bu_serverURL, sharedPref.getString(sharedprefcodes.activity_startup.serverURL,""));
+            editor.putBoolean(sharedprefcodes.activity_startup.bu_isManagedUser, sharedPref.getBoolean(sharedprefcodes.activity_startup.isManagedUser,false));
+            editor.apply();
+
+            editor.putString(sharedprefcodes.activity_startup.node_id, "");
+            editor.putString(sharedprefcodes.activity_startup.serverURL, "");
+            editor.putBoolean(sharedprefcodes.activity_startup.isManagedUser, true);
+            editor.apply();
+
+            //intent.putExtra(intentcodes.login_activity.ressetingwebsettings,true);
+            startActivity(intent);
+        }
+        return true;
+    }
+
+    View.OnClickListener moreloginoptions = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            IntentIntegrator scanRoomintent = new IntentIntegrator(mActivity);
+
+            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(mContext);
+            scanRoomintent.setBeepEnabled(sharedPref.getBoolean("scan_beep",false));
+            scanRoomintent.setOrientationLocked(false);
+            scanRoomintent.initiateScan();
+        }
+    };
+
+    private void SendResult(String user) {
 
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putString("user", mUsernameView.getText().toString());
+        editor.putString(sharedprefcodes.activity_startup.user, user);
         editor.apply();
-        MainActivity.USER=mUsernameView.getText().toString();
+        MainActivity.USER=user;
         Intent resultIntent = new Intent();
         resultIntent.putExtra("result", true);
         setResult(Activity.RESULT_OK, resultIntent);
+
         LoginActivity.this.finish();
         Intent intent = new Intent(LoginActivity.this,
                 MainActivity.class);
+        intent.putExtra(intentcodes.login_activity.qrcodelogin, false);
+        //intent.putExtra(intentcodes.login_activity.qrcodelogin, true);
+        startActivity(intent);
+    }
+
+    private void SendResult(String user, int qr) {
+
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(sharedprefcodes.activity_startup.user, user);
+        editor.apply();
+        MainActivity.USER=user;
+        Intent resultIntent = new Intent();
+        resultIntent.putExtra("result", true);
+        setResult(Activity.RESULT_OK, resultIntent);
+
+        LoginActivity.this.finish();
+        Intent intent = new Intent(LoginActivity.this,
+                MainActivity.class);
+        intent.putExtra(intentcodes.login_activity.qrcodelogin, true);
+        intent.putExtra(intentcodes.login_activity.qrcodeid, qr);
         startActivity(intent);
     }
 
@@ -181,15 +378,15 @@ public class LoginActivity extends AppCompatActivity {
         addUsersToAutoComplete(userList);
     }
 
-    private Boolean attemptLogin() {
+    private Boolean attemptLogin(String username, String password) {
 
         // Reset errors.
         mUsernameView.setError(null);
         mPasswordView.setError(null);
 
         // Store values at the time of the login attempt.
-        String username = mUsernameView.getText().toString().toUpperCase();
-        String password = mPasswordView.getText().toString();
+        //username = mUsernameView.getText().toString().toUpperCase();
+        //password = mPasswordView.getText().toString();
 
         boolean cancel = false;
         View focusView = null;
@@ -252,9 +449,9 @@ public class LoginActivity extends AppCompatActivity {
                 new ArrayAdapter<>(LoginActivity.this,
                         android.R.layout.simple_dropdown_item_1line, usersCollection);
 
-        adapter.notifyDataSetChanged();
+        //adapter.notifyDataSetChanged();
         mUsernameView.setAdapter(adapter);
-
+        adapter.notifyDataSetChanged();
     }
 
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;

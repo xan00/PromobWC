@@ -6,6 +6,7 @@
     <dimen name="text_view_flatheight">0dp</dimen>
     <dimen name="text_view_normalheight">14dp</dimen>
     <dimen name="cornerround">20dp</dimen>
+    <dimen name="cornerlessround">10dp</dimen>
     <dimen name="summ_border">1dp</dimen>
     <dimen name="asset_start_colour">255dp</dimen>
     <dimen name="asset_end_colour">45dp</dimen>

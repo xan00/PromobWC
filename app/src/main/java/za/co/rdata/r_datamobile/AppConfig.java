@@ -1,6 +1,8 @@
 package za.co.rdata.r_datamobile;
 
-public class AppConfig {    // Server user login url
+public class AppConfig {
+
+    public static String URL_STKGETBASKETS = "http://192.168.100.106/mdata/stock/stk_getbaskets.php";;
 
     static String URL_LOGIN = "http://192.168.100.106/mdata/login/login_mob.php";
 
@@ -36,5 +38,7 @@ public class AppConfig {    // Server user login url
 
     public static String URL_STKSETCOMMENT = "http://192.168.100.106/mdata/stock/stk_setcomment.php";
 
+    public static String URL_LOGINRESPONSEQR = "http://192.168.100.106/qr_code_maker/login_qr_response.php";
 
+    public static String URL_GETQRVALUE = "http://192.168.100.106/qr_code_maker/login_get_qr.php";
 }

@@ -1,11 +1,24 @@
 package za.co.rdata.r_datamobile.DBHelpers;
 
+import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
-import java.util.ArrayList;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
+import za.co.rdata.r_datamobile.AppConfig;
+import za.co.rdata.r_datamobile.DBMeta.jsonParams;
 import za.co.rdata.r_datamobile.DBMeta.meta;
 import za.co.rdata.r_datamobile.MainActivity;
 import za.co.rdata.r_datamobile.Models.model_pro_stk_options;
@@ -21,7 +34,7 @@ public class DBHelperStock extends DBHelper {
 
     private static Cursor scancursor;
 
-    public static void setBinScan(model_pro_stk_scan scanbin) {
+    public static void setBinScan(model_pro_stk_scan scanbin, Context context) {
         boolean success = false;
 
             Log.d("SQL", "Insert attempt made and confirmed");
@@ -45,15 +58,14 @@ public class DBHelperStock extends DBHelper {
                                     + meta.pro_stk_scan.stk_status + ")"                //19
 
                     + " VALUES ('"
-                    + SelectWarehouse.mob.substring(0,1)+"', '"                     //1
-                    + SelectWarehouse.mob+"', '"                                     //2
+                    + scanbin.getInstNode_id()+"', '"                     //1
+                    + scanbin.getMobnode_id()+"', '"                                     //2
                     + scanbin.getStk_take_cycle()+"', '"                             //3
-                    + scanbin.getWhse_code()+"', '"                                  //4
+                    + scanbin.getWhse_code()+"', '"
+                    //4
                     + scanbin.getStk_bin()+"', '"                                    //5
                     + scanbin.getStk_code()+"', '"                                 //6
-
                     + scanbin.getStk_bin_scan_type()+"', '"
-
                     + scanbin.getStk_scan_date() +"', '"
 
                     + scanbin.getStk_gps_master_long()+"', '"                        //14
@@ -66,6 +78,90 @@ public class DBHelperStock extends DBHelper {
             Log.d("SQL", "Insert attempt made and confirmed");
             success = true;
             db.close();
+            setScanRequest(scanbin, context);
+    }
+
+    public static void updateStockNotes(String notes, String stkbin) {
+        boolean success = false;
+        try {
+            SQLiteDatabase db = MainActivity.sqliteDbHelper.getWritableDatabase();
+            db.execSQL("UPDATE pro_stk_scan SET stk_note_code = '"+notes+"' WHERE stk_bin = '"+stkbin+"'");
+            success = true;
+            db.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void updateStockQty(Integer qty, String stkbin) {
+        boolean success = false;
+        try {
+            SQLiteDatabase db = MainActivity.sqliteDbHelper.getWritableDatabase();
+            db.execSQL("UPDATE pro_stk_scan SET stk_take_qty = "+qty+" WHERE stk_bin = '"+stkbin+"'");
+            success = true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void updateStockComments(String comments, String stkbin) {
+        boolean success = false;
+        try {
+            SQLiteDatabase db = MainActivity.sqliteDbHelper.getWritableDatabase();
+            db.execSQL("UPDATE pro_stk_scan SET stk_comments = '"+comments+"' WHERE stk_bin = '"+stkbin+"'");
+            success = true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    private static void setScanRequest(model_pro_stk_scan model_pro_stk_scan, Context context) {
+        String TAG = "req_apply";
+        RequestQueue queue = Volley.newRequestQueue(context);
+        //MainActivity.sqliteDbHelper = sqliteDBHelper.getInstance(this.getApplicationContext());
+
+        try {
+            String combinedurl = AppConfig.URL_STKSETSCAN;
+
+            Map<String, String> postParam= new HashMap<String, String>();
+            StringRequest jsonObjReq = new StringRequest(Request.Method.POST,
+                    combinedurl, new Response.Listener<String>(){
+                @Override
+                public void onResponse(String response)
+                {
+                    Log.d(TAG, response.toString());
+
+                }
+            },
+                    new Response.ErrorListener()
+                    {
+                        @Override
+                        public void onErrorResponse(VolleyError error)
+                        {
+                            VolleyLog.d(TAG, "Error: " + error.getMessage());
+                        }
+                    })
+            {
+                @Override
+                protected Map<String, String> getParams()
+                {
+                    Map<String, String> params = new HashMap<String, String>();
+                    ArrayList<Object> currentscans = model_pro_stk_scan.getModelAsArrayList();
+                    int parmtracker = 0;
+
+                    for (String s : jsonParams.pro_stk_scan.getfieldnames()
+                    ) {
+                        params.put(s,String.valueOf(currentscans.get(parmtracker)));
+                    }
+
+                    return params;
+                }
+            };
+
+            queue.add(jsonObjReq);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public static class pro_stk_options {
@@ -181,40 +277,6 @@ public class DBHelperStock extends DBHelper {
                 e.printStackTrace();
             }
             return stockscanItems;
-        }
-    }
-    
-    public static void updateStockNotes(String notes, String stkbin) {
-        boolean success = false;
-        try {
-            SQLiteDatabase db = MainActivity.sqliteDbHelper.getWritableDatabase();
-            db.execSQL("UPDATE pro_stk_scan SET stk_note_code = '"+notes+"' WHERE stk_bin = '"+stkbin+"'");
-            success = true;
-            db.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static void updateStockQty(Integer qty, String stkbin) {
-        boolean success = false;
-        try {
-            SQLiteDatabase db = MainActivity.sqliteDbHelper.getWritableDatabase();
-            db.execSQL("UPDATE pro_stk_scan SET stk_take_qty = "+qty+" WHERE stk_bin = '"+stkbin+"'");
-            success = true;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static void updateStockComments(String comments, String stkbin) {
-        boolean success = false;
-        try {
-            SQLiteDatabase db = MainActivity.sqliteDbHelper.getWritableDatabase();
-            db.execSQL("UPDATE pro_stk_scan SET stk_comments = '"+comments+"' WHERE stk_bin = '"+stkbin+"'");
-            success = true;
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 

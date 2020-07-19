@@ -366,4 +366,14 @@ public class meta {
         public static String stk_menu_module="stk_menu_module";
     }
 
+    public static class pro_qr_response{
+        public static String TableName = "pro_qr_response";
+        public static String InstNode_id="InstNode_id";
+        public static String mobnode_id="mobnode_id";
+        public static String qr_id="qr_id";
+        public static String stk_menu_item="response_code";
+        public static String stk_menu_desc="creation_date";
+    }
+
+
 }

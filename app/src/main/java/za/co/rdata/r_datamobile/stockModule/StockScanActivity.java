@@ -12,6 +12,14 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import androidx.annotation.Nullable;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import androidx.core.content.PermissionChecker;
 import androidx.appcompat.app.AlertDialog;
@@ -28,9 +36,16 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
+import za.co.rdata.r_datamobile.AppConfig;
 import za.co.rdata.r_datamobile.DBHelpers.DBHelperStock;
+import za.co.rdata.r_datamobile.DBMeta.jsonParams;
 import za.co.rdata.r_datamobile.DBMeta.meta;
 import za.co.rdata.r_datamobile.DBMeta.sharedprefcodes;
+import za.co.rdata.r_datamobile.Models.model_pro_hr_leavereq;
 import za.co.rdata.r_datamobile.fileTools.EmailCreator;
 import za.co.rdata.r_datamobile.locationTools.GetLocation;
 import za.co.rdata.r_datamobile.scanTools.IntentIntegrator;
@@ -187,6 +202,55 @@ public class StockScanActivity extends AppCompatActivity {
             }
         });
         builder.show();
+    }
+
+    private void setScanRequest(model_pro_stk_scan model_pro_stk_scan) {
+        String TAG = "req_apply";
+        RequestQueue queue = Volley.newRequestQueue(this);
+        //MainActivity.sqliteDbHelper = sqliteDBHelper.getInstance(this.getApplicationContext());
+
+        try {
+            String combinedurl = AppConfig.URL_STKSETSCAN;
+
+            Map<String, String> postParam= new HashMap<String, String>();
+            StringRequest jsonObjReq = new StringRequest(Request.Method.POST,
+                    combinedurl, new Response.Listener<String>(){
+                @Override
+                public void onResponse(String response)
+                {
+                    Log.d(TAG, response.toString());
+
+                }
+            },
+                    new Response.ErrorListener()
+                    {
+                        @Override
+                        public void onErrorResponse(VolleyError error)
+                        {
+                            VolleyLog.d(TAG, "Error: " + error.getMessage());
+                        }
+                    })
+            {
+                @Override
+                protected Map<String, String> getParams()
+                {
+                    Map<String, String> params = new HashMap<String, String>();
+                    ArrayList<Object> currentscans = model_pro_stk_scan.getModelAsArrayList();
+                    int parmtracker = 0;
+
+                    for (String s : jsonParams.pro_stk_scan.getfieldnames()
+                         ) {
+                        params.put(s,String.valueOf(currentscans.get(parmtracker)));
+                    }
+
+                    return params;
+                }
+            };
+
+            queue.add(jsonObjReq);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @SuppressLint({"ClickableViewAccessibility", "SetTextI18n"})
@@ -566,7 +630,8 @@ public class StockScanActivity extends AppCompatActivity {
 
         @Override
         protected Boolean doInBackground(model_pro_stk_scan... rows) {    ///////Async Task Handler For SQL Handling
-            DBHelperStock.setBinScan(scannedstock);
+            //DBHelperStock.setBinScan(scannedstock);
+
             return null;
         }
 

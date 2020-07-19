@@ -32,4 +32,9 @@
     <color name="incomplete_room">#393E41</color>
     <color name="rejectedleave">#B0C4DE</color>
 
+    <color name="loginback">#353742</color>
+    <color name="loginbutton">#545669</color>
+
+
+
 </resources>

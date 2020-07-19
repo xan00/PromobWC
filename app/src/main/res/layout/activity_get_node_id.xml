@@ -4,6 +4,7 @@
     android:id="@+id/linearLayout16"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/loginback"
     android:orientation="vertical"
     tools:context="za.co.rdata.r_datamobile.GetNodeIDActivity">
 
@@ -23,7 +24,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="36dp"
         android:layout_marginEnd="16dp"
         android:autofillHints=""
         android:hint="@string/Get_Node_Prompt_node_id"
@@ -31,7 +32,7 @@
         android:maxLines="1"
         android:singleLine="true"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/imageView4"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView4" />
 
     <Button
@@ -40,14 +41,15 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="32dp"
         android:layout_marginEnd="16dp"
+        android:background="@drawable/login_button"
         android:text="@string/Get_Node_Action_Enter"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/imageView4"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/chkIsManagedUser"
         app:layout_constraintVertical_bias="0.0" />
 
@@ -65,16 +67,17 @@
 
     <CheckBox
         android:id="@+id/chkIsManagedUser"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:checked="true"
         android:text="@string/managed_user"
-        app:buttonTint="@color/checkbox_filter_tint"
         android:textColorLink="@color/redmeter"
+        app:buttonTint="@color/checkbox_filter_tint"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.65"
         app:layout_constraintStart_toEndOf="@+id/imageView4"
         app:layout_constraintTop_toBottomOf="@+id/Get_Node_TVnodeID" />
 
