@@ -7,12 +7,12 @@
     android:background="@color/colorCompliment">
 
     <TextView
-        android:id="@+id/activity_select_warehouse"
+        android:id="@+id/activity_select_basketheader"
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:background="@color/roomcolour"
         android:gravity="center"
-        android:text="@string/select_warehouse"
+        android:text="@string/select_basket"
         android:textAppearance="?android:attr/textAppearanceLarge"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -20,11 +20,11 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ListView
-        android:id="@+id/activity_warehouse_list_listView"
+        android:id="@+id/activity_basket_list_listView"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="10dp"
-        android:layout_marginRight="8dp"
+        android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         android:divider="@android:color/transparent"
         android:dividerHeight="10.0sp"
@@ -33,7 +33,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/activity_select_warehouse"
+        app:layout_constraintTop_toBottomOf="@+id/activity_select_basketheader"
         app:layout_constraintVertical_bias="0.0" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

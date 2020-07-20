@@ -21,6 +21,7 @@ import za.co.rdata.r_datamobile.MainActivity;
 import za.co.rdata.r_datamobile.Models.model_pro_hr_leavereq;
 import za.co.rdata.r_datamobile.Models.model_pro_hr_leavetypes;
 import za.co.rdata.r_datamobile.Models.model_pro_hr_options;
+import za.co.rdata.r_datamobile.Models.model_pro_stk_basket;
 import za.co.rdata.r_datamobile.Models.model_pro_stk_no_access;
 import za.co.rdata.r_datamobile.Models.model_pro_stk_notes;
 import za.co.rdata.r_datamobile.Models.model_pro_stk_options;
@@ -383,6 +384,24 @@ public class sqliteDBHelper extends SQLiteOpenHelper {
         try {
             String queryvalues = queryvaluebuilder(model_pro_stk_no_access.getModelAsArrayList());
             db.execSQL("insert into pro_stk_no_access values (" + queryvalues + ");");
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        } catch (SQLiteConstraintException e1) {
+            e1.printStackTrace();
+        } catch (SQLException e2) {
+            e2.printStackTrace();
+        }
+
+        db.close(); // Closing database connection
+    }
+
+    public void addStkBasket(model_pro_stk_basket model_pro_stk_basket) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        // Inserting Row
+        try {
+            String queryvalues = queryvaluebuilder(model_pro_stk_basket.getModelAsArrayList());
+            db.execSQL("insert into pro_stk_basket values (" + queryvalues + ");");
         } catch (NullPointerException e) {
             e.printStackTrace();
         } catch (SQLiteConstraintException e1) {

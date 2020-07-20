@@ -2,7 +2,7 @@ package za.co.rdata.r_datamobile;
 
 public class AppConfig {
 
-    public static String URL_STKGETBASKETS = "http://192.168.100.106/mdata/stock/stk_getbaskets.php";;
+    public static String URL_STKGETBASKETS = "http://192.168.100.106/mdata/stock/stk_basket.php";;
 
     static String URL_LOGIN = "http://192.168.100.106/mdata/login/login_mob.php";
 

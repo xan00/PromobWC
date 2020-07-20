@@ -255,7 +255,7 @@ public class DBScripts {
                 "\tmobnode_id varchar(254) not null,\n" +
                 "\tbasket_id int not null,\n" +
                 "\tjob_id int not null,\n" +
-                "\tcheckout_date datetime default CURRENT_TIMESTAMP not null,\n" +
+                "\tcheckout_date datetime null,\n" +
                 "\tconstraint pro_stk_basket_InstNode_id_mobnode_id_basket_id_job_id_uindex\n" +
                 "\t\tprimary key (InstNode_id, mobnode_id, basket_id, job_id)\n" +
                 ");\n" +

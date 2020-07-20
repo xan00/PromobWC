@@ -375,5 +375,14 @@ public class meta {
         public static String stk_menu_desc="creation_date";
     }
 
+    public static class pro_stk_basket {
+        public static String TableName = "pro_stk_basket";
+        public static String InstNode_id="InstNode_id";
+        public static String mobnode_id="mobnode_id";
+        public static String basket_id="basket_id";
+        public static String job_id="job_id";
+        public static String creation_date = "creation_date";
+    }
+
 
 }

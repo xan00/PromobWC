@@ -2,22 +2,9 @@ package za.co.rdata.r_datamobile.Models;
 
 import java.util.ArrayList;
 
-/**
- * Project: Promun
- * Created by wcrous on 03/08/2016.
- */
 public class model_pro_stk_basket {
-    private String InstNode_id;
-    private String mobnode_id;
-    private int whse_code;
-    private String whse_description;
 
-    public model_pro_stk_basket(String instNode_id, String mobnode_id, int whse_code, String whse_description) {
-        InstNode_id = instNode_id;
-        this.mobnode_id = mobnode_id;
-        this.whse_code = whse_code;
-        this.whse_description = whse_description;
-    }
+    private String InstNode_id;
 
     public String getInstNode_id() {
         return InstNode_id;
@@ -35,20 +22,40 @@ public class model_pro_stk_basket {
         this.mobnode_id = mobnode_id;
     }
 
-    public int getWhse_code() {
-        return whse_code;
+    public int getBasket_id() {
+        return basket_id;
     }
 
-    public void setWhse_code(int whse_code) {
-        this.whse_code = whse_code;
+    public void setBasket_id(int basket_id) {
+        this.basket_id = basket_id;
     }
 
-    public String getWhse_description() {
-        return whse_description;
+    public int getJob_id() {
+        return job_id;
     }
 
-    public void setWhse_description(String whse_description) {
-        this.whse_description = whse_description;
+    public void setJob_id(int job_id) {
+        this.job_id = job_id;
+    }
+
+    public String getCheckout_date() {
+        return checkout_date;
+    }
+
+    public void setCheckout_date(String checkout_date) {
+        this.checkout_date = checkout_date;
+    }
+
+    private String mobnode_id;
+    private int basket_id;
+    private int job_id;
+    private String checkout_date;
+
+    public model_pro_stk_basket(String instNode_id, String mobnode_id, int basket_id, int job_id ) {
+        InstNode_id = instNode_id;
+        this.mobnode_id = mobnode_id;
+        this.basket_id = basket_id;
+        this.job_id = job_id;
     }
 
     public ArrayList<Object> getModelAsArrayList() {
@@ -56,8 +63,9 @@ public class model_pro_stk_basket {
         ArrayList<Object> objectArrayList = new ArrayList<>();
         objectArrayList.add(InstNode_id);
         objectArrayList.add(mobnode_id);
-        objectArrayList.add(whse_code);
-        objectArrayList.add(whse_description);
+        objectArrayList.add(basket_id);
+        objectArrayList.add(job_id);
+        objectArrayList.add(checkout_date);
         return objectArrayList;
     }
 }
