@@ -232,4 +232,25 @@ public class model_pro_stk_scan {
         objectArrayList.add(stk_status);
         return objectArrayList;
     }
+
+    public ArrayList<Object> getModelAsArrayListforInsert() {
+
+        ArrayList<Object> objectArrayList = new ArrayList<>();
+        objectArrayList.add(InstNode_id);
+        objectArrayList.add(mobnode_id);
+        objectArrayList.add(stk_take_cycle);
+        objectArrayList.add(whse_code);
+        objectArrayList.add(stk_bin);
+        objectArrayList.add(stk_code);
+        objectArrayList.add(stk_bin_scan_type);
+        objectArrayList.add(stk_scan_date);
+        objectArrayList.add(stk_gps_master_lat);
+        objectArrayList.add(stk_gps_master_long);
+        objectArrayList.add(stk_gps_read_lat);
+        objectArrayList.add(stk_gps_read_long);
+        objectArrayList.add(stk_user_code);
+        objectArrayList.add(stk_status);
+        return objectArrayList;
+    }
+
 }

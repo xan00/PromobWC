@@ -5,6 +5,19 @@ import java.util.ArrayList;
 public class model_pro_stk_basket {
 
     private String InstNode_id;
+    private String mobnode_id;
+    private int basket_id;
+    private int job_id;
+    private String checkout_date;
+    private int basket_job_type;
+
+    public model_pro_stk_basket(String instNode_id, String mobnode_id, int basket_id, int job_id) {
+        InstNode_id = instNode_id;
+        this.mobnode_id = mobnode_id;
+        this.basket_id = basket_id;
+        this.job_id = job_id;
+    }
+
 
     public String getInstNode_id() {
         return InstNode_id;
@@ -46,18 +59,6 @@ public class model_pro_stk_basket {
         this.checkout_date = checkout_date;
     }
 
-    private String mobnode_id;
-    private int basket_id;
-    private int job_id;
-    private String checkout_date;
-
-    public model_pro_stk_basket(String instNode_id, String mobnode_id, int basket_id, int job_id ) {
-        InstNode_id = instNode_id;
-        this.mobnode_id = mobnode_id;
-        this.basket_id = basket_id;
-        this.job_id = job_id;
-    }
-
     public ArrayList<Object> getModelAsArrayList() {
 
         ArrayList<Object> objectArrayList = new ArrayList<>();
@@ -67,5 +68,13 @@ public class model_pro_stk_basket {
         objectArrayList.add(job_id);
         objectArrayList.add(checkout_date);
         return objectArrayList;
+    }
+
+    public int getBasket_job_type() {
+        return basket_job_type;
+    }
+
+    public void setBasket_job_type(int basket_job_type) {
+        this.basket_job_type = basket_job_type;
     }
 }

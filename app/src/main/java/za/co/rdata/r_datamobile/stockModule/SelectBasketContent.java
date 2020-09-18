@@ -42,7 +42,7 @@ public class SelectBasketContent extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Intent iPoproom = getIntent();
         Bundle bSaved = iPoproom.getExtras();
-        setContentView(R.layout.activity_asset_list);
+        setContentView(R.layout.activity_basket_comp_list);
         strSelectedRoom = bSaved.getString("ROOM SCAN");
         strCurrentRoom = bSaved.getString(intentcodes.asset_activity.current_room);
         listArray = bSaved.getParcelableArrayList("Array Content");
@@ -64,7 +64,7 @@ public class SelectBasketContent extends AppCompatActivity {
         list_header.setText(String.format("ASSET SUMMARY: %s", strRoom));
 
         RecyclerView listAssetView = findViewById(R.id.activity_asset_list_listView);
-        adapter_AssetRecycler adapter_assetRecycler = new adapter_AssetRecycler(listArray,R.layout.select_room_item);
+        adapter_AssetRecycler adapter_assetRecycler = new adapter_AssetRecycler(listArray,R.layout.select_component_item);
         adapter_assetRecycler.setLightcolour(lightcolour);
         adapter_assetRecycler.setmContext(this);
         adapter_assetRecycler.setCurrentRoom(strRoom);
@@ -89,11 +89,11 @@ public class SelectBasketContent extends AppCompatActivity {
             Toast.makeText(getBaseContext(), "There Are " + "0" + temp, Toast.LENGTH_SHORT).show();
         }
 
-        Button scannewroom = findViewById(R.id.btnScanNewRoomfromList);
-        scannewroom.setOnClickListener(listenernewroom);
+        Button scannewroom = findViewById(R.id.btnScanNewBasketfromList);
+        scannewroom.setOnClickListener(listenernewBasket);
 
-        Button scannewasset = findViewById(R.id.btnScanNewAssetfromList);
-        scannewasset.setOnClickListener(listenerscan);
+        Button scannewasset = findViewById(R.id.btnScanNewPartfromList);
+        scannewasset.setOnClickListener(listenernewPart);
         }
 
         public void gotonewaasetscanning() {
@@ -128,12 +128,12 @@ public class SelectBasketContent extends AppCompatActivity {
             startActivity(gotorooms);
     }
 
-        public View.OnClickListener listenerscan = v -> {
+        public View.OnClickListener listenernewPart = v -> {
         ///////Starts Instance of New Asset Scan In Current Room
             gotonewaasetscanning();
         };
 
-        public View.OnClickListener listenernewroom = v -> {
+        public View.OnClickListener listenernewBasket = v -> {
         ///////Starts Instance of New Asset Scan In Current Room
             gotonewroomscanning();
         };
@@ -141,9 +141,7 @@ public class SelectBasketContent extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-
-        Intent gotomainsummary = new Intent(SelectBasketContent.this,RoomMainSummary.class);
-        gotomainsummary.putExtra("ROOM SCAN",strSelectedRoom);
+        Intent gotomainsummary = new Intent(SelectBasketContent.this,SelectBasket.class);
         startActivity(gotomainsummary);
     }
 }

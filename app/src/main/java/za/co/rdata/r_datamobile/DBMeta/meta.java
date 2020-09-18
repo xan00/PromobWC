@@ -309,14 +309,10 @@ public class meta {
         public static String pro_fo_status = "pro_fo_status";
         public static String pro_fo_action_date = "pro_fo_action_date";
         public static String pro_fo_prop_detail = "pro_fo_prop_detail";
-        public static String pro_fo_meter_no = "pro_fo_meter_no";
-        public static String pro_fo_reading = "pro_fo_reading";
-        public static String pro_fo_meter_type = "pro_fo_meter_type";
-        public static String pro_fo_width = "pro_fo_width";
-        public static String pro_fo_phase = "pro_fo_phase";
-        public static String pro_fo_amps = "pro_fo_amps";
         public static String pro_fo_longitude = "pro_fo_longitude";
         public static String pro_fo_latitude = "pro_fo_latitude";
+        public static String stk_basket_id = "stk_basket_id";
+        public static String creation_date = "creation_date";
     }
 
     public static class pro_hr_options{

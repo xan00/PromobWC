@@ -6,15 +6,12 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
-import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.text.InputType;
 import android.view.ContextMenu;
 import android.view.Menu;
@@ -27,19 +24,13 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 import za.co.rdata.r_datamobile.DBHelpers.DBHelper;
 import za.co.rdata.r_datamobile.DBHelpers.sqliteDBHelper;
@@ -49,12 +40,9 @@ import za.co.rdata.r_datamobile.GalleryActivity;
 import za.co.rdata.r_datamobile.MainActivity;
 import za.co.rdata.r_datamobile.Models.model_pro_mr_route_rows;
 import za.co.rdata.r_datamobile.R;
+import za.co.rdata.r_datamobile.SelectJob;
 import za.co.rdata.r_datamobile.adapters.adapter_JobPager;
-import za.co.rdata.r_datamobile.adapters.adapter_MeterReading;
-import za.co.rdata.r_datamobile.fragments.fragment_MakeAssetViewContent;
 import za.co.rdata.r_datamobile.fragments.fragment_jobMeter;
-import za.co.rdata.r_datamobile.fragments.fragment_meterReading;
-import za.co.rdata.r_datamobile.locationTools.GetLocation;
 import za.co.rdata.r_datamobile.locationTools.MapsActivity;
 import za.co.rdata.r_datamobile.meterReadingModule.MeterReaderController;
 import static za.co.rdata.r_datamobile.DBMeta.meta.pro_mr_route_rows.meter_number;
@@ -63,7 +51,7 @@ import static za.co.rdata.r_datamobile.DBMeta.meta.pro_mr_route_rows.meter_numbe
  * Created by James de Scande on 18/02/2020 at 16:02.
  */
 
-public class activity_job_card_holder extends AppCompatActivity {
+public class Select_Job_card_holder extends AppCompatActivity {
 
     ViewPager viewPager;
     @SuppressWarnings("unused")
@@ -77,7 +65,7 @@ public class activity_job_card_holder extends AppCompatActivity {
     public static String Cycle;
     public static String RouteNumber;
 
-    Context mContext = activity_job_card_holder.this;
+    Context mContext = Select_Job_card_holder.this;
     Activity mActivity = (Activity) mContext;
 
     TextView TV_Status1;
@@ -145,12 +133,16 @@ public class activity_job_card_holder extends AppCompatActivity {
             }
         });
 
+            viewPager.setCurrentItem(0);
         }
         catch (NullPointerException e) {
             e.printStackTrace();
+            Toast.makeText(this,"Job detail not found",Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(Select_Job_card_holder.this, SelectJob.class);
+            startActivity(intent);
+
         }
 
-        viewPager.setCurrentItem(0);
 //        final FloatingActionButton floatingActionButton = findViewById(R.id.fabToMap);
 //        registerForContextMenu(floatingActionButton);
 //        floatingActionButton.setOnClickListener(view -> openContextMenu(floatingActionButton));
@@ -176,7 +168,7 @@ public class activity_job_card_holder extends AppCompatActivity {
                     ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 99);
                 }
 
-                Intent gotogallery = new Intent(activity_job_card_holder.this, GalleryActivity.class);
+                Intent gotogallery = new Intent(Select_Job_card_holder.this, GalleryActivity.class);
                 gotogallery.putExtra("PHOTO ID", String.valueOf(MeterReaderController.route_row_keys.get(intCurrentMeter).getMeter_id()));
                 String sql = "SELECT meter_reading, gps_read_lat, gps_read_long, meter_number FROM pro_mr_route_rows WHERE walk_sequence = '"
                         //+ //MeterReaderController.route_row_keys.get(intCurrentMeter).getWalk_sequence()
@@ -354,7 +346,7 @@ public class activity_job_card_holder extends AppCompatActivity {
         if ((dblCoords[0] == 0) || (dblCoords[1] == 0)) {
             Toast.makeText(getBaseContext(), "Error, there is currently no coordinate data for this point", Toast.LENGTH_SHORT).show();
         } else {
-            Intent newmap = new Intent(activity_job_card_holder.this, MapsActivity.class);
+            Intent newmap = new Intent(Select_Job_card_holder.this, MapsActivity.class);
             newmap.putExtra("METER COORDS", dblCoords);
             newmap.putExtra("METER NUMBER", String.valueOf(curCoords.getInt(curCoords.getColumnIndex(meter_number))));
             startActivity(newmap);

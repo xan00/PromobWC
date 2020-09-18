@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/roomcolour"
-    tools:context=".jobModule.activity_job_card_holder">
+    tools:context=".jobModule.Select_Job_card_holder">
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fltMoreOptions"

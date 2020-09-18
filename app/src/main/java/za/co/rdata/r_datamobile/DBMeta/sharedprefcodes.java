@@ -22,5 +22,6 @@ public class sharedprefcodes {
         public static String bu_isManagedUser = "bu_isManagedUser";
         public static String user = "user";
         public static String qrscanlogin = "qrscanlogin";
+        public static String serverURLPHP = "serverURLPHP";
     }
 }

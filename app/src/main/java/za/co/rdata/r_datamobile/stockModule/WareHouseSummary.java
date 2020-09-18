@@ -19,8 +19,15 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.PermissionChecker;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -43,6 +50,9 @@ import za.co.rdata.r_datamobile.DBMeta.meta;
 import za.co.rdata.r_datamobile.DBMeta.sharedprefcodes;
 import za.co.rdata.r_datamobile.Models.model_pro_stk_stock;
 import za.co.rdata.r_datamobile.Models.model_pro_stk_warehouse;
+import za.co.rdata.r_datamobile.SelectJob;
+import za.co.rdata.r_datamobile.adapters.adapter_JobRecycler;
+import za.co.rdata.r_datamobile.adapters.adapter_WarehouseSummaryRecycler;
 import za.co.rdata.r_datamobile.locationTools.GetLocation;
 import za.co.rdata.r_datamobile.MainActivity;
 import za.co.rdata.r_datamobile.Models.model_pro_stk_scan;
@@ -59,6 +69,12 @@ public class WareHouseSummary extends AppCompatActivity {
     public sqliteDBHelper sqliteDbHelper;
     String mob;
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getstock();
+    }
+
     @SuppressLint("SetTextI18n")
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -72,7 +88,7 @@ public class WareHouseSummary extends AppCompatActivity {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         mob = sharedPref.getString(sharedprefcodes.activity_startup.node_id, "");
 
-        getstock();
+        //getstock();
 
     }
 
@@ -101,7 +117,7 @@ public class WareHouseSummary extends AppCompatActivity {
         return coordinates;
     }
 
-    public class adapter_WarehouseSummary extends ArrayAdapter<model_pro_stk_scan> {
+   /* public class adapter_WarehouseSummary extends ArrayAdapter<model_pro_stk_scan> {
 
         Context mContext;
         ArrayList<model_pro_stk_scan> arrStockValues;
@@ -110,6 +126,7 @@ public class WareHouseSummary extends AppCompatActivity {
         class ViewHolderItem {
             TextView txtStockName;
             TextView txtStockCount;
+            ConstraintLayout constraintLayout;
         }
 
         adapter_WarehouseSummary(ArrayList<model_pro_stk_scan> arrStockValues) {
@@ -129,6 +146,7 @@ public class WareHouseSummary extends AppCompatActivity {
                 itemview = getLayoutInflater().inflate(R.layout.select_warehouse_summary, parent, false);
                 viewHolder.txtStockName = itemview.findViewById(R.id.txtStockName);
                 viewHolder.txtStockCount = itemview.findViewById(R.id.txtStockCount);
+                viewHolder.constraintLayout = itemview.findViewById(R.id.clwarehousesummary);
                 itemview.setTag(viewHolder);
             } else {
                 try {
@@ -147,12 +165,14 @@ public class WareHouseSummary extends AppCompatActivity {
             viewHolder.txtStockCount.setText(String.valueOf(stockscan.getStk_take_qty()));
             viewHolder.txtStockCount.setTag(String.valueOf(stockscan.getStk_take_qty()));
 
+            //if (!stockscan.getStk_take_qty().equals(null)) {viewHolder.constraintLayout.setBackgroundResource(R.drawable.stock_item_scanned);}
+
             curStockDesc.close();
 
             return itemview;
         }
     }
-
+*/
     @Override
     public void onBackPressed() {
         Intent intentwarehouse = new Intent(WareHouseSummary.this, SelectWarehouse.class);
@@ -264,7 +284,7 @@ public class WareHouseSummary extends AppCompatActivity {
 
                 Cursor curStockScan = null;
                 try {
-                    curStockScan = sqliteDbHelper.getReadableDatabase().rawQuery("SELECT * FROM pro_stk_scan WHERE stk_bin = '" + curStock.getString(curStock.getColumnIndex(meta.pro_stk_stock.stk_bin)) + "' ORDER BY stk_bin", null);
+                    curStockScan = sqliteDbHelper.getReadableDatabase().rawQuery("SELECT * FROM pro_stk_scan WHERE stk_code = '" + curStock.getString(curStock.getColumnIndex(meta.pro_stk_stock.stk_code)) + "'", null);
                     curStockScan.moveToFirst();
                 } catch (NullPointerException | CursorIndexOutOfBoundsException ignore) {
                 }
@@ -300,7 +320,7 @@ public class WareHouseSummary extends AppCompatActivity {
                 } catch (NullPointerException | CursorIndexOutOfBoundsException ignore) {
                 }
 
-                int stockqty = 0;
+                int stockqty = -999;
                 try {
                     stockqty = curStockScan.getInt(curStockScan.getColumnIndex(meta.pro_stk_scan.stk_take_qty));
                 } catch (NullPointerException | CursorIndexOutOfBoundsException ignore) {
@@ -336,23 +356,32 @@ public class WareHouseSummary extends AppCompatActivity {
         }
         curStock.close();
 
-        ArrayAdapter<model_pro_stk_scan> adapter = new adapter_WarehouseSummary(arrStockScans);
+        adapter_WarehouseSummaryRecycler adapter_warehouseSummaryRecycler = new adapter_WarehouseSummaryRecycler(arrStockScans, R.layout.select_warehouse_summary);
+        adapter_warehouseSummaryRecycler.setRetStockcode(R.id.txtStockCount);
+        adapter_warehouseSummaryRecycler.setRetstockdesc(R.id.txtStockDesc);
+        adapter_warehouseSummaryRecycler.setRetframe(R.id.clwarehousesummary);
+        adapter_warehouseSummaryRecycler.setmContext(WareHouseSummary.this);
 
-        final ListView listView = findViewById(R.id.lstWarehosueSumm);
-        listView.setAdapter(adapter);
+        DividerItemDecoration itemDecorator = new DividerItemDecoration(WareHouseSummary.this, DividerItemDecoration.VERTICAL);
+        RecyclerView recyclerView = findViewById(R.id.lstWarehosueSumm);
+        recyclerView.removeItemDecoration(itemDecorator);
+        itemDecorator.setDrawable(ContextCompat.getDrawable(WareHouseSummary.this, R.drawable.recycler_divider_large));
+        recyclerView.addItemDecoration(itemDecorator);
+        ///recyclerView.setDrawable(new DividerItemDecoration(this,R.drawable.recycler_divider));
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
+        recyclerView.setLayoutManager(mLayoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setAdapter(adapter_warehouseSummaryRecycler);
 
         TextView lblWareSumm = findViewById(R.id.lblWarehouseSummTitle);
         lblWareSumm.setText("WAREHOUSE: "+strWarehousedesc);
 
         FloatingActionButton fltScanStock = findViewById(R.id.flbScan);
-        fltScanStock.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent stockscan = new Intent(WareHouseSummary.this, StockScanActivity.class);
-                stockscan.putExtra(sharedprefcodes.activity_stores.whcode, strWarehousecode);
-                stockscan.putExtra(sharedprefcodes.activity_stores.whdesc, strWarehousedesc);
-                startActivity(stockscan);
-            }
+        fltScanStock.setOnClickListener(view -> {
+            Intent stockscan = new Intent(WareHouseSummary.this, StockScanActivity.class);
+            stockscan.putExtra(sharedprefcodes.activity_stores.whcode, strWarehousecode);
+            stockscan.putExtra(sharedprefcodes.activity_stores.whdesc, strWarehousedesc);
+            startActivity(stockscan);
         });
     }
 

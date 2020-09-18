@@ -357,7 +357,7 @@ public class LoginActivity extends AppCompatActivity {
             cursor.moveToFirst();
         } catch (NullPointerException e) {
             e.printStackTrace();
-            //MainActivity.sqliteDbHelper = sqliteDBHelper.getInstance(this.getApplicationContext());
+            MainActivity.sqliteDbHelper = sqliteDBHelper.getInstance(this.getApplicationContext());
             cursor = DBHelper.pro_sys_users.getAllUsers();
             cursor.moveToFirst();
         }
@@ -610,11 +610,6 @@ public class LoginActivity extends AppCompatActivity {
                         // Inserting row in users table
                         db.addUser(model_pro_sys_users);
 
-                        // Launch main activity
-                        Intent intent = new Intent(LoginActivity.this,
-                                MainActivity.class);
-                        startActivity(intent);
-                        finish();
                     } else {
                         // Error in login. Get the error message
                         String errorMsg = jObj.getString("error_msg");
@@ -626,6 +621,7 @@ public class LoginActivity extends AppCompatActivity {
                     e.printStackTrace();
                     Toast.makeText(getApplicationContext(), "Json error: " + e.getMessage(), Toast.LENGTH_LONG).show();
                 }
+                populateAutoComplete();
 
             }
         }, new Response.ErrorListener() {

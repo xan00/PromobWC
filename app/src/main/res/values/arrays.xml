@@ -11,6 +11,19 @@
         <item>196.41.122.216</item>
     </string-array>
 
+    <string-array name="php_ip_addresses">
+        <item>bi-cw.sebata.co.za:9080</item>
+        <item>192.168.100.106</item>
+    </string-array>
+
+    <string-array name="leaave_types">
+        <item>annual</item>
+        <item>overtime</item>
+        <item>special</item>
+        <item>compassionate</item>
+        <item>study</item>
+    </string-array>
+
     <string-array name="months">
         <item>01</item>
         <item>02</item>
@@ -24,7 +37,11 @@
         <item>10</item>
         <item>11</item>
         <item>12</item>
+    </string-array>
 
+    <string-array name="phpip_addresses">
+        <item>bi-sql.sebata.co.za</item>
+        <item>localhost</item>
     </string-array>
 
 </resources>

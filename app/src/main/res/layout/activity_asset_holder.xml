@@ -61,18 +61,17 @@
         android:id="@+id/txtCurrentItem"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
-        android:layout_marginTop="20dp"
         android:fadingEdge="horizontal|vertical"
         android:foregroundGravity="top"
-        android:paddingBottom="15dp"
-        android:paddingEnd="24dp"
         android:paddingStart="15dp"
+        android:paddingEnd="24dp"
+        android:paddingBottom="15dp"
         android:textAlignment="textEnd"
         android:textColor="@color/default_back"
         android:textSize="17sp"
         android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintBottom_toBottomOf="@+id/pgRoomAssets"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/txtCurrentRoomLabel"

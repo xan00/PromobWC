@@ -3,5 +3,7 @@
     <domain-config cleartextTrafficPermitted="true">
         <domain includeSubdomains="true">196.41.122.216</domain>
         <domain includeSubdomains="true">196.41.123.51</domain>
+        <domain includeSubdomains="true">192.168.100.106</domain>
+        <domain includeSubdomains="true">bi-cw.sebata.co.za:9080</domain>
     </domain-config>
 </network-security-config>

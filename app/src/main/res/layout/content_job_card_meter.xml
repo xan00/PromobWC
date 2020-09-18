@@ -7,7 +7,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/constraintLayoutJobFragment"
     android:layout_marginTop="4dp"
-    tools:context="za.co.rdata.r_datamobile.jobModule.activity_job_card_holder">
+    tools:context="za.co.rdata.r_datamobile.jobModule.Select_Job_card_holder">
 
     <TextView
         android:id="@+id/textView"

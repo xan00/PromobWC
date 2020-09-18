@@ -29,7 +29,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:maxImageSize="16dp"
-        app:srcCompat="@android:drawable/ic_lock_idle_lock" />
+        app:srcCompat="@android:drawable/ic_lock_idle_lock"
+        android:focusable="true" />
 
     <RelativeLayout
         android:id="@+id/relativeLayout3"
@@ -110,9 +111,12 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
             android:background="@drawable/login_button"
+            android:clickable="true"
+            android:shadowColor="@color/colorCompliment"
             android:text="@string/action_log_in"
             android:textColor="@color/colorCompliment"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:focusable="true" />
 
     </LinearLayout>
 

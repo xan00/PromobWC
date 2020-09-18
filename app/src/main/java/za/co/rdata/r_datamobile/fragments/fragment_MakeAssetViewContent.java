@@ -168,6 +168,8 @@ public class fragment_MakeAssetViewContent extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
+
+
     }
 
     @Nullable
@@ -228,6 +230,7 @@ public class fragment_MakeAssetViewContent extends Fragment {
 
         txtAddRemaining = viewFragment.findViewById(R.id.txtAddontoremaining);
         txtAddRemaining.setText(scannedassetdata.getAdjremainder());
+        txtAddRemaining.clearFocus();
 
         TextView txtQtyforManual = viewFragment.findViewById(R.id.txtQtyfoManual);
         TextView txtQtyLabel = viewFragment.findViewById(R.id.textView27);
@@ -236,23 +239,19 @@ public class fragment_MakeAssetViewContent extends Fragment {
         ConstraintSet constraintSet = new ConstraintSet();
 
         try {
-        /*
+
             if ((assetdata.getReg_qtyformanual() > 0) && (assetdata.getReg_barcode().startsWith(getResources().getString(R.string.manual_tag)))) {
                 txtQtyforManual.setAlpha(1);
-
                 txtQtyLabel.setAlpha(1);
-                txtQtyforManual.setText(String.valueOf(assetdata.getReg_qtyformanual()));
-                constraintSet.clone(constraintLayout);
-                constraintSet.connect(R.id.textView18, ConstraintSet.TOP, R.id.textView27, ConstraintSet.BOTTOM, 8);
-                constraintSet.applyTo(constraintLayout);
+                txtQtyforManual.setText(String.valueOf(scannedassetdata .getScan_quantity()));
+                //constraintSet.clone(constraintLayout);
+                //constraintSet.connect(R.id.textView18, ConstraintSet.TOP, R.id.textView27, ConstraintSet.BOTTOM, 8);
+                //constraintSet.applyTo(constraintLayout);
             } else {
-            */
-                txtQtyforManual.setAlpha(0);
-                txtQtyLabel.setAlpha(0);
-                constraintSet.clone(constraintLayout);
-                constraintSet.connect(R.id.textView18, ConstraintSet.TOP, R.id.textView24, ConstraintSet.BOTTOM, 8);
-                constraintSet.applyTo(constraintLayout);
 
+            txtQtyforManual.setAlpha(0);
+            txtQtyLabel.setAlpha(0);
+        }
 
         } catch (NullPointerException e) {
             txtQtyforManual.setAlpha(0);
@@ -368,6 +367,7 @@ public class fragment_MakeAssetViewContent extends Fragment {
 
         curCurrentAssetData.close();
         curCurrentScanData.close();
+        txtAddRemaining.clearFocus();
 
         return viewFragment;
     }
@@ -396,6 +396,7 @@ public class fragment_MakeAssetViewContent extends Fragment {
         txtDescription.setOnLongClickListener(listen_descTextView);
         txtAddRemaining.setOnClickListener(addonclear);
         ScannedBoxColourChange(lightColourChecking(getAssetdata(), getScannedassetdata()));
+        txtAddRemaining.clearFocus();
     }
 
     private int lightColourChecking(model_pro_ar_asset_rows assetdata, model_pro_ar_scanasset scannedassetdata) {

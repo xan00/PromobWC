@@ -287,4 +287,86 @@ public class DBScripts {
                 "create index pro_stk_basket_contents_InstNode_id_mobnode_id_stkcode_index\n" +
                 "\ton pro_stk_basket_contents (InstNode_id, mobnode_id, stkcode);";
     }
+
+    public static class pro_fo_jobs {
+        public static String ddl = "create table if not exists pro_fo_jobs\n" +
+                "(\n" +
+                "\tInstNode_id varchar(254) not null,\n" +
+                "\tmobnode_id varchar(254) not null,\n" +
+                "\tpro_fo_job_no int not null,\n" +
+                "\tpro_fo_job_type int not null,\n" +
+                "\tpro_fo_status varchar(20) not null,\n" +
+                "\tpro_fo_action_date datetime not null,\n" +
+                "\tpro_fo_prop_detail varchar(254) null,\n" +
+                "\tpro_fo_longitude double default 0 null,\n" +
+                "\tpro_fo_latitude double default 0 null,\n" +
+                "\tstk_basket_id int not null,\n" +
+                "\tcreation_date datetime default CURRENT_TIMESTAMP null,\n" +
+                "\tconstraint pro_fo_jobs_InstNoasket_id_uindex\n" +
+                "\t\tunique (InstNode_id, mobnode_id, pro_fo_job_no, stk_basket_id)\n" +
+                ");\n" +
+                "\n" +
+                "create index pro_fo_jobs_pro_fo_job_no_index\n" +
+                "\ton pro_fo_jobs (pro_fo_job_no);\n" +
+                "\n" +
+                "alter table pro_fo_jobs\n" +
+                "\tadd primary key (InstNode_id, mobnode_id, pro_fo_job_no, stk_basket_id);";
+    }
+
+    public static class pro_mr_route_headers {
+        public static String ddl = "create table if not exists pro_mr_route_headers\n" +
+                "(\n" +
+                "\tInstNode_id varchar(254) not null,\n" +
+                "\tmobnode_id varchar(254) not null,\n" +
+                "\tcycle varchar(254) not null,\n" +
+                "\troute_number varchar(254) not null,\n" +
+                "\tdescription varchar(254) null,\n" +
+                "\tstatus int null,\n" +
+                "\trelease_date varchar(254) null,\n" +
+                "\tprimary key (InstNode_id, mobnode_id, cycle, route_number),\n" +
+                "\tconstraint pro_mr_route_headers_mobnode_id_route_number_uindex\n" +
+                "\t\tunique (mobnode_id, route_number)\n" +
+                ");\n";
+    }
+
+    public static class pro_mr_route_rows {
+        public static String ddl = "create table if not exists pro_mr_route_rows\n" +
+                "(\n" +
+                "\tInstNode_id varchar(254) not null,\n" +
+                "\tmobnode_id varchar(254) not null,\n" +
+                "\tcycle varchar(254) not null,\n" +
+                "\troute_number varchar(254) not null,\n" +
+                "\twalk_sequence int default 0 not null,\n" +
+                "\tmeter_number varchar(254) null,\n" +
+                "\tmeter_id int default 0 not null,\n" +
+                "\tmeter_type varchar(254) null,\n" +
+                "\taddress_name varchar(254) null,\n" +
+                "\tstreet_number varchar(254) null,\n" +
+                "\ttown varchar(254) null,\n" +
+                "\tsuburb varchar(254) null,\n" +
+                "\taccount_number varchar(254) null,\n" +
+                "\terf_number varchar(254) null,\n" +
+                "\tdescription varchar(254) null,\n" +
+                "\tprevious_date varchar(254) null,\n" +
+                "\tprevious_reading decimal null,\n" +
+                "\tlow_reading decimal null,\n" +
+                "\thigh_reading decimal null,\n" +
+                "\testimate_consumption decimal null,\n" +
+                "\tgps_master_long double null,\n" +
+                "\tgps_master_lat double null,\n" +
+                "\tgps_read_long double null,\n" +
+                "\tgps_read_lat double null,\n" +
+                "\tmeter_reading decimal(10,2) null,\n" +
+                "\treading_date varchar(254) null,\n" +
+                "\tna_code varchar(254) null,\n" +
+                "\tnote_code varchar(254) null,\n" +
+                "\tretries int null,\n" +
+                "\tdistance_to_meter_read float null,\n" +
+                "\tstatus int null,\n" +
+                "\tname varchar(254) null,\n" +
+                "\tprimary key (InstNode_id, mobnode_id, cycle, walk_sequence, route_number, meter_id),\n" +
+                "\tconstraint pro_mr_route_rows_index\n" +
+                "\t\tunique (mobnode_id, route_number, walk_sequence, meter_id)\n" +
+                ");";
+    }
 }

@@ -15,8 +15,7 @@ import java.util.List;
 import za.co.rdata.r_datamobile.DBMeta.intentcodes;
 import za.co.rdata.r_datamobile.Models.model_pro_ar_asset_room;
 import za.co.rdata.r_datamobile.R;
-import za.co.rdata.r_datamobile.assetModule.RoomMainSummary;
-import za.co.rdata.r_datamobile.jobModule.activity_job_card_holder;
+import za.co.rdata.r_datamobile.jobModule.Select_Job_card_holder;
 
 public class adapter_JobRecycler extends RecyclerView.Adapter<adapter_JobRecycler.GenericViewHolder> {
 
@@ -32,7 +31,7 @@ public class adapter_JobRecycler extends RecyclerView.Adapter<adapter_JobRecycle
         @Override
         public void onClick(View view) {
 
-            Intent gotojob = new Intent(mContext, activity_job_card_holder.class);
+            Intent gotojob = new Intent(mContext, Select_Job_card_holder.class);
             TextView textView = view.findViewById(retbarcode);
             String strJobNumber = textView.getText().toString();
             TextView textViewasset = view.findViewById(retdesc);

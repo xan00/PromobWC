@@ -81,37 +81,41 @@ public class DBHelperStock extends DBHelper {
             setScanRequest(scanbin, context);
     }
 
-    public static void updateStockNotes(String notes, String stkbin) {
+    public static void updateStockNotes(model_pro_stk_scan scanbin, Context context) {
         boolean success = false;
         try {
             SQLiteDatabase db = MainActivity.sqliteDbHelper.getWritableDatabase();
-            db.execSQL("UPDATE pro_stk_scan SET stk_note_code = '"+notes+"' WHERE stk_bin = '"+stkbin+"'");
+            db.execSQL("UPDATE pro_stk_scan SET stk_note_code = '"+scanbin.getStk_note_code()+"' WHERE stk_code = '"+ scanbin.getStk_code()+"'");
             success = true;
             db.close();
         } catch (Exception e) {
             e.printStackTrace();
+            setScanNote(scanbin, context);
         }
     }
 
-    public static void updateStockQty(Integer qty, String stkbin) {
+    public static void updateStockQty(model_pro_stk_scan scanbin, Context context) {
         boolean success = false;
         try {
             SQLiteDatabase db = MainActivity.sqliteDbHelper.getWritableDatabase();
-            db.execSQL("UPDATE pro_stk_scan SET stk_take_qty = "+qty+" WHERE stk_bin = '"+stkbin+"'");
+            db.execSQL("UPDATE pro_stk_scan SET stk_take_qty = "+scanbin.getStk_take_qty()+" WHERE stk_code = '"+scanbin.getStk_code()+"'");
             success = true;
+            db.close();
+            setScanQty(scanbin, context);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public static void updateStockComments(String comments, String stkbin) {
+    public static void updateStockComments(model_pro_stk_scan scanbin, Context context) {
         boolean success = false;
         try {
             SQLiteDatabase db = MainActivity.sqliteDbHelper.getWritableDatabase();
-            db.execSQL("UPDATE pro_stk_scan SET stk_comments = '"+comments+"' WHERE stk_bin = '"+stkbin+"'");
+            db.execSQL("UPDATE pro_stk_scan SET stk_comments = '"+scanbin.getStk_comments()+"' WHERE stk_code = '"+scanbin.getStk_code()+"'");
             success = true;
         } catch (Exception e) {
             e.printStackTrace();
+            setScanComment(scanbin, context);
         }
     }
     
@@ -146,13 +150,198 @@ public class DBHelperStock extends DBHelper {
                 protected Map<String, String> getParams()
                 {
                     Map<String, String> params = new HashMap<String, String>();
-                    ArrayList<Object> currentscans = model_pro_stk_scan.getModelAsArrayList();
+                    ArrayList<Object> currentscans = model_pro_stk_scan.getModelAsArrayListforInsert();
                     int parmtracker = 0;
 
-                    for (String s : jsonParams.pro_stk_scan.getfieldnames()
+                    for (String s : jsonParams.pro_stk_scan.getfieldnamesforinsert()
                     ) {
                         params.put(s,String.valueOf(currentscans.get(parmtracker)));
+                        parmtracker++;
                     }
+
+                    return params;
+                }
+            };
+
+            queue.add(jsonObjReq);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void setScanQty(model_pro_stk_scan model_pro_stk_scan, Context context) {
+        String TAG = "req_qty";
+        RequestQueue queue = Volley.newRequestQueue(context);
+        //MainActivity.sqliteDbHelper = sqliteDBHelper.getInstance(this.getApplicationContext());
+
+        try {
+            String combinedurl = AppConfig.URL_STKSETQTY;
+
+            Map<String, String> postParam= new HashMap<String, String>();
+            StringRequest jsonObjReq = new StringRequest(Request.Method.POST,
+                    combinedurl, new Response.Listener<String>(){
+                @Override
+                public void onResponse(String response)
+                {
+                    Log.d(TAG, response.toString());
+
+                }
+            },
+                    new Response.ErrorListener()
+                    {
+                        @Override
+                        public void onErrorResponse(VolleyError error)
+                        {
+                            VolleyLog.d(TAG, "Error: " + error.getMessage());
+                        }
+                    })
+            {
+                @Override
+                protected Map<String, String> getParams()
+                {
+                    Map<String, String> params = new HashMap<String, String>();
+                    params.put("m",String.valueOf(model_pro_stk_scan.getMobnode_id()));
+                    params.put("w",String.valueOf(model_pro_stk_scan.getWhse_code()));
+                    params.put("c",String.valueOf(model_pro_stk_scan.getStk_code()));
+                    params.put("q",String.valueOf(model_pro_stk_scan.getStk_take_qty()));
+
+                    return params;
+                }
+            };
+
+            queue.add(jsonObjReq);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void setScanComment(model_pro_stk_scan model_pro_stk_scan, Context context) {
+        String TAG = "req_comment";
+        RequestQueue queue = Volley.newRequestQueue(context);
+        //MainActivity.sqliteDbHelper = sqliteDBHelper.getInstance(this.getApplicationContext());
+
+        try {
+            String combinedurl = AppConfig.URL_STKSETCOMMENT;
+
+            Map<String, String> postParam= new HashMap<String, String>();
+            StringRequest jsonObjReq = new StringRequest(Request.Method.POST,
+                    combinedurl, new Response.Listener<String>(){
+                @Override
+                public void onResponse(String response)
+                {
+                    Log.d(TAG, response.toString());
+
+                }
+            },
+                    new Response.ErrorListener()
+                    {
+                        @Override
+                        public void onErrorResponse(VolleyError error)
+                        {
+                            VolleyLog.d(TAG, "Error: " + error.getMessage());
+                        }
+                    })
+            {
+                @Override
+                protected Map<String, String> getParams()
+                {
+                    Map<String, String> params = new HashMap<String, String>();
+                    params.put("m",String.valueOf(model_pro_stk_scan.getMobnode_id()));
+                    params.put("w",String.valueOf(model_pro_stk_scan.getWhse_code()));
+                    params.put("cd",String.valueOf(model_pro_stk_scan.getStk_code()));
+                    params.put("co",String.valueOf(model_pro_stk_scan.getStk_comments()));
+
+                    return params;
+                }
+            };
+
+            queue.add(jsonObjReq);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void setScanNote(model_pro_stk_scan model_pro_stk_scan, Context context) {
+        String TAG = "req_qty";
+        RequestQueue queue = Volley.newRequestQueue(context);
+        //MainActivity.sqliteDbHelper = sqliteDBHelper.getInstance(this.getApplicationContext());
+
+        try {
+            String combinedurl = AppConfig.URL_STKSETNOTE;
+
+            Map<String, String> postParam= new HashMap<String, String>();
+            StringRequest jsonObjReq = new StringRequest(Request.Method.POST,
+                    combinedurl, new Response.Listener<String>(){
+                @Override
+                public void onResponse(String response)
+                {
+                    Log.d(TAG, response.toString());
+
+                }
+            },
+                    new Response.ErrorListener()
+                    {
+                        @Override
+                        public void onErrorResponse(VolleyError error)
+                        {
+                            VolleyLog.d(TAG, "Error: " + error.getMessage());
+                        }
+                    })
+            {
+                @Override
+                protected Map<String, String> getParams()
+                {
+                    Map<String, String> params = new HashMap<String, String>();
+                    params.put("m",String.valueOf(model_pro_stk_scan.getMobnode_id()));
+                    params.put("w",String.valueOf(model_pro_stk_scan.getWhse_code()));
+                    params.put("c",String.valueOf(model_pro_stk_scan.getStk_code()));
+                    params.put("q",String.valueOf(model_pro_stk_scan.getStk_note_code()));
+
+                    return params;
+                }
+            };
+
+            queue.add(jsonObjReq);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void setScanNa(model_pro_stk_scan model_pro_stk_scan, Context context) {
+        String TAG = "req_qty";
+        RequestQueue queue = Volley.newRequestQueue(context);
+        //MainActivity.sqliteDbHelper = sqliteDBHelper.getInstance(this.getApplicationContext());
+
+        try {
+            String combinedurl = AppConfig.URL_STKSETNA;
+
+            Map<String, String> postParam= new HashMap<String, String>();
+            StringRequest jsonObjReq = new StringRequest(Request.Method.POST,
+                    combinedurl, new Response.Listener<String>(){
+                @Override
+                public void onResponse(String response)
+                {
+                    Log.d(TAG, response.toString());
+
+                }
+            },
+                    new Response.ErrorListener()
+                    {
+                        @Override
+                        public void onErrorResponse(VolleyError error)
+                        {
+                            VolleyLog.d(TAG, "Error: " + error.getMessage());
+                        }
+                    })
+            {
+                @Override
+                protected Map<String, String> getParams()
+                {
+                    Map<String, String> params = new HashMap<String, String>();
+                    params.put("m",String.valueOf(model_pro_stk_scan.getMobnode_id()));
+                    params.put("w",String.valueOf(model_pro_stk_scan.getWhse_code()));
+                    params.put("c",String.valueOf(model_pro_stk_scan.getStk_code()));
+                    params.put("q",String.valueOf(model_pro_stk_scan.getStk_na_code()));
 
                     return params;
                 }

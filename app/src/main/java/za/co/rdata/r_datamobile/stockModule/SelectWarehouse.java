@@ -83,6 +83,7 @@ public class SelectWarehouse extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_select_warehouse);
 
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         mob = sharedPref.getString(sharedprefcodes.activity_startup.node_id, "");
@@ -153,6 +154,7 @@ public class SelectWarehouse extends AppCompatActivity {
 
                             int arrSize = whsearray.length();
                             model_pro_stk_warehouse model_pro_stk_warehouse = null;
+                            MainActivity.refreshdb();
                             for (int i = 0; i < arrSize; ++i) {
 
                                 whseitem = whsearray.getJSONArray(i);
@@ -167,6 +169,7 @@ public class SelectWarehouse extends AppCompatActivity {
                                 if (model_pro_stk_warehouse.getWhse_code()!=0)
                                     MainActivity.sqliteDbHelper.addStkWhse(model_pro_stk_warehouse);
                             }
+                            MainActivity.sqliteDbHelper.close();
                         } else {
                             // Error in login. Get the error message
                             String errorMsg = jObj.getString("error_msg");
@@ -203,7 +206,7 @@ public class SelectWarehouse extends AppCompatActivity {
 
         currentlayout = 0;
 
-        setContentView(R.layout.activity_select_warehouse);
+
         final ListView listWarehouseView = findViewById(R.id.activity_warehouse_list_listView);
         ArrayAdapter<model_pro_stk_warehouse> adapter;
         adapter = new SelectWarehouse.warehousedetails_ListAdapter();
@@ -524,6 +527,13 @@ public class SelectWarehouse extends AppCompatActivity {
     public String MakeDate() {
         SimpleDateFormat dateFormat = new SimpleDateFormat(
                 "dd/MM/yyyy HH:mm:ss aa", Locale.getDefault());
+        Date date = new Date();
+        return dateFormat.format(date);
+    }
+
+    public String MakeDateReverse() {
+        SimpleDateFormat dateFormat = new SimpleDateFormat(
+                "yyyy-MM-dd_HH:mm:ss", Locale.getDefault());
         Date date = new Date();
         return dateFormat.format(date);
     }

@@ -167,12 +167,15 @@
         <activity android:name=".meterReadingModule.SummaryRouteActivity" />
         <activity android:name=".ImageUploadActivity" />
         <activity android:name=".SelectJob" />
-        <activity android:name=".jobModule.activity_job_card_holder" />
+        <activity android:name=".jobModule.Select_Job_card_holder" />
         <activity android:name=".HRModule.SelectLeave" />
         <activity android:name=".HRModule.SelectApprove" />
         <activity android:name=".HRModule.SelectApplyForLeave" />
         <activity android:name=".SelectStores" />
         <activity android:name=".stockModule.SelectBasket" />
+        <activity android:name=".HRModule.SelectHRDoc" />
+        <activity android:name=".stockModule.SelectBasketContent" />
+        <activity android:name=".MaintainWebServerPHPSettingsActivity" />
 
         <provider
             android:name="androidx.core.content.FileProvider"

@@ -2,6 +2,10 @@ package za.co.rdata.r_datamobile.DBMeta;
 
 public class intentcodes {
 
+    public static class stock_activity {
+        public static String parentActivity = "parentActivity";
+    }
+
     public static class login_activity {
         public static String ressetingwebsettings = "resettingwebsettings";
 
@@ -14,6 +18,7 @@ public class intentcodes {
         public static String holdingleavetype = "holdingleavetype";
         public static String leaverequestmodel = "leaverequestmodel";
         public static String camefromselectleave = "camefromselectleave";
+        public static String hrdocrequestmodel = "hrdocrequestmodel";
     }
 
     public static class job_activity {

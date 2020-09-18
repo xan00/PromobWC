@@ -2,6 +2,10 @@ package za.co.rdata.r_datamobile;
 
 public class AppConfig {
 
+    private static String weburl = "192.168.100.106";
+
+    public static String URL_FOGETJOBS = "http://"+weburl+"/mdata/fo/fo_get_jobs.php";;
+
     public static String URL_STKGETBASKETS = "http://192.168.100.106/mdata/stock/stk_basket.php";;
 
     static String URL_LOGIN = "http://192.168.100.106/mdata/login/login_mob.php";
@@ -32,6 +36,8 @@ public class AppConfig {
 
     public static String URL_STKSETSCAN = "http://192.168.100.106/mdata/stock/stk_setscan.php";
 
+    public static String URL_STKSETQTY = "http://192.168.100.106/mdata/stock/stk_setscanqty.php";
+
     public static String URL_STKSETNOTE = "http://192.168.100.106/mdata/stock/stk_setscannote.php";
 
     public static String URL_STKSETNA = "http://192.168.100.106/mdata/stock/stk_setscanna.php";
@@ -41,4 +47,10 @@ public class AppConfig {
     public static String URL_LOGINRESPONSEQR = "http://192.168.100.106/qr_code_maker/login_qr_response.php";
 
     public static String URL_GETQRVALUE = "http://192.168.100.106/qr_code_maker/login_get_qr.php";
+
+    public static String URL_HRDOCREQ = "http://192.168.100.106/file_fetch/file_fetch.php";
+
+    public void setWeburl(String weburl) {
+        this.weburl = weburl;
+    }
 }

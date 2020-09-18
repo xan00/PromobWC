@@ -7,6 +7,7 @@ import android.util.Log;
 
 import java.util.ArrayList;
 
+import za.co.rdata.r_datamobile.DBMeta.DBScripts;
 import za.co.rdata.r_datamobile.DBMeta.meta;
 import za.co.rdata.r_datamobile.MainActivity;
 import za.co.rdata.r_datamobile.Models.model_pro_ar_cond;
@@ -202,6 +203,9 @@ public class DBHelper {
             ArrayList<model_pro_mr_route_header> Routes = new ArrayList<>();
 
             Cursor cursor = null;
+
+            MainActivity.sqliteDbHelper.getWritableDatabase().execSQL(DBScripts.pro_mr_route_headers.ddl);
+            MainActivity.sqliteDbHelper.getWritableDatabase().execSQL(DBScripts.pro_mr_route_rows.ddl);
 
             //Get available routes
             try {

@@ -13,6 +13,8 @@
         android:id="@+id/cslAssetCapture"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:focusableInTouchMode="true"
+        android:focusable="true"
         android:background="@color/default_back"
         android:orientation="vertical"
         android:weightSum="1"
@@ -405,32 +407,34 @@
         app:layout_constraintTop_toBottomOf="@+id/textView47"
         app:layout_constraintVertical_bias="0.0" />
 
-    <EditText
-        android:id="@+id/txtAddontoremaining"
-        android:layout_width="0dp"
-        android:layout_height="24dp"
-        android:layout_marginStart="24dp"
-        android:background="@drawable/textinput_shape"
-        android:bottomLeftRadius="5dp"
-        android:bottomRightRadius="5dp"
-        android:cursorVisible="false"
-        android:digits="0123456789-"
-        android:ems="2"
-        android:gravity="center_horizontal"
-        android:hint="@string/_0"
-        android:imeOptions="actionDone"
-        android:importantForAutofill="no"
-        android:inputType="numberSigned"
-        android:textAlignment="center"
-        android:textColor="@color/colorTextLight"
-        android:textSize="13sp"
-        android:topLeftRadius="5dp"
-        android:topRightRadius="5dp"
-        app:layout_constraintBaseline_toBaselineOf="@+id/textView47"
-        app:layout_constraintEnd_toStartOf="@+id/guideline2"
-        app:layout_constraintHorizontal_bias="0.75"
-        app:layout_constraintStart_toEndOf="@+id/textView47"
-        tools:ignore="UnusedAttribute" />
+        <EditText
+            android:id="@+id/txtAddontoremaining"
+            android:layout_width="0dp"
+            android:layout_height="18dp"
+            android:layout_marginStart="24dp"
+            android:background="@drawable/textinput_shape"
+            android:bottomLeftRadius="5dp"
+            android:bottomRightRadius="5dp"
+            android:cursorVisible="false"
+            android:digits="0123456789-"
+            android:focusable="true"
+            android:clickable="true"
+            android:ems="2"
+            android:gravity="center_horizontal"
+            android:hint="@string/_0"
+            android:imeOptions="actionDone"
+            android:importantForAutofill="no"
+            android:inputType="numberSigned"
+            android:textAlignment="center"
+            android:textColor="@color/colorTextLight"
+            android:textSize="13sp"
+            android:topLeftRadius="5dp"
+            android:topRightRadius="5dp"
+            app:layout_constraintBaseline_toBaselineOf="@+id/textView47"
+            app:layout_constraintEnd_toStartOf="@+id/guideline2"
+            app:layout_constraintHorizontal_bias="0.75"
+            app:layout_constraintStart_toEndOf="@+id/textView47"
+            tools:ignore="UnusedAttribute" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline2"
@@ -491,17 +495,17 @@
         android:orientation="vertical"
         app:layout_constraintGuide_begin="20dp" />
 
-    <TextView
-        android:id="@+id/textView18"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:background="@color/roomcolour"
-        android:text="@string/notes_and_user_inputs"
-        android:textAlignment="center"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView27" />
+        <TextView
+            android:id="@+id/textView18"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:background="@color/roomcolour"
+            android:text="@string/notes_and_user_inputs"
+            android:textAlignment="center"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView24" />
 
     <TextView
         android:id="@+id/textView23"
@@ -514,17 +518,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/textView27"
-        android:layout_width="150dp"
-        android:layout_height="18dp"
-        android:layout_marginTop="8dp"
-        android:text="@string/quantity"
-        android:textAlignment="textEnd"
-        android:textColor="@color/black"
-        android:textSize="13sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView24" />
+        <TextView
+            android:id="@+id/textView27"
+            android:layout_width="150dp"
+            android:layout_height="18dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/quantity"
+            android:textAlignment="textEnd"
+            android:textColor="@color/black"
+            android:textSize="13sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView29" />
 
     <TextView
         android:id="@+id/txtQtyfoManual"
@@ -594,16 +598,16 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/textView29" />
 
-    <TextView
-        android:id="@+id/space4"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="16dp"
-        android:background="@color/roomcolour"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView29" />
+        <TextView
+            android:id="@+id/space4"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="8dp"
+            android:background="@color/roomcolour"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView27" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

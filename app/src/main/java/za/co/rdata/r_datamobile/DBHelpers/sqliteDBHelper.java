@@ -18,6 +18,7 @@ import java.util.HashMap;
 
 import za.co.rdata.r_datamobile.DBMeta.meta;
 import za.co.rdata.r_datamobile.MainActivity;
+import za.co.rdata.r_datamobile.Models.model_pro_fo_jobs;
 import za.co.rdata.r_datamobile.Models.model_pro_hr_leavereq;
 import za.co.rdata.r_datamobile.Models.model_pro_hr_leavetypes;
 import za.co.rdata.r_datamobile.Models.model_pro_hr_options;
@@ -288,7 +289,7 @@ public class sqliteDBHelper extends SQLiteOpenHelper {
     }
 
     public void addStkWhse(model_pro_stk_warehouse model_pro_stk_warehouse) {
-        SQLiteDatabase db = this.getWritableDatabase();
+        SQLiteDatabase db = MainActivity.sqliteDbHelper.getWritableDatabase();
 
         // Inserting Row
         try {
@@ -302,7 +303,7 @@ public class sqliteDBHelper extends SQLiteOpenHelper {
             e2.printStackTrace();
         }
 
-        db.close(); // Closing database connection
+        //db.close(); // Closing database connection
     }
 
     public void addStk(model_pro_stk_stock model_pro_stk_stock) {
@@ -411,6 +412,24 @@ public class sqliteDBHelper extends SQLiteOpenHelper {
         }
 
         db.close(); // Closing database connection
+    }
+
+    public void addFOJob(model_pro_fo_jobs model_pro_fo_jobs) {
+        SQLiteDatabase db = MainActivity.sqliteDbHelper.getWritableDatabase();
+
+        // Inserting Row
+        try {
+            String queryvalues = queryvaluebuilder(model_pro_fo_jobs.getModelAsArrayList());
+            db.execSQL("insert into pro_fo_jobs values (" + queryvalues + ");");
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        } catch (SQLiteConstraintException e1) {
+            e1.printStackTrace();
+        } catch (SQLException e2) {
+            e2.printStackTrace();
+        }
+
+        //db.close(); // Closing database connection
     }
 }
 

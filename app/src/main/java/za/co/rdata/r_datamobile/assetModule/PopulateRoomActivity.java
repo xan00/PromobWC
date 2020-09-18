@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.ContextMenu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -52,6 +53,11 @@ import static za.co.rdata.r_datamobile.stringTools.MakeDate.GetDate;
  */
 
 public class PopulateRoomActivity extends AppCompatActivity {
+    @Override
+    protected void onResume() {
+        super.onResume();
+        hideSoftKeyboard(this);
+    }
 
     private static final int GET_INPUT_CODE = 5001;
 
@@ -201,6 +207,7 @@ public class PopulateRoomActivity extends AppCompatActivity {
         curAssetsinroom.close();
         curCorrectScanCount.close();
         viewPager.setCurrentItem(0);
+
 
     }
 
@@ -440,7 +447,17 @@ public class PopulateRoomActivity extends AppCompatActivity {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
+
+                    TextView txtQty;
+
+                    try {
+                        listAssetFragments.get(intPagePosition).getScannedassetdata().setCondition(intent.getStringExtra("cond_description"));
+                    } catch (NullPointerException ignore) {
                     }
+                    txtQty = Objects.requireNonNull(listAssetFragments.get(intPagePosition).getView()).findViewById(R.id.txtQtyfoManual);
+                    txtQty.setText(listAssetFragments.get(intPagePosition).getScannedassetdata().getScan_quantity());
+
+                }
             }
     }
 
@@ -492,6 +509,13 @@ public class PopulateRoomActivity extends AppCompatActivity {
     }
 
 ////////////////////////////////////////////Input////////////////////////////////////////////////////////////////////////////////////////////
+
+    public static void hideSoftKeyboard(Activity activity) {
+        InputMethodManager inputMethodManager =
+                (InputMethodManager) activity.getSystemService(
+                        Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(activity.getWindow().getDecorView().getRootView().getWindowToken(), 0);
+    }
 
     public void InputboxNewBarcode(final String commentv) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -801,15 +825,6 @@ public class PopulateRoomActivity extends AppCompatActivity {
 
                 model_pro_ar_scanasset scannedmanual = listAssetFragments.get(intPagePosition).getScannedassetdata();
 
-                /*
-                saveScan.setScanneddata(scannedmanual);
-                try {
-                    saveScan.execute(scannedmanual);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-*/
-
                 TextView txtColour = findViewById(R.id.txtCurrentItem);
                 txtColour.setBackgroundResource(R.drawable.room_item_manual_and_scanned);
 
@@ -899,7 +914,7 @@ public class PopulateRoomActivity extends AppCompatActivity {
                         try {
                             int qtyformanual = listAssetFragments.get(intPagePosition).getAssetdata().getReg_qtyformanual();
 
-                            if (qtyformanual > 1) {
+                            if (qtyformanual > 0) {
                                 Intent intent = new Intent(this, InputQuantity.class);
                                 intent.putExtra("Quantity", qtyformanual);
                                 //intentcode=-9;
@@ -907,7 +922,7 @@ public class PopulateRoomActivity extends AppCompatActivity {
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
-                            Toast.makeText(getBaseContext(), "Try Again", Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(getBaseContext(), "Try Again", Toast.LENGTH_SHORT).show();
                         }
                     }
 
@@ -1000,7 +1015,6 @@ public class PopulateRoomActivity extends AppCompatActivity {
             } else if (scannedassetdata.getScan_location().equals("not scanned")) {
                 light = R.color.not_yet_scanned;
             } else if (!scannedassetdata.getScan_location().equals(assetdata.getReg_location_code())) {
-                //TextView txtScanRoom = listAssetFragments.get(intPagePosition).getView().findViewById(R.id.txtScannedRoom);
                 if (strSelectedRoom.equals(strCurrentroom)) {
                     light = R.color.OutOfLocation;
                 } else {

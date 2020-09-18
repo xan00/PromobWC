@@ -61,6 +61,7 @@ public class StartUpActivity extends AppCompatActivity implements AsyncResponse 
     private final int GET_LOGIN_FOR_RESULT_CODE = 2;
     private final int GET_MAIN_FOR_RESULT_CODE = 3;
     private final int GET_SERVER_URL_FOR_RESULT_CODE = 4;
+    private final int GET_PHPSERVER_URL_FOR_RESULT_CODE = 5;
     //private SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
     private String node_id = "";//sharedPref.getString("node id", "");
     private String serverURL;
@@ -73,8 +74,8 @@ public class StartUpActivity extends AppCompatActivity implements AsyncResponse 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start_up);
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-        node_id = sharedPref.getString("node_id", "");
-        serverURL = sharedPref.getString("serverURL", "");
+        node_id = sharedPref.getString(sharedprefcodes.activity_startup.node_id, "");
+        serverURL = sharedPref.getString(sharedprefcodes.activity_startup.serverURL, "");
         isManagedUser = sharedPref.getBoolean(sharedprefcodes.activity_startup.isManagedUser, true);
 
         if (isManagedUser) {
@@ -89,9 +90,14 @@ public class StartUpActivity extends AppCompatActivity implements AsyncResponse 
                 startActivity(mainactivity);
             }
         } else {
-            Intent mainactivity = new Intent(StartUpActivity.this, LoginActivity.class);
-            checkLogin();
-            startActivity(mainactivity);
+            if (serverURL.isEmpty() || serverURL.equals("")) {
+                AskUserForServerPHPSettings();
+            }
+            else {
+                //Intent mainactivity = new Intent(StartUpActivity.this, LoginActivity.class);
+                //checkLogin();
+                //startActivity(mainactivity);
+            }
         }
 
         if (Build.VERSION.SDK_INT >= 23) {
@@ -147,6 +153,15 @@ public class StartUpActivity extends AppCompatActivity implements AsyncResponse 
         startActivityForResult(intentMaintainWebServerSettings, GET_SERVER_URL_FOR_RESULT_CODE);
     }
 
+    private void AskUserForServerPHPSettings() {
+        Intent intentMaintainWebServerSettings = new Intent(this, MaintainWebServerPHPSettingsActivity.class);
+        startActivityForResult(intentMaintainWebServerSettings, GET_PHPSERVER_URL_FOR_RESULT_CODE);
+
+        //Intent mainactivity = new Intent(StartUpActivity.this, LoginActivity.class);
+        //checkLogin();
+        //startActivity(mainactivity);
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
@@ -167,9 +182,7 @@ public class StartUpActivity extends AppCompatActivity implements AsyncResponse 
                         else
                             All_OK_Continue();
                     } else {
-                        checkLogin();
-                        Intent mainactivity = new Intent(StartUpActivity.this, LoginActivity.class);
-                        startActivity(mainactivity);
+                        AskUserForServerPHPSettings();
                     }
                 } else
                     finish();
@@ -179,6 +192,17 @@ public class StartUpActivity extends AppCompatActivity implements AsyncResponse 
                 if (resultCode == Activity.RESULT_OK) {
                     serverURL = data.getStringExtra("serverURL");
                     All_OK_Continue();
+                } else {
+                    finish();
+                }
+                break;
+
+            case GET_PHPSERVER_URL_FOR_RESULT_CODE:
+                if (resultCode == Activity.RESULT_OK) {
+                    serverURL = data.getStringExtra("serverURL");
+                    checkLogin();
+                    Intent mainactivity = new Intent(StartUpActivity.this, LoginActivity.class);
+                    startActivity(mainactivity);
                 } else {
                     finish();
                 }

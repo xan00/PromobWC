@@ -7,7 +7,6 @@ import androidx.fragment.app.FragmentStatePagerAdapter;
 
 import java.util.ArrayList;
 
-import za.co.rdata.r_datamobile.Models.model_pro_jb_jobcard;
 import za.co.rdata.r_datamobile.fragments.fragment_jobMeter;
 
 /**

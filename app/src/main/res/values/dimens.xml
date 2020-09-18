@@ -14,5 +14,7 @@
     <dimen name="fragment_detail_label">13sp</dimen>
     <dimen name="fragmet_label_width_small">100dp</dimen>
     <dimen name="select_leave_small_font_size">11sp</dimen>
+    <dimen name="standardlayout">13.5dp</dimen>
+    <dimen name="standardpadding">8dp</dimen>
 
 </resources>

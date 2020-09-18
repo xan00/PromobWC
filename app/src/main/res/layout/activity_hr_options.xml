@@ -30,6 +30,7 @@
         android:id="@+id/selectemployee_LVmenuItems"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginStart="12dp"
         android:layout_marginTop="12dp"
         android:layout_marginEnd="12dp"
         android:layout_marginBottom="4dp"

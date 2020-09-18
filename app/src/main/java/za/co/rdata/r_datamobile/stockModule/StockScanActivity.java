@@ -29,9 +29,11 @@ import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.ContextMenu;
+import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -75,6 +77,7 @@ public class StockScanActivity extends AppCompatActivity {
     private String displaywarehousecode;
     private String displaywarehousedesc;
     String mob;
+    String inst;
 
     model_pro_stk_scan scannedstock;
     model_pro_stk_stock stockinfo;
@@ -89,6 +92,7 @@ public class StockScanActivity extends AppCompatActivity {
 
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         mob = sharedPref.getString(sharedprefcodes.activity_startup.node_id, "");
+        inst = sharedPref.getString(sharedprefcodes.activity_startup.instnode_id, "");
 
         displaywarehousecode  = getIntent().getStringExtra("WAREHOUSE NAME");
         displaywarehousedesc  = getIntent().getStringExtra("WAREHOUSE DESC");
@@ -121,11 +125,12 @@ public class StockScanActivity extends AppCompatActivity {
 
             try {
                 stocknotes = intent.getStringExtra("note_description");
+                scannedstock.setStk_note_code(stocknotes);
             } catch (NullPointerException e) {
                 stocknotes = tempnotes;
             } finally {
                 txtNotes.setText(stocknotes);
-                DBHelperStock.updateStockNotes(stocknotes, scanBin);
+                DBHelperStock.updateStockNotes(scannedstock, StockScanActivity.this);
             }
 
         }
@@ -136,16 +141,6 @@ public class StockScanActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        /*
-        if (intentcode == 0) {
-            if (scanBin == null) {
-                Inputbox();
-            } else {
-                scantype = "s";
-                MakeBin();
-            }
-        }
-        */
     }
 
     public void ScanBin() {
@@ -204,206 +199,123 @@ public class StockScanActivity extends AppCompatActivity {
         builder.show();
     }
 
-    private void setScanRequest(model_pro_stk_scan model_pro_stk_scan) {
-        String TAG = "req_apply";
-        RequestQueue queue = Volley.newRequestQueue(this);
-        //MainActivity.sqliteDbHelper = sqliteDBHelper.getInstance(this.getApplicationContext());
-
-        try {
-            String combinedurl = AppConfig.URL_STKSETSCAN;
-
-            Map<String, String> postParam= new HashMap<String, String>();
-            StringRequest jsonObjReq = new StringRequest(Request.Method.POST,
-                    combinedurl, new Response.Listener<String>(){
-                @Override
-                public void onResponse(String response)
-                {
-                    Log.d(TAG, response.toString());
-
-                }
-            },
-                    new Response.ErrorListener()
-                    {
-                        @Override
-                        public void onErrorResponse(VolleyError error)
-                        {
-                            VolleyLog.d(TAG, "Error: " + error.getMessage());
-                        }
-                    })
-            {
-                @Override
-                protected Map<String, String> getParams()
-                {
-                    Map<String, String> params = new HashMap<String, String>();
-                    ArrayList<Object> currentscans = model_pro_stk_scan.getModelAsArrayList();
-                    int parmtracker = 0;
-
-                    for (String s : jsonParams.pro_stk_scan.getfieldnames()
-                         ) {
-                        params.put(s,String.valueOf(currentscans.get(parmtracker)));
-                    }
-
-                    return params;
-                }
-            };
-
-            queue.add(jsonObjReq);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     @SuppressLint({"ClickableViewAccessibility", "SetTextI18n"})
     private void MakeBin() {
 
         currentlayout = 1;
-
-        GetStockBinInfo();
-        GetScanBinInfo();
-        Cursor notecursor = null;
-        setContentView(R.layout.activity_stock_capture);
+        MainActivity.refreshdb();
 
         try {
-            notecursor = MainActivity.sqliteDbHelper.getReadableDatabase().query(
-                    meta.pro_stk_notes.TableName,
-                    null, meta.pro_stk_notes.pro_stk_no_code + " = ?", new String[]{scannedstock.getStk_note_code()}, null, null, null, null);
-            notecursor.moveToLast();
-        } catch (IllegalArgumentException ignore) {}
-
-        TextView txtNotes = findViewById(R.id.txtStockNotes);
-
-        CommentChanger();
-
-        TextView txtBin = findViewById(R.id.txtBin);
-        TextView txtStockCode = findViewById(R.id.txtStockCode);
-        TextView txtDesc = findViewById(R.id.txtDescription);
-        TextView txtCategory = findViewById(R.id.txtCategory);
-        TextView txtUnitsofMeasure = findViewById(R.id.txtUnitofMeasure);
-        TextView txtReorder = findViewById(R.id.txtReorder);
-        TextView txtMaxLevel = findViewById(R.id.txtMaximum);
-        TextView txtExpectedQty = findViewById(R.id.txtExpectedQty);
-
-        TextView txtWarehouseHeader = findViewById(R.id.txtWarehouseHeader);
-        txtWarehouseHeader.setText(displaywarehousecode + ": " + displaywarehousedesc);
-
-        txtBin.setText(stockinfo.getStk_bin());
-        txtStockCode.setText(stockinfo.getStk_code());
-        txtDesc.setText(stockinfo.getStk_descrip());
-        txtCategory.setText(stockinfo.getStk_category());
-        txtUnitsofMeasure.setText(stockinfo.getStk_unit_desc());
-
-        txtReorder.setText(String.valueOf(stockinfo.getStk_reorder()));
-        txtMaxLevel.setText(String.valueOf(stockinfo.getStk_max_level()));
-        txtExpectedQty.setText(String.valueOf(stockinfo.getStk_qty()));
-
-        try {
-            txtNotes.setText(notecursor.getString(notecursor.getColumnIndex(meta.pro_stk_notes.pro_stk_no_description)));
-            notecursor.close();
-        } catch (CursorIndexOutOfBoundsException | NullPointerException e) {
-            txtNotes.setText("");
-        }
-        txtNotes.setOnLongClickListener(listen_noteTextView);
+            GetStockBinInfo();
+            GetScanBinInfo();
+            Cursor notecursor = null;
+            setContentView(R.layout.activity_stock_capture);
 
 
+            try {
+                notecursor = MainActivity.sqliteDbHelper.getReadableDatabase().query(
+                        meta.pro_stk_notes.TableName,
+                        null, meta.pro_stk_notes.pro_stk_no_code + " = ?", new String[]{scannedstock.getStk_note_code()}, null, null, null, null);
+                notecursor.moveToLast();
+            } catch (IllegalArgumentException ignore) {
+            }
 
-        Cursor scanstockcursor = MainActivity.sqliteDbHelper.getWritableDatabase().query(
-                meta.pro_stk_scan.TableName,
-                null, meta.pro_stk_scan.stk_bin + " = ?", new String[]{scanBin}, null, null, null, null);
-        scanstockcursor.moveToLast();
+            TextView txtNotes = findViewById(R.id.txtStockNotes);
 
-        if (scanstockcursor.getCount() == 0) {
-            Log.d(TAG, "Insert attempt made");
-            SaveData saveData = new SaveData();
-            saveData.execute(scannedstock);
-        }
+            CommentChanger();
 
-        scanstockcursor.close();
+            TextView txtBin = findViewById(R.id.txtBin);
+            TextView txtStockCode = findViewById(R.id.txtStockCode);
+            TextView txtDesc = findViewById(R.id.txtDescription);
+            TextView txtCategory = findViewById(R.id.txtCategory);
+            TextView txtUnitsofMeasure = findViewById(R.id.txtUnitofMeasure);
+            TextView txtReorder = findViewById(R.id.txtReorder);
+            TextView txtMaxLevel = findViewById(R.id.txtMaximum);
+            TextView txtExpectedQty = findViewById(R.id.txtExpectedQty);
 
-        final EditText txtBinQty = findViewById(R.id.txtBinQty);
+            TextView txtWarehouseHeader = findViewById(R.id.txtWarehouseHeader);
+            txtWarehouseHeader.setText(displaywarehousecode + ": " + displaywarehousedesc);
 
-        Cursor scanqtycursor = MainActivity.sqliteDbHelper.getWritableDatabase().query(
-                meta.pro_stk_scan.TableName,
-                null, meta.pro_stk_scan.stk_bin + " = ?", new String[]{scanBin}, null, null, null, null);
-        scanqtycursor.moveToFirst();
+            txtBin.setText(stockinfo.getStk_bin());
+            txtStockCode.setText(stockinfo.getStk_code());
+            txtDesc.setText(stockinfo.getStk_descrip());
+            txtCategory.setText(stockinfo.getStk_category());
+            txtUnitsofMeasure.setText(stockinfo.getStk_unit_desc());
 
-        try {
-            txtBinQty.setText(String.valueOf(scanqtycursor.getInt(scanqtycursor.getColumnIndex(meta.pro_stk_scan.stk_take_qty))));
+            txtReorder.setText(String.valueOf(stockinfo.getStk_reorder()));
+            txtMaxLevel.setText(String.valueOf(stockinfo.getStk_max_level()));
+            txtExpectedQty.setText(String.valueOf(stockinfo.getStk_qty()));
+
+            try {
+                txtNotes.setText(notecursor.getString(notecursor.getColumnIndex(meta.pro_stk_notes.pro_stk_no_description)));
+                notecursor.close();
+            } catch (CursorIndexOutOfBoundsException | NullPointerException e) {
+                txtNotes.setText("");
+            }
+            txtNotes.setOnLongClickListener(listen_noteTextView);
+
+
+            Cursor scanstockcursor = MainActivity.sqliteDbHelper.getWritableDatabase().query(
+                    meta.pro_stk_scan.TableName,
+                    null, meta.pro_stk_scan.stk_bin + " = ?", new String[]{scanBin}, null, null, null, null);
+            scanstockcursor.moveToLast();
+
+            if (scanstockcursor.getCount() == 0) {
+                Log.d(TAG, "Insert attempt made");
+                scannedstock.setInstNode_id(inst);
+                scannedstock.setMobnode_id(mob);
+                SaveData saveData = new SaveData();
+                saveData.execute(scannedstock);
+            }
+
+            scanstockcursor.close();
+
+            final EditText txtBinQty = findViewById(R.id.txtBinQty);
+
+            Cursor scanqtycursor = MainActivity.sqliteDbHelper.getWritableDatabase().query(
+                    meta.pro_stk_scan.TableName,
+                    null, meta.pro_stk_scan.stk_bin + " = ?", new String[]{scanBin}, null, null, null, null);
+            scanqtycursor.moveToFirst();
+
+            try {
+                txtBinQty.setText(String.valueOf(scanqtycursor.getInt(scanqtycursor.getColumnIndex(meta.pro_stk_scan.stk_take_qty))));
+            } catch (CursorIndexOutOfBoundsException e) {
+                txtBinQty.setText(String.valueOf(0));
+
+            }
+
+            scanqtycursor.close();
+
+            final TextView txtComments = findViewById(R.id.txtStockComments);
+            txtComments.setText(scannedstock.getStk_comments());
+
+            txtBinQty.setOnClickListener(v -> txtBinQty.getText().clear());
+
+            txtBinQty.setOnEditorActionListener((v, actionId, event) -> {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    //do here your stuff f
+                    scannedstock.setStk_take_qty(Integer.valueOf(txtBinQty.getText().toString()));
+                    Log.d("SQL", "quantity change   " + scannedstock.getStk_take_qty());
+                    DBHelperStock.updateStockQty( scannedstock, StockScanActivity.this);
+                    //txtBinQty.clearFocus();
+                    return true;
+                }
+                return false;
+            });
+
+            FloatingActionButton fltMoreOptions = findViewById(R.id.fltStockOptions);
+            registerForContextMenu(fltMoreOptions);
+
+            fltMoreOptions.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    ScanBin();
+                }
+            });
+
         } catch (CursorIndexOutOfBoundsException e) {
-            txtBinQty.setText(String.valueOf(0));
+            e.printStackTrace();
         }
-
-        scanqtycursor.close();
-
-        final TextView txtComments = findViewById(R.id.txtStockComments);
-        txtComments.setText(scannedstock.getStk_comments());
-
-        txtBinQty.setOnTouchListener(listen_binQtyTextView);
-        txtBinQty.addTextChangedListener(new TextWatcher() {
-
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                s = txtBinQty.getText();                ///////Extracts bin qty to String
-
-                String templife = s.toString().trim();
-
-                try {
-                    scannedstock.setStk_take_qty(Integer.valueOf(templife));
-                } catch (NullPointerException | NumberFormatException e) {
-                    scannedstock.setStk_take_qty(0);
-                } finally {
-                    Log.d("SQL", "quantity change   "+scannedstock.getStk_take_qty());
-                    DBHelperStock.updateStockQty(scannedstock.getStk_take_qty(), scanBin);
-                }
-            }
-        });
-
-        txtComments.addTextChangedListener(new TextWatcher() {
-
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                s = (Editable) txtComments.getText();                ///////Extracts bin qty to String
-
-                String templife = s.toString().trim();
-
-                try {
-                    scannedstock.setStk_comments(templife);
-                } catch (NullPointerException e) {
-                    scannedstock.setStk_comments("");
-                } finally {
-                    DBHelperStock.updateStockComments(scannedstock.getStk_comments(), scanBin);
-                }
-            }
-        });
-
-        FloatingActionButton fltMoreOptions = findViewById(R.id.fltStockOptions);
-        registerForContextMenu(fltMoreOptions);
-
-        fltMoreOptions.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ScanBin();
-            }
-        });
     }
 
     public void GetScanBinInfo() {
@@ -429,7 +341,7 @@ public class StockScanActivity extends AppCompatActivity {
             instnode = MainActivity.NODE_ID.substring(0, 1);
         }
 
-        Log.d(TAG, "mobinst id is " + mob.substring(0, 1));
+        Log.d(TAG, "inst id is " + instnode);
 
         Cursor companycursor = MainActivity.sqliteDbHelper.getReadableDatabase().query(
                 meta.pro_sys_company.TableName,
@@ -460,7 +372,7 @@ public class StockScanActivity extends AppCompatActivity {
         }
 
         SelectWarehouse selectWarehouse = new SelectWarehouse();
-        scannedstock.setStk_scan_date(selectWarehouse.MakeDate());
+        scannedstock.setStk_scan_date(selectWarehouse.MakeDateReverse());
 
         try {
             scannedstock.setStk_na_code(scanstockcursor.getString(scanstockcursor.getColumnIndex(meta.pro_stk_scan.stk_na_code)));
@@ -573,7 +485,7 @@ public class StockScanActivity extends AppCompatActivity {
                 } catch (NullPointerException e) {
                     scannedstock.setStk_comments("");
                 } finally {
-                    DBHelperStock.updateStockComments(scannedstock.getStk_comments(), scanBin);
+                    DBHelperStock.updateStockComments(scannedstock, StockScanActivity.this);
                 }
             }
         });
@@ -630,7 +542,7 @@ public class StockScanActivity extends AppCompatActivity {
 
         @Override
         protected Boolean doInBackground(model_pro_stk_scan... rows) {    ///////Async Task Handler For SQL Handling
-            //DBHelperStock.setBinScan(scannedstock);
+            DBHelperStock.setBinScan(rows[0], StockScanActivity.this);
 
             return null;
         }
@@ -653,17 +565,6 @@ public class StockScanActivity extends AppCompatActivity {
             Intent intent = new Intent(StockScanActivity.this, SelectNoteActivity.class);
             startActivityForResult(intent, GET_NOTE_CODE);      ///////Starts Instance Of Notes for Note Value in Registry
             return true;
-        }
-    };
-
-    View.OnTouchListener listen_binQtyTextView = new View.OnTouchListener() {
-        @SuppressLint("ClickableViewAccessibility")
-        @Override
-        public boolean onTouch(View view, MotionEvent motionEvent) {
-            final EditText txtBinQty = findViewById(R.id.txtBinQty);
-            txtBinQty.getText().clear();           ///////Clears AdjRemainder EditText
-
-            return false;
         }
     };
 

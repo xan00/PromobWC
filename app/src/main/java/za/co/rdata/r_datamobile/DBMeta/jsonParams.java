@@ -13,7 +13,7 @@ public class jsonParams {
         public static String whse_code = "whse";
         public static String stk_bin = "bin";
         public static String stk_code = "code";
-        public static String stk_bin_scan_type = "scan_type";
+        public static String stk_bin_scan_type = "scantype";
         public static String stk_take_qty = "qty";
         public static String stk_scan_date = "date";
         public static String stk_na_code = "na";
@@ -30,6 +30,11 @@ public class jsonParams {
         public static ArrayList<String> getfieldnames() {
             return new ArrayList<>(Arrays.asList(InstNode_id,mobnode_id,stk_take_cycle,whse_code,stk_bin,stk_code,stk_bin_scan_type,stk_take_qty,stk_scan_date ,
                                                  stk_na_code ,stk_note_code,stk_diff_reason,stk_comments,stk_gps_master_lat, stk_gps_master_long,stk_gps_read_lat,stk_gps_read_long,stk_user_code, stk_status));
+        }
+
+        public static ArrayList<String> getfieldnamesforinsert() {
+            return new ArrayList<>(Arrays.asList(InstNode_id,mobnode_id,stk_take_cycle,whse_code,stk_bin,stk_code,stk_bin_scan_type,stk_scan_date ,
+                    stk_gps_master_lat, stk_gps_master_long,stk_gps_read_lat,stk_gps_read_long,stk_user_code, stk_status));
         }
     }
 

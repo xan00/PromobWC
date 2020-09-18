@@ -233,5 +233,12 @@
     <string name="basket_id">Basket:</string>
     <string name="job_id">Job:</string>
     <string name="select_basket">Select Basket</string>
+    <string name="request_document">REQUEST DOCUMENT</string>
+    <string name="download">Download</string>
+    <string name="scan_basket">SCAN BASKET</string>
+    <string name="scan_part">SCAN PART</string>
+    <string name="basket_summary">BASKET SUMMARY</string>
+    <string name="save">Save</string>
+    <string name="server_settings">SERVER SETTINGS</string>
 
 </resources>

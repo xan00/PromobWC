@@ -4,43 +4,43 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/select_asset_view_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/note_views"
-    android:bottomRightRadius="20dp"
+    android:layout_height="wrap_content"
+    android:bottomLeftRadius="7dp"
+    android:bottomRightRadius="7dp"
     android:focusable="true"
-
-    android:paddingTop="15dp"
-    android:paddingBottom="15dp"
+    android:paddingBottom="5dp"
     android:shape="rectangle"
-    android:topRightRadius="20dp"
+    android:topLeftRadius="7dp"
+    android:topRightRadius="7dp"
     tools:clickable="true">
 
     <TextView
-        android:id="@+id/txtWarehouse"
+        android:id="@+id/Asset_reg_barcode"
         android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_marginStart="16dp"
+        android:layout_height="16dp"
         android:gravity="top|start"
+        android:text="@string/asset"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@android:color/black"
-        android:textSize="16sp"
+        android:textSize="12sp"
         android:textStyle="bold"
         app:layout_constraintBaseline_toBaselineOf="@+id/textView6"
-        app:layout_constraintLeft_toRightOf="@+id/textView6" />
+        app:layout_constraintLeft_toRightOf="@+id/textView6"
+        tools:layout_constraintBaseline_creator="1"
+        tools:layout_constraintLeft_creator="1" />
 
     <TextView
-        android:id="@+id/txtWarehouseDes"
+        android:id="@+id/Asset_reg_asset_desc"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
+        android:layout_marginTop="11dp"
         android:gravity="start"
-        android:paddingBottom="2dp"
-        android:text="@string/job_id"
+        android:text="@string/asset_description"
         android:textColor="@android:color/black"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        app:layout_constraintBaseline_toBaselineOf="@+id/txtWarehouse"
-        app:layout_constraintStart_toEndOf="@+id/textView79"
+        android:textSize="12sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView14"
         tools:layout_constraintLeft_creator="1"
         tools:layout_constraintRight_creator="1" />
 
@@ -48,35 +48,36 @@
         android:id="@+id/textView6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:text="@string/basket_id"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/barcode"
         android:textColor="@color/black"
-        android:textSize="16sp"
-        app:layout_constraintStart_toStartOf="parent"
+        android:textSize="12sp"
+        app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/textView79"
+        android:id="@+id/textView14"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
-        android:text="@string/job_id"
-        android:textColor="@color/black"
-        android:textSize="16sp"
-        app:layout_constraintBaseline_toBaselineOf="@+id/textView6"
-        app:layout_constraintStart_toEndOf="@+id/txtWarehouse" />
-
-    <TextView
-        android:id="@+id/txtJobDesc"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="16dp"
-        android:text="Job Desc"
+        android:text="@string/room"
         android:textColor="@color/black"
         android:textSize="12sp"
-        app:layout_constraintStart_toEndOf="@+id/txtWarehouse"
-        app:layout_constraintTop_toBottomOf="@+id/textView79" />
+        app:layout_constraintBaseline_toBaselineOf="@+id/Asset_reg_barcode"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/Asset_reg_barcode" />
 
+    <TextView
+        android:id="@+id/txtRoomID"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text=""
+        android:textColor="@color/black"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        app:layout_constraintBaseline_toBaselineOf="@+id/textView14"
+        app:layout_constraintStart_toEndOf="@+id/textView14" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

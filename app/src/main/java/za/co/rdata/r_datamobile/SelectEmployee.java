@@ -49,10 +49,10 @@ public class SelectEmployee extends AppCompatActivity {
         gethrmenus();
 
         menuItems = DBHelperHR.pro_hr_options.GetHRMenuByUser(MainActivity.NODE_ID);
-        ArrayAdapter<model_pro_hr_options> adapter = new SelectEmployee.hrItems_ListAdapter();
         ListView listView = findViewById(R.id.selectemployee_LVmenuItems);
-        adapter.notifyDataSetChanged();
+        ArrayAdapter<model_pro_hr_options> adapter = new SelectEmployee.hrItems_ListAdapter();
         listView.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
 
         listView.setOnItemClickListener((parent, view, position, id) -> {
             TextView TVmodule = view.findViewById(R.id.menu_list_item_program);
@@ -124,6 +124,11 @@ public class SelectEmployee extends AppCompatActivity {
                                     menuitem.get(4).toString()
                             );
                             MainActivity.sqliteDbHelper.addHRMenu(model_pro_hr_options);
+                            menuItems = DBHelperHR.pro_hr_options.GetHRMenuByUser(MainActivity.NODE_ID);
+                            ListView listView = findViewById(R.id.selectemployee_LVmenuItems);
+                            ArrayAdapter<model_pro_hr_options> adapter = new SelectEmployee.hrItems_ListAdapter();
+                            listView.setAdapter(adapter);
+                            adapter.notifyDataSetChanged();
                         }
                     } else {
                         // Error in login. Get the error message

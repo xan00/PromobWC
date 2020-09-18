@@ -45,6 +45,7 @@ import za.co.rdata.r_datamobile.DBMeta.DBScripts;
 import za.co.rdata.r_datamobile.DBMeta.meta;
 import za.co.rdata.r_datamobile.DBMeta.sharedprefcodes;
 import za.co.rdata.r_datamobile.MainActivity;
+import za.co.rdata.r_datamobile.Models.model_pro_fo_jobs;
 import za.co.rdata.r_datamobile.Models.model_pro_stk_basket;
 import za.co.rdata.r_datamobile.Models.model_pro_stk_scan;
 import za.co.rdata.r_datamobile.Models.model_pro_stk_stock;
@@ -108,8 +109,17 @@ public class SelectBasket extends AppCompatActivity {
             listArray.clear();
 
             while (!baskets.isAfterLast()) {
-                listArray.add(new model_pro_stk_basket(baskets.getString(0), baskets.getString(1), baskets.getInt(2),
-                        baskets.getInt(3)));
+                model_pro_stk_basket model_pro_stk_basket =
+                        new model_pro_stk_basket(baskets.getString(0), baskets.getString(1), baskets.getInt(2),
+                        baskets.getInt(3));
+
+                Cursor jobs = db.rawQuery("SELECT pro_fo_job_type FROM pro_fo_jobs WHERE mobnode_id = '"+mob+"' and pro_fo_job_no = "+model_pro_stk_basket.getJob_id(), null);
+                jobs.moveToFirst();
+
+                model_pro_stk_basket.setBasket_job_type(jobs.getInt(0));
+                jobs.close();
+
+                listArray.add(model_pro_stk_basket);
                 baskets.moveToNext();
             }
             baskets.close();
@@ -175,6 +185,90 @@ public class SelectBasket extends AppCompatActivity {
                                         basketitem.getInt(3)
                                 );
                                     MainActivity.sqliteDbHelper.addStkBasket(model_pro_stk_basket);
+                            }
+                        } else {
+                            // Error in login. Get the error message
+                            String errorMsg = jObj.getString("error_msg");
+                            //Toast.makeText(getApplicationContext(), errorMsg, Toast.LENGTH_LONG).show();
+                        }
+                    } catch (JSONException e) {
+                        // JSON error
+                        e.printStackTrace();
+                        //Toast.makeText(getApplicationContext(), "Json error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    } catch (SQLiteConstraintException e) {
+                        e.printStackTrace();
+                    } finally {
+                        populatebasketlist(finalInstnode);
+                    }
+
+                }
+
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.e(TAG, "Login Error: " + error.getMessage());
+                    //Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_LONG).show();
+                    //hideDialog();
+                }
+            });
+            queue.add(strReqMenu);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void getJobs() {
+
+        String tag_string_req = "req_jobs";
+        RequestQueue queue = Volley.newRequestQueue(this);
+        //pDialog.setMessage("Logging in ...");
+        //showDialog();
+        String instnode = "";
+        if (MainActivity.NODE_ID.length() >= 4) {
+            instnode = MainActivity.NODE_ID.substring(0, 2);
+        } else {
+            instnode = MainActivity.NODE_ID.substring(0, 1);
+        }
+        MainActivity.sqliteDbHelper = sqliteDBHelper.getInstance(this.getApplicationContext());
+        try {
+            MainActivity.sqliteDbHelper.getWritableDatabase().execSQL(DBScripts.pro_fo_jobs.ddl);
+
+            String combinedurl = AppConfig.URL_FOGETJOBS
+                    + "?inst=" + instnode;
+            String finalInstnode = instnode;
+            StringRequest strReqMenu = new StringRequest(Request.Method.GET,
+                    combinedurl, new Response.Listener<String>() {
+
+                @Override
+                public void onResponse(String response) {
+                    try {
+                        JSONObject jObj = new JSONObject(response);
+                        boolean error = jObj.getBoolean("error");
+                        // Check for error node in json
+                        if (!error) {
+                            JSONArray jobarray = jObj.getJSONArray("job");
+                            JSONArray jobitem = new JSONArray();
+
+                            int arrSize = jobarray.length();
+                            model_pro_fo_jobs model_pro_fo_jobs = null;
+                            for (int i = 0; i < arrSize; ++i) {
+
+                                jobitem = jobarray.getJSONArray(i);
+
+                                model_pro_fo_jobs = new model_pro_fo_jobs(
+                                        jobitem.getString(0),
+                                        jobitem.getString(1),
+                                        jobitem.getInt(2),
+                                        jobitem.getInt(3),
+                                        jobitem.getString(4),
+                                        String.valueOf(jobitem.get(5)),
+                                        String.valueOf(jobitem.get(6)),
+                                        jobitem.getDouble(7),
+                                        jobitem.getDouble(8),
+                                        jobitem.getInt(9),
+                                        String.valueOf(jobitem.get(10))
+                                );
+                                MainActivity.sqliteDbHelper.addFOJob(model_pro_fo_jobs);
                             }
                         } else {
                             // Error in login. Get the error message
@@ -279,9 +373,11 @@ public class SelectBasket extends AppCompatActivity {
 
             TextView textview_warehouse = itemView.findViewById(R.id.txtWarehouse);
             TextView textview_waredescription = itemView.findViewById(R.id.txtWarehouseDes);
+            TextView txtBasketDesc = itemView.findViewById(R.id.txtJobDesc);
 
             textview_warehouse.setText(String.valueOf(basket.getBasket_id()));
             textview_waredescription.setText(String.valueOf(basket.getJob_id()));
+            txtBasketDesc.setText(String.valueOf(basket.getBasket_job_type()));
 
             /*
             Collections.sort(listArray, new Comparator<model_pro_stk_warehouse>() {

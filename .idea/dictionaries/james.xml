@@ -5,10 +5,14 @@
       <w>clearbatches</w>
       <w>collasped</w>
       <w>combinedurl</w>
+      <w>currenthrdocrequest</w>
       <w>filelocation</w>
       <w>fileold</w>
       <w>filesync</w>
       <w>gotologin</w>
+      <w>hrdoctypes</w>
+      <w>indate</w>
+      <w>instnode</w>
       <w>keeprunning</w>
       <w>lastlogin</w>
       <w>leavereq</w>
