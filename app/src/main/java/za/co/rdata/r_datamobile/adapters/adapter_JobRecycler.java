@@ -15,7 +15,7 @@ import java.util.List;
 import za.co.rdata.r_datamobile.DBMeta.intentcodes;
 import za.co.rdata.r_datamobile.Models.model_pro_ar_asset_room;
 import za.co.rdata.r_datamobile.R;
-import za.co.rdata.r_datamobile.jobModule.Select_Job_card_holder;
+import za.co.rdata.r_datamobile.jobModule.PopulateJobActivity;
 
 public class adapter_JobRecycler extends RecyclerView.Adapter<adapter_JobRecycler.GenericViewHolder> {
 
@@ -31,7 +31,7 @@ public class adapter_JobRecycler extends RecyclerView.Adapter<adapter_JobRecycle
         @Override
         public void onClick(View view) {
 
-            Intent gotojob = new Intent(mContext, Select_Job_card_holder.class);
+            Intent gotojob = new Intent(mContext, PopulateJobActivity.class);
             TextView textView = view.findViewById(retbarcode);
             String strJobNumber = textView.getText().toString();
             TextView textViewasset = view.findViewById(retdesc);
@@ -106,10 +106,10 @@ public class adapter_JobRecycler extends RecyclerView.Adapter<adapter_JobRecycle
 
             switch (Integer.parseInt(modelProArAssetRoom.getRoomcounter())) {
                 case 7: holder.textDepartment.setText("Water");
-                    holder.conframe.setBackgroundResource(R.drawable.room_item_newly_scanned);
+                    holder.conframe.setBackgroundResource(R.drawable.job_item_water);
                 break;
                 case 12: holder.textDepartment.setText("Electricity");
-                    holder.conframe.setBackgroundResource(R.drawable.room_item_manually_added);
+                    holder.conframe.setBackgroundResource(R.drawable.job_item_electricity);
                 break;
 
             }

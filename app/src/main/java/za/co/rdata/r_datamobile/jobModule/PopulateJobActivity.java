@@ -29,6 +29,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.viewpager.widget.ViewPager;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -51,7 +53,7 @@ import static za.co.rdata.r_datamobile.DBMeta.meta.pro_mr_route_rows.meter_numbe
  * Created by James de Scande on 18/02/2020 at 16:02.
  */
 
-public class Select_Job_card_holder extends AppCompatActivity {
+public class PopulateJobActivity extends AppCompatActivity {
 
     ViewPager viewPager;
     @SuppressWarnings("unused")
@@ -65,7 +67,7 @@ public class Select_Job_card_holder extends AppCompatActivity {
     public static String Cycle;
     public static String RouteNumber;
 
-    Context mContext = Select_Job_card_holder.this;
+    Context mContext = PopulateJobActivity.this;
     Activity mActivity = (Activity) mContext;
 
     TextView TV_Status1;
@@ -80,8 +82,8 @@ public class Select_Job_card_holder extends AppCompatActivity {
     Integer NotVisited;
     String[] meter_details;
 
-    ArrayList<fragment_jobMeter> listJobFragments;
-    ArrayList<model_pro_mr_route_rows> rows = new ArrayList<>();
+    ArrayList<fragment_jobMeter> listJobFragments = new ArrayList<>();
+    //ArrayList<model_pro_mr_route_rows> rows = new ArrayList<>();
 
     private static SQLiteDatabase db;
     private static sqliteDBHelper sqliteDb;
@@ -91,7 +93,7 @@ public class Select_Job_card_holder extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_job_holder);
 
-        viewPager = findViewById(R.id.view_pager);
+        viewPager = findViewById(R.id.pgJobCard);
 
         //currentlayout = 0;
         sqliteDb = sqliteDBHelper.getInstance(mContext);
@@ -116,6 +118,7 @@ public class Select_Job_card_holder extends AppCompatActivity {
 
 
         adapter_JobPager adapter_jobPager = new adapter_JobPager(getSupportFragmentManager(), listJobFragments);
+
         viewPager.setAdapter(adapter_jobPager);
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @SuppressLint("DefaultLocale")
@@ -138,14 +141,16 @@ public class Select_Job_card_holder extends AppCompatActivity {
         catch (NullPointerException e) {
             e.printStackTrace();
             Toast.makeText(this,"Job detail not found",Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(Select_Job_card_holder.this, SelectJob.class);
+            Intent intent = new Intent(PopulateJobActivity.this, SelectJob.class);
             startActivity(intent);
 
         }
 
-//        final FloatingActionButton floatingActionButton = findViewById(R.id.fabToMap);
+        final FloatingActionButton floatingActionButton = findViewById(R.id.fltMoreJobOptions);
+        floatingActionButton.bringToFront();
 //        registerForContextMenu(floatingActionButton);
 //        floatingActionButton.setOnClickListener(view -> openContextMenu(floatingActionButton));
+
     }
 
     @Override
@@ -168,7 +173,9 @@ public class Select_Job_card_holder extends AppCompatActivity {
                     ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 99);
                 }
 
-                Intent gotogallery = new Intent(Select_Job_card_holder.this, GalleryActivity.class);
+                
+
+                Intent gotogallery = new Intent(PopulateJobActivity.this, GalleryActivity.class);
                 gotogallery.putExtra("PHOTO ID", String.valueOf(MeterReaderController.route_row_keys.get(intCurrentMeter).getMeter_id()));
                 String sql = "SELECT meter_reading, gps_read_lat, gps_read_long, meter_number FROM pro_mr_route_rows WHERE walk_sequence = '"
                         //+ //MeterReaderController.route_row_keys.get(intCurrentMeter).getWalk_sequence()
@@ -346,7 +353,7 @@ public class Select_Job_card_holder extends AppCompatActivity {
         if ((dblCoords[0] == 0) || (dblCoords[1] == 0)) {
             Toast.makeText(getBaseContext(), "Error, there is currently no coordinate data for this point", Toast.LENGTH_SHORT).show();
         } else {
-            Intent newmap = new Intent(Select_Job_card_holder.this, MapsActivity.class);
+            Intent newmap = new Intent(PopulateJobActivity.this, MapsActivity.class);
             newmap.putExtra("METER COORDS", dblCoords);
             newmap.putExtra("METER NUMBER", String.valueOf(curCoords.getInt(curCoords.getColumnIndex(meter_number))));
             startActivity(newmap);

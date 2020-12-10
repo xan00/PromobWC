@@ -17,9 +17,10 @@ public class model_pro_fo_jobs {
     private double job_lat;
     private double job_lng;
     private int stk_basket_id;
+    private String job_close_msg;
     private String creation_date;
 
-    public model_pro_fo_jobs(String instnode_id, String mobnode_id, int jobnumber, int jobtype, String jobstatus, String action_date, String prop_detail, double job_lat, double job_lng, int stk_basket_id, String creation_date) {
+    public model_pro_fo_jobs(String instnode_id, String mobnode_id, int jobnumber, int jobtype, String jobstatus, String action_date, String prop_detail, double job_lat, double job_lng, int stk_basket_id, String job_close_msg, String creation_date) {
         this.instnode_id = instnode_id;
         this.mobnode_id = mobnode_id;
         this.jobnumber = jobnumber;
@@ -30,6 +31,7 @@ public class model_pro_fo_jobs {
         this.job_lat = job_lat;
         this.job_lng = job_lng;
         this.stk_basket_id = stk_basket_id;
+        this.job_close_msg = job_close_msg;
         this.creation_date = creation_date;
     }
 
@@ -136,10 +138,18 @@ public class model_pro_fo_jobs {
 
         objectArrayList.add(job_lng);
         objectArrayList.add(stk_basket_id);
+        objectArrayList.add(job_close_msg);
         objectArrayList.add(creation_date);
 
         return objectArrayList;
     }
 
 
+    public String getJob_close_msg() {
+        return job_close_msg;
+    }
+
+    public void setJob_close_msg(String job_close_msg) {
+        this.job_close_msg = job_close_msg;
+    }
 }

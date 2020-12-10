@@ -53,59 +53,82 @@ import static za.co.rdata.r_datamobile.stringTools.MakeDate.GetDate;
  */
 
 public class PopulateRoomActivity extends AppCompatActivity {
-    @Override
-    protected void onResume() {
-        super.onResume();
-        hideSoftKeyboard(this);
-    }
-
     private static final int GET_INPUT_CODE = 5001;
-
-    Context mContext = PopulateRoomActivity.this;
-    Activity mActivity = (Activity) mContext;
-
+    public static int intentcode = -1;
+    private static SQLiteDatabase db;
+    private static sqliteDBHelper sqliteDb;
     public View itemView;
 
     public ViewPager viewPager;
-
-    Cursor curAsset;
-    Cursor curScanned;
+    Context mContext = PopulateRoomActivity.this;
+    Activity mActivity = (Activity) mContext;
 
     //sqliteDBHelper sqliteDb = sqliteDBHelper.getInstance(this.getApplicationContext());
     //SQLiteDatabase db = sqliteDb.getReadableDatabase();
-
+    Cursor curAsset;
+    Cursor curScanned;
     String strSelectedRoom;
     String strLocationscantype;
     String strLocationdesc;
     String strResponsibleperson;
     String barcode;
     String strSelectedBarcode;
-
-    public static int intentcode = -1;
     int GET_DESC_CODE = 4;
     int scancycle;
     int intPagePosition;
     int lightcolour;
     int itemviewid;
     int currentlayout;
-    String strDetailName="ROOM CODE: ";
-    String strDetailName2="BARCODE: ";
+    String strDetailName = "ROOM CODE: ";
+    String strDetailName2 = "BARCODE: ";
     String strCurrentroom = "";
-
     TextView txtRoomNumber;
     TextView txtAssetTally;
     TextView txtCurrentItem;
-
     model_pro_ar_scanasset scan;
     model_pro_ar_asset_rows data;
-
-    private static SQLiteDatabase db;
-    private static sqliteDBHelper sqliteDb;
-
     ArrayList<fragment_MakeAssetViewContent> listAssetFragments;
+    View.OnClickListener listenerscan = v -> {
+        intentcode = 1;
+        gotonewaasetscanning();                       ///////Starts Instance of New Asset Scan In Current Room
+    };
     private String newbarcodevalue = "";
+    private String newlocationvalue = "";
 
-////////////////////////////////////////////Initialise////////////////////////////////////////////////////////////////////////////////////////////
+    public static void hideSoftKeyboard(Activity activity) {
+        InputMethodManager inputMethodManager =
+                (InputMethodManager) activity.getSystemService(
+                        Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(activity.getWindow().getDecorView().getRootView().getWindowToken(), 0);
+    }
+
+////////////////////////////////////////////Results////////////////////////////////////////////////////////////////////////////////////////////
+
+    public static boolean CompareOneDBValues(Cursor firstcursorname, String columnfirstname, String checkvalue) {  ////////DB Entry Comparison
+
+        String valueone;
+        try {
+            valueone = firstcursorname.getString(firstcursorname.getColumnIndex(columnfirstname));
+
+            return !valueone.equals(checkvalue);
+        } catch (NullPointerException e) {
+            return true;
+        } catch (CursorIndexOutOfBoundsException e) {
+            return false;
+        }
+    }
+
+////////////////////////////////////////////Summary////////////////////////////////////////////////////////////////////////////////////////////
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        hideSoftKeyboard(this);
+    }
+
+////////////////////////////////////////////Input////////////////////////////////////////////////////////////////////////////////////////////
+
+    ////////////////////////////////////////////Initialise////////////////////////////////////////////////////////////////////////////////////////////
     @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,11 +145,11 @@ public class PopulateRoomActivity extends AppCompatActivity {
 
         assert bSaved != null;
         strCurrentroom = bSaved.getString(intentcodes.asset_activity.current_room);
-            strSelectedRoom = bSaved.getString("ROOM SCAN");
-        if (strCurrentroom==null) {
+        strSelectedRoom = bSaved.getString("ROOM SCAN");
+        if (strCurrentroom == null) {
             strCurrentroom = strSelectedRoom;
         }
-            scancycle = bSaved.getInt("SCAN CYCLE");
+        scancycle = bSaved.getInt("SCAN CYCLE");
         strLocationscantype = bSaved.getString("LOCATION SCAN TYPE");
         strLocationdesc = bSaved.getString("LOCATION NAME");
         strResponsibleperson = bSaved.getString("RESPONSIBLE PERSON");
@@ -165,7 +188,7 @@ public class PopulateRoomActivity extends AppCompatActivity {
         Cursor curScanCount = db.rawQuery("SELECT scan_barcode FROM pro_ar_scan WHERE scan_location = '" + strCurrentroom + "';", null);
         curScanCount.moveToFirst();
 
-        txtAssetTally.setText(curCorrectScanCount.getCount() + "(" + (curScanCount.getCount()-curCorrectScanCount.getCount()) + ")/" + curAssetsinroom.getCount());
+        txtAssetTally.setText(curCorrectScanCount.getCount() + "(" + (curScanCount.getCount() - curCorrectScanCount.getCount()) + ")/" + curAssetsinroom.getCount());
         curAssetsinroom.close();
         curCorrectScanCount.close();
         curScanCount.close();
@@ -184,7 +207,7 @@ public class PopulateRoomActivity extends AppCompatActivity {
 
         txtCurrentItem = findViewById(R.id.txtCurrentItem);
         txtCurrentItem.bringToFront();
-        lightcolour = lightColourChecking(data,scan);
+        lightcolour = lightColourChecking(data, scan);
         txtCurrentItem.setBackgroundResource(lightcolour);
 
         assetViewContent.setAssetdata(data);
@@ -211,8 +234,6 @@ public class PopulateRoomActivity extends AppCompatActivity {
 
     }
 
-////////////////////////////////////////////Results////////////////////////////////////////////////////////////////////////////////////////////
-
     @SuppressLint("SetTextI18n")
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
@@ -224,26 +245,26 @@ public class PopulateRoomActivity extends AppCompatActivity {
             IntentResult scanningResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
 
 //            assert scanningResult != null;
-               try {
-                   if (scanningResult.getContents() != null) {
-                       barcode = scanningResult.getContents();
-                       Intent roomintent = new Intent(PopulateRoomActivity.this, PopulateRoomActivity.class);
-                       roomintent.putExtra("ROOM SCAN", strSelectedRoom);
-                       roomintent.putExtra(intentcodes.asset_activity.current_room, strCurrentroom);
-                       roomintent.putExtra("CYCLE", scancycle);
-                       roomintent.putExtra("LOCATION SCAN TYPE", "s");
-                       roomintent.putExtra("LOCATION NAME", strLocationdesc);
-                       roomintent.putExtra("RESPONSIBLE PERSON", strResponsibleperson);
-                       roomintent.putExtra("BARCODE", barcode);
-                       roomintent.putExtra("LIGHT COLOUR", lightcolour);
-                       roomintent.putExtra("SUMMARY VALUE", itemviewid);
-                       startActivity(roomintent);
-                   } else {
-                       Inputbox();
-                   }
-               } catch (NullPointerException e) {
-                   Toast.makeText(PopulateRoomActivity.this,"Please Try Again" + barcode,Toast.LENGTH_LONG).show();
-               }
+            try {
+                if (scanningResult.getContents() != null) {
+                    barcode = scanningResult.getContents();
+                    Intent roomintent = new Intent(PopulateRoomActivity.this, PopulateRoomActivity.class);
+                    roomintent.putExtra("ROOM SCAN", strSelectedRoom);
+                    roomintent.putExtra(intentcodes.asset_activity.current_room, strCurrentroom);
+                    roomintent.putExtra("CYCLE", scancycle);
+                    roomintent.putExtra("LOCATION SCAN TYPE", "s");
+                    roomintent.putExtra("LOCATION NAME", strLocationdesc);
+                    roomintent.putExtra("RESPONSIBLE PERSON", strResponsibleperson);
+                    roomintent.putExtra("BARCODE", barcode);
+                    roomintent.putExtra("LIGHT COLOUR", lightcolour);
+                    roomintent.putExtra("SUMMARY VALUE", itemviewid);
+                    startActivity(roomintent);
+                } else {
+                    Inputbox();
+                }
+            } catch (NullPointerException e) {
+                Toast.makeText(PopulateRoomActivity.this, "Please Try Again" + barcode, Toast.LENGTH_LONG).show();
+            }
 
 ////////////////////////////////////Notes Results///////////////////////////////////////////////////////////////////////////
 
@@ -256,8 +277,10 @@ public class PopulateRoomActivity extends AppCompatActivity {
 
                 switch (commentvalue) {
                     case "NEW BARCODE":
-                        InputboxNewBarcode(commentvalue);
-
+                        InputboxNewBarcode(commentvalue,1);
+                        break;
+                    case "NEW LOCATION":
+                        InputboxNewLocation(commentvalue,1);
                         break;
                     case "NEW DESCRIPTION":
                         PopulateRoomActivity.intentcode = 4;
@@ -267,73 +290,124 @@ public class PopulateRoomActivity extends AppCompatActivity {
                     default:
 
                         try {
-                        listAssetFragments.get(intPagePosition).getScannedassetdata().setComments1(commentvalue);
-                        //listAssetFragments.get(intPagePosition).getScannedassetdata().setNotes(commentvalue);
-                    } catch (NullPointerException ignore) {
-                    }
+                            listAssetFragments.get(intPagePosition).getScannedassetdata().setComments1(commentvalue);
+                            //listAssetFragments.get(intPagePosition).getScannedassetdata().setNotes(commentvalue);
+                        } catch (NullPointerException ignore) {
+                        }
 
-                    txtComment = Objects.requireNonNull(listAssetFragments.get(intPagePosition).getView()).findViewById(R.id.txtComments);
-                    txtComment.setText(commentvalue);
-                    SelectAsset.SaveComments saveComments = new SelectAsset.SaveComments();
-                    saveComments.setBarcode(listAssetFragments.get(intPagePosition).getAssetdata().getReg_barcode());
-                    saveComments.execute(listAssetFragments.get(intPagePosition).getScannedassetdata().getComments1());
+                        txtComment = Objects.requireNonNull(listAssetFragments.get(intPagePosition).getView()).findViewById(R.id.txtComments);
+                        txtComment.setText(commentvalue);
+                        SelectAsset.SaveComments saveComments = new SelectAsset.SaveComments();
+                        saveComments.setBarcode(listAssetFragments.get(intPagePosition).getAssetdata().getReg_barcode());
+                        saveComments.execute(listAssetFragments.get(intPagePosition).getScannedassetdata().getComments1());
 
-                    Cursor curCurrentAssetComment = db.rawQuery("SELECT reg_comments1 FROM pro_ar_register WHERE reg_barcode = '" + listAssetFragments.get(intPagePosition).getAssetdata().getReg_barcode() + "'", null);
-                    curCurrentAssetComment.moveToFirst();
+                        Cursor curCurrentAssetComment = db.rawQuery("SELECT reg_comments1 FROM pro_ar_register WHERE reg_barcode = '" + listAssetFragments.get(intPagePosition).getAssetdata().getReg_barcode() + "'", null);
+                        curCurrentAssetComment.moveToFirst();
 
-                    if (CompareOneDBValues(curCurrentAssetComment, meta.pro_ar_register.reg_comments1, listAssetFragments.get(intPagePosition).getScannedassetdata().getComments1())) {
-                        txtComment.setBackgroundResource(R.drawable.value_differs);
-                    } else txtComment.setBackgroundResource(R.drawable.textinput_shape);
+                        if (CompareOneDBValues(curCurrentAssetComment, meta.pro_ar_register.reg_comments1, listAssetFragments.get(intPagePosition).getScannedassetdata().getComments1())) {
+                            txtComment.setBackgroundResource(R.drawable.value_differs);
+                        } else txtComment.setBackgroundResource(R.drawable.textinput_shape);
 
-                    curCurrentAssetComment.close();
-                    break;
+                        curCurrentAssetComment.close();
+                        break;
                 }
-            } catch (NullPointerException ignore) {}
-
-    } else if (intentcode == 21) {
-
-        try {
-
-            TextView txtComment;
-            String commentvalue = intent.getStringExtra("note_description");
-
-            switch (commentvalue) {
-                case "NEW BARCODE":
-                    InputboxNewBarcode(commentvalue);
-
-                    break;
-                case "NEW DESCRIPTION":
-                    PopulateRoomActivity.intentcode = 41;
-                    Intent intentdesc = new Intent(this, SelectDescriptionActivity.class);
-                    startActivityForResult(intentdesc, GET_DESC_CODE);
-                    break;
-                default:
-                    try {
-                        listAssetFragments.get(intPagePosition).getScannedassetdata().setComments2(commentvalue);
-                        //listAssetFragments.get(intPagePosition).getScannedassetdata().setNotes(commentvalue);
-                    } catch (NullPointerException ignore) {
-                    }
-
-                    txtComment = Objects.requireNonNull(listAssetFragments.get(intPagePosition).getView()).findViewById(R.id.txtComments2);
-                    txtComment.setText(commentvalue);
-                    SelectAsset.SaveComments2 saveComments = new SelectAsset.SaveComments2();
-                    saveComments.setBarcode(listAssetFragments.get(intPagePosition).getAssetdata().getReg_barcode());
-                    saveComments.execute(listAssetFragments.get(intPagePosition).getScannedassetdata().getComments2());
-
-                    Cursor curCurrentAssetComment = db.rawQuery("SELECT reg_comments2 FROM pro_ar_register WHERE reg_barcode = '" + listAssetFragments.get(intPagePosition).getAssetdata().getReg_barcode() + "'", null);
-                    curCurrentAssetComment.moveToFirst();
-
-                    if (CompareOneDBValues(curCurrentAssetComment, meta.pro_ar_register.reg_comments2, listAssetFragments.get(intPagePosition).getScannedassetdata().getComments2())) {
-                        txtComment.setBackgroundResource(R.drawable.value_differs);
-                    } else txtComment.setBackgroundResource(R.drawable.textinput_shape);
-
-                    curCurrentAssetComment.close();
-
-                    break;
+            } catch (NullPointerException ignore) {
             }
-        } catch (NullPointerException ignore) {}
 
-    } else
+        } else if (intentcode == 21) {
+
+            try {
+
+                TextView txtComment;
+                String commentvalue = intent.getStringExtra("note_description");
+
+                switch (commentvalue) {
+                    case "NEW BARCODE":
+                        InputboxNewBarcode(commentvalue,2);
+
+                        break;
+                    case "NEW LOCATION":
+                        InputboxNewLocation(commentvalue,2);
+                        break;
+                    case "NEW DESCRIPTION":
+                        PopulateRoomActivity.intentcode = 41;
+                        Intent intentdesc = new Intent(this, SelectDescriptionActivity.class);
+                        startActivityForResult(intentdesc, GET_DESC_CODE);
+                        break;
+                    default:
+                        try {
+                            listAssetFragments.get(intPagePosition).getScannedassetdata().setComments2(commentvalue);
+                            //listAssetFragments.get(intPagePosition).getScannedassetdata().setNotes(commentvalue);
+                        } catch (NullPointerException ignore) {
+                        }
+
+                        txtComment = Objects.requireNonNull(listAssetFragments.get(intPagePosition).getView()).findViewById(R.id.txtComments2);
+                        txtComment.setText(commentvalue);
+                        SelectAsset.SaveComments2 saveComments = new SelectAsset.SaveComments2();
+                        saveComments.setBarcode(listAssetFragments.get(intPagePosition).getAssetdata().getReg_barcode());
+                        saveComments.execute(listAssetFragments.get(intPagePosition).getScannedassetdata().getComments2());
+
+                        Cursor curCurrentAssetComment = db.rawQuery("SELECT reg_comments2 FROM pro_ar_register WHERE reg_barcode = '" + listAssetFragments.get(intPagePosition).getAssetdata().getReg_barcode() + "'", null);
+                        curCurrentAssetComment.moveToFirst();
+
+                        if (CompareOneDBValues(curCurrentAssetComment, meta.pro_ar_register.reg_comments2, listAssetFragments.get(intPagePosition).getScannedassetdata().getComments2())) {
+                            txtComment.setBackgroundResource(R.drawable.value_differs);
+                        } else txtComment.setBackgroundResource(R.drawable.textinput_shape);
+
+                        curCurrentAssetComment.close();
+
+                        break;
+                }
+            } catch (NullPointerException ignore) {
+            }
+
+        } else if (intentcode == 22) {
+
+            try {
+
+                TextView txtComment;
+                String commentvalue = intent.getStringExtra("note_description");
+
+                switch (commentvalue) {
+                    case "NEW BARCODE":
+                        InputboxNewBarcode(commentvalue,3);
+                        break;
+                    case "NEW LOCATION":
+                        InputboxNewLocation(commentvalue, 3);
+                        break;
+                    case "NEW DESCRIPTION":
+                        PopulateRoomActivity.intentcode = 41;
+                        Intent intentdesc = new Intent(this, SelectDescriptionActivity.class);
+                        startActivityForResult(intentdesc, GET_DESC_CODE);
+                        break;
+                    default:
+                        try {
+                            listAssetFragments.get(intPagePosition).getScannedassetdata().setComments3(commentvalue);
+                            //listAssetFragments.get(intPagePosition).getScannedassetdata().setNotes(commentvalue);
+                        } catch (NullPointerException ignore) {
+                        }
+
+                        txtComment = Objects.requireNonNull(listAssetFragments.get(intPagePosition).getView()).findViewById(R.id.txtComments3);
+                        txtComment.setText(commentvalue);
+                        SelectAsset.SaveComments3 saveComments = new SelectAsset.SaveComments3();
+                        saveComments.setBarcode(listAssetFragments.get(intPagePosition).getAssetdata().getReg_barcode());
+                        saveComments.execute(listAssetFragments.get(intPagePosition).getScannedassetdata().getComments3());
+
+                        Cursor curCurrentAssetComment = db.rawQuery("SELECT reg_comments3 FROM pro_ar_register WHERE reg_barcode = '" + listAssetFragments.get(intPagePosition).getAssetdata().getReg_barcode() + "'", null);
+                        curCurrentAssetComment.moveToFirst();
+
+                        if (CompareOneDBValues(curCurrentAssetComment, meta.pro_ar_register.reg_comments3, listAssetFragments.get(intPagePosition).getScannedassetdata().getComments3())) {
+                            txtComment.setBackgroundResource(R.drawable.value_differs);
+                        } else txtComment.setBackgroundResource(R.drawable.textinput_shape);
+
+                        curCurrentAssetComment.close();
+
+                        break;
+                }
+            } catch (NullPointerException ignore) {
+            }
+
+        } else
 ////////////////////////////////////Condition Results///////////////////////////////////////////////////////////////////////////
 
             if (intentcode == 3) {
@@ -371,8 +445,9 @@ public class PopulateRoomActivity extends AppCompatActivity {
                     TextView txtActualDesc;
 
                     try {
-                        listAssetFragments.get(intPagePosition).getScannedassetdata().setComments1("NEW DESC: "+intent.getStringExtra("desc_description"));
-                    } catch (NullPointerException ignore) {}
+                        listAssetFragments.get(intPagePosition).getScannedassetdata().setComments1("NEW DESC: " + intent.getStringExtra("desc_description"));
+                    } catch (NullPointerException ignore) {
+                    }
 
                     txtDesc = Objects.requireNonNull(listAssetFragments.get(intPagePosition).getView()).findViewById(R.id.txtComments);
                     txtDesc.setText(listAssetFragments.get(intPagePosition).getScannedassetdata().getComments1());
@@ -390,9 +465,7 @@ public class PopulateRoomActivity extends AppCompatActivity {
                     } else txtDesc.setBackgroundResource(R.drawable.textinput_shape);
 
                     curCurrentAssetDescription.close();
-                } else
-
-                if (intentcode == 41) {
+                } else if (intentcode == 41) {
 
                     Cursor curCurrentAssetDescription = db.rawQuery("SELECT reg_asset_desc FROM pro_ar_register WHERE reg_barcode = '" + listAssetFragments.get(intPagePosition).getAssetdata().getReg_barcode() + "'", null);
                     curCurrentAssetDescription.moveToFirst();
@@ -401,8 +474,9 @@ public class PopulateRoomActivity extends AppCompatActivity {
                     TextView txtActualDesc;
 
                     try {
-                        listAssetFragments.get(intPagePosition).getScannedassetdata().setComments2("NEW DESC: "+intent.getStringExtra("desc_description"));
-                    } catch (NullPointerException ignore) {}
+                        listAssetFragments.get(intPagePosition).getScannedassetdata().setComments2("NEW DESC: " + intent.getStringExtra("desc_description"));
+                    } catch (NullPointerException ignore) {
+                    }
 
                     txtDesc = Objects.requireNonNull(listAssetFragments.get(intPagePosition).getView()).findViewById(R.id.txtComments2);
                     txtDesc.setText(listAssetFragments.get(intPagePosition).getScannedassetdata().getComments2());
@@ -435,89 +509,83 @@ public class PopulateRoomActivity extends AppCompatActivity {
 
 /////////////////////////////////////No Results///////////////////////////////////////////////////////////////////////////
 
-            if (requestCode == GET_INPUT_CODE) {
-                if (resultCode == Activity.RESULT_OK) {
-                    int resultReading = intent.getIntExtra("Reading", 1);
-                    int resultRetries = intent.getIntExtra("Retries", 0);
-                    scan.setScan_quantity(resultReading);
-                    scan.setScan_quan_retries(resultRetries);
-                    //refreshFrameData(false, "M");
-                    try {
-                        sqliteDb.getWritableDatabase().execSQL("UPDATE pro_ar_scan SET scan_quantity=" + resultReading + ", scan_quan_retries=" + resultRetries + ",scan_type_barcode='M' WHERE scan_barcode='" + listAssetFragments.get(intPagePosition).getAssetdata().getReg_barcode() + "'");
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+        if (requestCode == GET_INPUT_CODE) {
 
-                    TextView txtQty;
+            TextView txtQty;
 
-                    try {
-                        listAssetFragments.get(intPagePosition).getScannedassetdata().setCondition(intent.getStringExtra("cond_description"));
-                    } catch (NullPointerException ignore) {
-                    }
-                    txtQty = Objects.requireNonNull(listAssetFragments.get(intPagePosition).getView()).findViewById(R.id.txtQtyfoManual);
-                    txtQty.setText(listAssetFragments.get(intPagePosition).getScannedassetdata().getScan_quantity());
-
+            if (resultCode == Activity.RESULT_OK) {
+                int resultReading = intent.getIntExtra("Reading", 1);
+                int resultRetries = intent.getIntExtra("Retries", 0);
+                scan.setScan_quantity(resultReading);
+                scan.setScan_quan_retries(resultRetries);
+                //refreshFrameData(false, "M");
+                try {
+                    sqliteDb.getWritableDatabase().execSQL("UPDATE pro_ar_scan SET scan_quantity=" + resultReading + ", scan_quan_retries=" + resultRetries + ",scan_type_barcode='M' WHERE scan_barcode='" + listAssetFragments.get(intPagePosition).getAssetdata().getReg_barcode() + "'");
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-            }
-    }
 
-////////////////////////////////////////////Summary////////////////////////////////////////////////////////////////////////////////////////////
+                try {
+                    listAssetFragments.get(intPagePosition).getScannedassetdata().setScan_quantity(resultReading);
+                    listAssetFragments.get(intPagePosition).getScannedassetdata().setScan_quan_retries(resultRetries);
+
+                } catch (NullPointerException ignore) {
+                }
+
+                txtQty = Objects.requireNonNull(listAssetFragments.get(intPagePosition).getView()).findViewById(R.id.txtQtyforManual);
+                txtQty.setText(String.valueOf(scan.getScan_quantity()));
+
+            }
+        }
+    }
 
     @SuppressLint("SetTextI18n")
     private void refreshFrameData() {
 
-            //intPagePosition = 0;
+        //intPagePosition = 0;
 
-            if (intPagePosition != -1) {
-                listAssetFragments.get(intPagePosition).getScannedassetdata().setScan_barcode(barcode);
-                listAssetFragments.get(intPagePosition).getScannedassetdata().setScan_location(strSelectedRoom);
-                listAssetFragments.get(intPagePosition).setScannedLightColour(R.color.AlreadyScanned);
-                SelectAsset.SaveData saveScan = new SelectAsset.SaveData();
-                saveScan.setBarcode(barcode);
-                saveScan.setRoom(strSelectedRoom);
-                saveScan.setType("M");
-                saveScan.execute(listAssetFragments.get(intPagePosition).getScannedassetdata());
-                String sqlstring = "SELECT scan_barcode FROM pro_ar_scan WHERE scan_location = '" + strSelectedRoom + "' and scan_location_entry = '" +
-                        strSelectedRoom + "'";
+        if (intPagePosition != -1) {
+            listAssetFragments.get(intPagePosition).getScannedassetdata().setScan_barcode(barcode);
+            listAssetFragments.get(intPagePosition).getScannedassetdata().setScan_location(strSelectedRoom);
+            listAssetFragments.get(intPagePosition).setScannedLightColour(R.color.AlreadyScanned);
+            SelectAsset.SaveData saveScan = new SelectAsset.SaveData();
+            saveScan.setBarcode(barcode);
+            saveScan.setRoom(strSelectedRoom);
+            saveScan.setType("M");
+            saveScan.execute(listAssetFragments.get(intPagePosition).getScannedassetdata());
+            String sqlstring = "SELECT scan_barcode FROM pro_ar_scan WHERE scan_location = '" + strSelectedRoom + "' and scan_location_entry = '" +
+                    strSelectedRoom + "'";
 
-                Cursor curAssetsinroom = db.rawQuery("SELECT reg_barcode FROM pro_ar_register WHERE reg_location_code = '" + strCurrentroom + "'", null);
-                curAssetsinroom.moveToFirst();
+            Cursor curAssetsinroom = db.rawQuery("SELECT reg_barcode FROM pro_ar_register WHERE reg_location_code = '" + strCurrentroom + "'", null);
+            curAssetsinroom.moveToFirst();
 
-                Cursor curCorrectScanCount = db.rawQuery("SELECT scan_barcode FROM pro_ar_scan WHERE scan_location = '" + strCurrentroom + "' and scan_location_entry = '" + strCurrentroom + "';", null);
-                curCorrectScanCount.moveToFirst();
+            Cursor curCorrectScanCount = db.rawQuery("SELECT scan_barcode FROM pro_ar_scan WHERE scan_location = '" + strCurrentroom + "' and scan_location_entry = '" + strCurrentroom + "';", null);
+            curCorrectScanCount.moveToFirst();
 
-                Cursor curScanCount = db.rawQuery("SELECT scan_barcode FROM pro_ar_scan WHERE scan_location = '" + strCurrentroom + "';", null);
-                curScanCount.moveToFirst();
+            Cursor curScanCount = db.rawQuery("SELECT scan_barcode FROM pro_ar_scan WHERE scan_location = '" + strCurrentroom + "';", null);
+            curScanCount.moveToFirst();
 
-                txtAssetTally.setText(curCorrectScanCount.getCount() + "(" + (curScanCount.getCount()-curCorrectScanCount.getCount()) + ") /" + curAssetsinroom.getCount());
-                curAssetsinroom.close();
-                curCorrectScanCount.close();
-                curScanCount.close();
-            } else {
-                try {
-                    MakeScanAssetData makeScanAssetData = new MakeScanAssetData(barcode, strSelectedRoom);
-                    fragment_MakeAssetViewContent assetViewContent = new fragment_MakeAssetViewContent();
-                    assetViewContent.setAssetdata(makeScanAssetData.MakeAssetData());
-                    assetViewContent.setScannedassetdata(makeScanAssetData.MakeAsset(scancycle, "K", strLocationscantype));
-                    assetViewContent.setLocationname(strLocationdesc);
-                    assetViewContent.setResponsibleperson(strResponsibleperson);
-                    listAssetFragments.add(assetViewContent);
-                } catch (IllegalStateException e) {
-                    e.printStackTrace();
-                }
+            txtAssetTally.setText(curCorrectScanCount.getCount() + "(" + (curScanCount.getCount() - curCorrectScanCount.getCount()) + ") /" + curAssetsinroom.getCount());
+            curAssetsinroom.close();
+            curCorrectScanCount.close();
+            curScanCount.close();
+
+        } else {
+            try {
+                MakeScanAssetData makeScanAssetData = new MakeScanAssetData(barcode, strSelectedRoom);
+                fragment_MakeAssetViewContent assetViewContent = new fragment_MakeAssetViewContent();
+                assetViewContent.setAssetdata(makeScanAssetData.MakeAssetData());
+                assetViewContent.setScannedassetdata(makeScanAssetData.MakeAsset(scancycle, "K", strLocationscantype));
+                assetViewContent.setLocationname(strLocationdesc);
+                assetViewContent.setResponsibleperson(strResponsibleperson);
+                listAssetFragments.add(assetViewContent);
+            } catch (IllegalStateException e) {
+                e.printStackTrace();
             }
+        }
     }
 
-////////////////////////////////////////////Input////////////////////////////////////////////////////////////////////////////////////////////
-
-    public static void hideSoftKeyboard(Activity activity) {
-        InputMethodManager inputMethodManager =
-                (InputMethodManager) activity.getSystemService(
-                        Activity.INPUT_METHOD_SERVICE);
-        inputMethodManager.hideSoftInputFromWindow(activity.getWindow().getDecorView().getRootView().getWindowToken(), 0);
-    }
-
-    public void InputboxNewBarcode(final String commentv) {
+    public void InputboxNewBarcode(final String commentv, int commentposition) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Input New Barcode Value");
 
@@ -538,28 +606,138 @@ public class PopulateRoomActivity extends AppCompatActivity {
                 String commentvalue = commentv;
                 commentvalue = commentvalue + ": " + newbarcodevalue;
                 try {
-                    listAssetFragments.get(intPagePosition).getScannedassetdata().setComments1(commentvalue);
-                    listAssetFragments.get(intPagePosition).getScannedassetdata().setNotes(commentvalue);
+                    switch (commentposition)
+                    {
+                        case 1:
+                            listAssetFragments.get(intPagePosition).getScannedassetdata().setComments1(commentvalue);
+                            TextView txtComment = Objects.requireNonNull(listAssetFragments.get(intPagePosition).getView()).findViewById(R.id.txtComments);
+                            txtComment.setText(commentvalue);
+                            SelectAsset.SaveComments saveComments = new SelectAsset.SaveComments();
+                            saveComments.setBarcode(listAssetFragments.get(intPagePosition).getAssetdata().getReg_barcode());
+                            saveComments.execute(listAssetFragments.get(intPagePosition).getScannedassetdata().getComments1());
+                            Cursor curCurrentAssetComment = db.rawQuery("SELECT reg_comments1 FROM pro_ar_register WHERE reg_barcode = '" + listAssetFragments.get(intPagePosition).getAssetdata().getReg_barcode() + "'", null);
+                            curCurrentAssetComment.moveToFirst();
+                            if (CompareOneDBValues(curCurrentAssetComment, meta.pro_ar_register.reg_comments1, listAssetFragments.get(intPagePosition).getScannedassetdata().getComments1())) {
+                                txtComment.setBackgroundResource(R.drawable.value_differs);
+                            } else txtComment.setBackgroundResource(R.drawable.textinput_shape);
+                            curCurrentAssetComment.close();
+                        break;
+                        case 2:
+                            listAssetFragments.get(intPagePosition).getScannedassetdata().setComments2(commentvalue);
+                            TextView txtComment2 = Objects.requireNonNull(listAssetFragments.get(intPagePosition).getView()).findViewById(R.id.txtComments2);
+                            txtComment2.setText(commentvalue);
+                            SelectAsset.SaveComments2 saveComments2 = new SelectAsset.SaveComments2();
+                            saveComments2.setBarcode(listAssetFragments.get(intPagePosition).getAssetdata().getReg_barcode());
+                            saveComments2.execute(listAssetFragments.get(intPagePosition).getScannedassetdata().getComments2());
+                            Cursor curCurrentAssetComment2 = db.rawQuery("SELECT reg_comments2 FROM pro_ar_register WHERE reg_barcode = '" + listAssetFragments.get(intPagePosition).getAssetdata().getReg_barcode() + "'", null);
+                            curCurrentAssetComment2.moveToFirst();
+                            if (CompareOneDBValues(curCurrentAssetComment2, meta.pro_ar_register.reg_comments2, listAssetFragments.get(intPagePosition).getScannedassetdata().getComments2())) {
+                                txtComment2.setBackgroundResource(R.drawable.value_differs);
+                            } else txtComment2.setBackgroundResource(R.drawable.textinput_shape);
+                            curCurrentAssetComment2.close();
+                            break;
+                        case 3: listAssetFragments.get(intPagePosition).getScannedassetdata().setComments3(commentvalue);
+                            listAssetFragments.get(intPagePosition).getScannedassetdata().setComments3(commentvalue);
+                            TextView txtComment3 = Objects.requireNonNull(listAssetFragments.get(intPagePosition).getView()).findViewById(R.id.txtComments3);
+                            txtComment3.setText(commentvalue);
+                            SelectAsset.SaveComments3 saveComments3 = new SelectAsset.SaveComments3();
+                            saveComments3.setBarcode(listAssetFragments.get(intPagePosition).getAssetdata().getReg_barcode());
+                            saveComments3.execute(listAssetFragments.get(intPagePosition).getScannedassetdata().getComments3());
+                            Cursor curCurrentAssetComment3 = db.rawQuery("SELECT reg_comments3 FROM pro_ar_register WHERE reg_barcode = '" + listAssetFragments.get(intPagePosition).getAssetdata().getReg_barcode() + "'", null);
+                            curCurrentAssetComment3.moveToFirst();
+                            if (CompareOneDBValues(curCurrentAssetComment3, meta.pro_ar_register.reg_comments3, listAssetFragments.get(intPagePosition).getScannedassetdata().getComments3())) {
+                                txtComment3.setBackgroundResource(R.drawable.value_differs);
+                            } else txtComment3.setBackgroundResource(R.drawable.textinput_shape);
+                            curCurrentAssetComment3.close();
+                            break;
+                    }
+                    //listAssetFragments.get(intPagePosition).getScannedassetdata().setNotes(commentvalue);
                 } catch (NullPointerException ignore) {
                 }
 
-                TextView txtComment = Objects.requireNonNull(listAssetFragments.get(intPagePosition).getView()).findViewById(R.id.txtComments);
-                txtComment.setText(commentvalue);
-                SelectAsset.SaveComments saveComments = new SelectAsset.SaveComments();
-                saveComments.setBarcode(listAssetFragments.get(intPagePosition).getAssetdata().getReg_barcode());
-                saveComments.execute(listAssetFragments.get(intPagePosition).getScannedassetdata().getComments1());
-
-                Cursor curCurrentAssetComment = db.rawQuery("SELECT reg_comments1 FROM pro_ar_register WHERE reg_barcode = '" + listAssetFragments.get(intPagePosition).getAssetdata().getReg_barcode() + "'", null);
-                curCurrentAssetComment.moveToFirst();
-
-                if (CompareOneDBValues(curCurrentAssetComment, meta.pro_ar_register.reg_comments1, listAssetFragments.get(intPagePosition).getScannedassetdata().getComments1())) {
-                    txtComment.setBackgroundResource(R.drawable.value_differs);
-                } else txtComment.setBackgroundResource(R.drawable.textinput_shape);
-
-                curCurrentAssetComment.close();
             } else {
                 Toast.makeText(getBaseContext(), "Input value was the incorrect length, please try again", Toast.LENGTH_SHORT).show();
-                InputboxNewBarcode(commentv);
+                InputboxNewBarcode(commentv, commentposition);
+            }
+        });
+        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
+
+        builder.show();
+    }
+
+    public void InputboxNewLocation(final String commentv, int commentposition) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Input New Location Value");
+
+        // Set up the input
+        final EditText input = new EditText(this);
+
+        // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        builder.setView(input);
+
+        // Set up the buttons
+        builder.setPositiveButton("OK", (dialog, which) -> {
+            String input_value;
+            input_value = input.getText().toString().toUpperCase();
+            if (input_value.length() >= 5) {
+                newlocationvalue = input_value;
+
+                String commentvalue = commentv;
+                commentvalue = commentvalue + ": " + newlocationvalue;
+                try {
+                    switch (commentposition)
+                    {
+                        case 1:
+                            listAssetFragments.get(intPagePosition).getScannedassetdata().setComments1(commentvalue);
+                            TextView txtComment = Objects.requireNonNull(listAssetFragments.get(intPagePosition).getView()).findViewById(R.id.txtComments);
+                            txtComment.setText(commentvalue);
+                            SelectAsset.SaveComments saveComments = new SelectAsset.SaveComments();
+                            saveComments.setBarcode(listAssetFragments.get(intPagePosition).getAssetdata().getReg_barcode());
+                            saveComments.execute(listAssetFragments.get(intPagePosition).getScannedassetdata().getComments1());
+                            Cursor curCurrentAssetComment = db.rawQuery("SELECT reg_comments1 FROM pro_ar_register WHERE reg_Location_code = '" + listAssetFragments.get(intPagePosition).getAssetdata().getReg_location_code() + "'", null);
+                            curCurrentAssetComment.moveToFirst();
+                            if (CompareOneDBValues(curCurrentAssetComment, meta.pro_ar_register.reg_comments1, listAssetFragments.get(intPagePosition).getScannedassetdata().getComments1())) {
+                                txtComment.setBackgroundResource(R.drawable.value_differs);
+                            } else txtComment.setBackgroundResource(R.drawable.textinput_shape);
+                            curCurrentAssetComment.close();
+                            break;
+                        case 2:
+                            listAssetFragments.get(intPagePosition).getScannedassetdata().setComments2(commentvalue);
+                            TextView txtComment2 = Objects.requireNonNull(listAssetFragments.get(intPagePosition).getView()).findViewById(R.id.txtComments2);
+                            txtComment2.setText(commentvalue);
+                            SelectAsset.SaveComments2 saveComments2 = new SelectAsset.SaveComments2();
+                            saveComments2.setBarcode(listAssetFragments.get(intPagePosition).getAssetdata().getReg_barcode());
+                            saveComments2.execute(listAssetFragments.get(intPagePosition).getScannedassetdata().getComments2());
+                            Cursor curCurrentAssetComment2 = db.rawQuery("SELECT reg_comments2 FROM pro_ar_register WHERE reg_Location_code = '" + listAssetFragments.get(intPagePosition).getAssetdata().getReg_location_code() + "'", null);
+                            curCurrentAssetComment2.moveToFirst();
+                            if (CompareOneDBValues(curCurrentAssetComment2, meta.pro_ar_register.reg_comments2, listAssetFragments.get(intPagePosition).getScannedassetdata().getComments2())) {
+                                txtComment2.setBackgroundResource(R.drawable.value_differs);
+                            } else txtComment2.setBackgroundResource(R.drawable.textinput_shape);
+                            curCurrentAssetComment2.close();
+                            break;
+                        case 3: listAssetFragments.get(intPagePosition).getScannedassetdata().setComments3(commentvalue);
+                            listAssetFragments.get(intPagePosition).getScannedassetdata().setComments3(commentvalue);
+                            TextView txtComment3 = Objects.requireNonNull(listAssetFragments.get(intPagePosition).getView()).findViewById(R.id.txtComments3);
+                            txtComment3.setText(commentvalue);
+                            SelectAsset.SaveComments3 saveComments3 = new SelectAsset.SaveComments3();
+                            saveComments3.setBarcode(listAssetFragments.get(intPagePosition).getAssetdata().getReg_barcode());
+                            saveComments3.execute(listAssetFragments.get(intPagePosition).getScannedassetdata().getComments3());
+                            Cursor curCurrentAssetComment3 = db.rawQuery("SELECT reg_comments3 FROM pro_ar_register WHERE reg_Location_code = '" + listAssetFragments.get(intPagePosition).getAssetdata().getReg_location_code() + "'", null);
+                            curCurrentAssetComment3.moveToFirst();
+                            if (CompareOneDBValues(curCurrentAssetComment3, meta.pro_ar_register.reg_comments3, listAssetFragments.get(intPagePosition).getScannedassetdata().getComments3())) {
+                                txtComment3.setBackgroundResource(R.drawable.value_differs);
+                            } else txtComment3.setBackgroundResource(R.drawable.textinput_shape);
+                            curCurrentAssetComment3.close();
+                            break;
+                    }
+                    //listAssetFragments.get(intPagePosition).getScannedassetdata().setNotes(commentvalue);
+                } catch (NullPointerException ignore) {
+                }
+
+            } else {
+                Toast.makeText(getBaseContext(), "Input value was the incorrect length, please try again", Toast.LENGTH_SHORT).show();
+                InputboxNewLocation(commentv, commentposition);
             }
         });
         builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
@@ -592,13 +770,15 @@ public class PopulateRoomActivity extends AppCompatActivity {
             }
 
             ActivityLogger activityLogger = new ActivityLogger(mContext);
-            activityLogger.createLog("input_log"+MainActivity.USER,input_value,true,true,false);
+            activityLogger.createLog("input_log" + MainActivity.USER, input_value, true, true, false);
 
         });
         builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
 
         builder.show();
     }
+
+////////////////////////////////////////////ContextMenus////////////////////////////////////////////////////////////////////////////////////////////
 
     public void InputboxAsset() {
 
@@ -617,10 +797,10 @@ public class PopulateRoomActivity extends AppCompatActivity {
             String input_value;
             input_value = input.getText().toString().toUpperCase();
 
-            Cursor assets = sqliteDb.getReadableDatabase().rawQuery("SELECT reg_barcode, reg_location_code FROM pro_ar_register WHERE reg_barcode = '" + input_value + "'",null);
+            Cursor assets = sqliteDb.getReadableDatabase().rawQuery("SELECT reg_barcode, reg_location_code FROM pro_ar_register WHERE reg_barcode = '" + input_value + "'", null);
             assets.moveToFirst();
 
-            if (assets.getCount() !=0) {
+            if (assets.getCount() != 0) {
                 Intent roomintent = new Intent(PopulateRoomActivity.this, PopulateRoomActivity.class);
                 //assets.move(assetposition);
                 roomintent.putExtra("ROOM SCAN", assets.getString(1));
@@ -628,12 +808,12 @@ public class PopulateRoomActivity extends AppCompatActivity {
                 roomintent.putExtra("CYCLE", scancycle);
                 roomintent.putExtra("LOCATION SCAN TYPE", "k");
 
-                Cursor location = sqliteDb.getReadableDatabase().rawQuery("SELECT loc_name, loc_person FROM pro_ar_locations WHERE loc_code = '"+assets.getString(1)+"'",null);
+                Cursor location = sqliteDb.getReadableDatabase().rawQuery("SELECT loc_name, loc_person FROM pro_ar_locations WHERE loc_code = '" + assets.getString(1) + "'", null);
                 location.moveToFirst();
 
                 roomintent.putExtra("LOCATION NAME", location.getString(0));
                 roomintent.putExtra("RESPONSIBLE PERSON", location.getString(1));
-                roomintent.putExtra("BARCODE",input_value);
+                roomintent.putExtra("BARCODE", input_value);
                 location.close();
 
                 MakeScanAssetData makeScanAssetData = new MakeScanAssetData(input_value, assets.getString(1));
@@ -644,9 +824,9 @@ public class PopulateRoomActivity extends AppCompatActivity {
                 model_pro_ar_asset_rows tempdata = makeScanAssetData.MakeAssetData();
                 model_pro_ar_scanasset tempscan = makeScanAssetData.MakeAsset(scancycle, "s", "s");
 
-                roomintent.putExtra("LIGHT COLOUR",lightColourChecking(tempdata,tempscan));
+                roomintent.putExtra("LIGHT COLOUR", lightColourChecking(tempdata, tempscan));
 
-                roomintent.putExtra("SUMMARY VALUE",itemviewid);
+                roomintent.putExtra("SUMMARY VALUE", itemviewid);
                 startActivity(roomintent);
             } else {
                 Toast.makeText(getBaseContext(), "Input value Not Found, please try again", Toast.LENGTH_SHORT).show();
@@ -660,37 +840,37 @@ public class PopulateRoomActivity extends AppCompatActivity {
     public void ScanToSearch() {
         intentcode = 1;
 
-        SelectAsset selectAsset = new SelectAsset(mContext,mActivity);
+        SelectAsset selectAsset = new SelectAsset(mContext, mActivity);
         selectAsset.ScanSearchAsset();
     }
-
-////////////////////////////////////////////ContextMenus////////////////////////////////////////////////////////////////////////////////////////////
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
 
         String sqlstring = "select parm_value from pro_sys_parms where parm = 'manual_scanning' or parm='mark_invest' or parm='dispose/undispose' or parm = 'camera_active' order by parm";
-        Cursor moreoptionsparms = sqliteDb.getReadableDatabase().rawQuery(sqlstring,null);
+        Cursor moreoptionsparms = sqliteDb.getReadableDatabase().rawQuery(sqlstring, null);
         moreoptionsparms.moveToFirst();
 
         menu.add(0, v.getId(), 0, "Go To Asset");
 
         try {
-            if (moreoptionsparms.getInt(0)==1) {
-        menu.add(1, v.getId(), 0, "Go To Gallery");
+            if (moreoptionsparms.getInt(0) == 1) {
+                menu.add(1, v.getId(), 0, "Go To Gallery");
             }
-        } catch (Exception ignore) {}
+        } catch (Exception ignore) {
+        }
 
         moreoptionsparms.moveToNext();
 
         menu.add(2, v.getId(), 0, "Go To Summary");
 
         try {
-            if (moreoptionsparms.getInt(0)==1) {
-            menu.add(3, v.getId(), 0, "Un/Mark as Disposed");
+            if (moreoptionsparms.getInt(0) == 1) {
+                menu.add(3, v.getId(), 0, "Un/Mark as Disposed");
             }
-        } catch (Exception ignore) {}
+        } catch (Exception ignore) {
+        }
 
         moreoptionsparms.moveToNext();
 
@@ -701,8 +881,8 @@ public class PopulateRoomActivity extends AppCompatActivity {
         unseen = moreoptionsparms.getInt(0);
 
         try {
-            if (moreoptionsparms.getInt(0)==1 && barcode.startsWith(getResources().getString(R.string.manual_tag))) {
-            menu.add(4, v.getId(), 0, "Un/Mark as Seen");
+            if (moreoptionsparms.getInt(0) == 1 && barcode.startsWith(getResources().getString(R.string.manual_tag))) {
+                menu.add(4, v.getId(), 0, "Un/Mark as Seen");
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -711,14 +891,17 @@ public class PopulateRoomActivity extends AppCompatActivity {
         moreoptionsparms.moveToNext();
 
         try {
-            if (moreoptionsparms.getInt(0)==1) {
+            if (moreoptionsparms.getInt(0) == 1) {
                 menu.add(5, v.getId(), 0, "Mark for Investigation");
             }
-        } catch (Exception ignore) {}
+        } catch (Exception ignore) {
+        }
 
         menu.add(6, v.getId(), 0, "Check Barcode");
         moreoptionsparms.close();
     }
+
+////////////////////////////////////////////General////////////////////////////////////////////////////////////////////////////////////////////
 
     private int GetCycle() {
         int cycle;
@@ -755,26 +938,26 @@ public class PopulateRoomActivity extends AppCompatActivity {
                 saveDisposedState.execute("1");
                 tempFragForDisposed.getAssetdata().setActive(true);
                 txtCurrentItem = findViewById(R.id.txtCurrentItem);
-                lightcolour = lightColourChecking(tempFragForDisposed.getAssetdata(),tempFragForDisposed.getScannedassetdata());
+                lightcolour = lightColourChecking(tempFragForDisposed.getAssetdata(), tempFragForDisposed.getScannedassetdata());
                 txtCurrentItem.setBackgroundResource(lightcolour);
             }
 
         } else if (item.getTitle() == "Go To Summary") {
 
             Intent roomintent = new Intent(PopulateRoomActivity.this, RoomMainSummary.class);
-            roomintent.putExtra("TO ROOMS",2);
+            roomintent.putExtra("TO ROOMS", 2);
             roomintent.putExtra("ROOM SCAN", strCurrentroom);
             roomintent.putExtra(intentcodes.asset_activity.current_room, strCurrentroom);
-            roomintent.putExtra("SUMMARY VALUE",itemviewid);
+            roomintent.putExtra("SUMMARY VALUE", itemviewid);
             startActivity(roomintent);
 
         } else if (item.getTitle() == "Un/Mark as Seen") {
 
             if (listAssetFragments.get(intPagePosition).getAssetdata().getReg_barcode().startsWith((getResources().getString(R.string.manual_tag)))) {
 
-                Cursor currentexists =  db.rawQuery("SELECT scan_barcode FROM pro_ar_scan WHERE scan_barcode = '" + barcode + "'", null);
+                Cursor currentexists = db.rawQuery("SELECT scan_barcode FROM pro_ar_scan WHERE scan_barcode = '" + barcode + "'", null);
 
-                if (currentexists.getCount()>0) {
+                if (currentexists.getCount() > 0) {
                     sqliteDb.getWritableDatabase().execSQL("DELETE FROM pro_ar_scan WHERE scan_barcode = '" + barcode + "'");
 
 
@@ -789,7 +972,7 @@ public class PopulateRoomActivity extends AppCompatActivity {
 
                     currentexists.close();
 
-                    txtAssetTally.setText(curCorrectScanCount.getCount() + "(" + (curScanCount.getCount()-curCorrectScanCount.getCount()) + ") /" + curAssetsinroom.getCount());
+                    txtAssetTally.setText(curCorrectScanCount.getCount() + "(" + (curScanCount.getCount() - curCorrectScanCount.getCount()) + ") /" + curAssetsinroom.getCount());
                     curAssetsinroom.close();
                     curCorrectScanCount.close();
                     curScanCount.close();
@@ -807,43 +990,43 @@ public class PopulateRoomActivity extends AppCompatActivity {
 
                 } else {
 
-                SelectAsset.SaveData saveScan = new SelectAsset.SaveData();
-                saveScan.setBarcode(barcode);
-                saveScan.setRoom(strSelectedRoom);
-                saveScan.setType("M");
-                listAssetFragments.get(intPagePosition).getScannedassetdata().setScan_type_barcode("M");
-                listAssetFragments.get(intPagePosition).getScannedassetdata().setScan_cycle(GetCycle());
+                    SelectAsset.SaveData saveScan = new SelectAsset.SaveData();
+                    saveScan.setBarcode(barcode);
+                    saveScan.setRoom(strSelectedRoom);
+                    saveScan.setType("M");
+                    listAssetFragments.get(intPagePosition).getScannedassetdata().setScan_type_barcode("M");
+                    listAssetFragments.get(intPagePosition).getScannedassetdata().setScan_cycle(GetCycle());
 
-                //model_pro_ar_scanasset scannedmanual = listAssetFragments.get(intPagePosition).getScannedassetdata();
-                listAssetFragments.get(intPagePosition).getScannedassetdata().setScan_location(strSelectedRoom);
+                    //model_pro_ar_scanasset scannedmanual = listAssetFragments.get(intPagePosition).getScannedassetdata();
+                    listAssetFragments.get(intPagePosition).getScannedassetdata().setScan_location(strSelectedRoom);
 
-                Long scan_id = Long.parseLong(barcode.substring(1,4)+ listAssetFragments.get(intPagePosition).getScannedassetdata().getMobnode_id()+strSelectedRoom.substring(1,5));
-                Integer route_nr = Integer.parseInt(barcode.substring(1,4));
+                    Long scan_id = Long.parseLong(barcode.substring(1, 4) + listAssetFragments.get(intPagePosition).getScannedassetdata().getMobnode_id() + strSelectedRoom.substring(1, 5));
+                    Integer route_nr = Integer.parseInt(barcode.substring(1, 4));
 
-                listAssetFragments.get(intPagePosition).getScannedassetdata().setScan_id(scan_id);
-                listAssetFragments.get(intPagePosition).getScannedassetdata().setRoute_nr(route_nr);
+                    listAssetFragments.get(intPagePosition).getScannedassetdata().setScan_id(scan_id);
+                    listAssetFragments.get(intPagePosition).getScannedassetdata().setRoute_nr(route_nr);
 
-                model_pro_ar_scanasset scannedmanual = listAssetFragments.get(intPagePosition).getScannedassetdata();
+                    model_pro_ar_scanasset scannedmanual = listAssetFragments.get(intPagePosition).getScannedassetdata();
 
-                TextView txtColour = findViewById(R.id.txtCurrentItem);
-                txtColour.setBackgroundResource(R.drawable.room_item_manual_and_scanned);
+                    TextView txtColour = findViewById(R.id.txtCurrentItem);
+                    txtColour.setBackgroundResource(R.drawable.room_item_manual_and_scanned);
 
-                Cursor curAssetsinroom = db.rawQuery("SELECT reg_barcode FROM pro_ar_register WHERE reg_location_code = '" + strSelectedRoom + "'", null);
-                curAssetsinroom.moveToFirst();
+                    Cursor curAssetsinroom = db.rawQuery("SELECT reg_barcode FROM pro_ar_register WHERE reg_location_code = '" + strSelectedRoom + "'", null);
+                    curAssetsinroom.moveToFirst();
 
-                Cursor curCorrectScanCount = db.rawQuery("SELECT scan_barcode FROM pro_ar_scan WHERE scan_location = '" + strSelectedRoom + "' and scan_location_entry = '" + strSelectedRoom + "';", null);
-                curCorrectScanCount.moveToFirst();
+                    Cursor curCorrectScanCount = db.rawQuery("SELECT scan_barcode FROM pro_ar_scan WHERE scan_location = '" + strSelectedRoom + "' and scan_location_entry = '" + strSelectedRoom + "';", null);
+                    curCorrectScanCount.moveToFirst();
 
-                TextView txtScanRoom = listAssetFragments.get(intPagePosition).getView().findViewById(R.id.txtScannedRoom);
-                txtScanRoom.setText(strSelectedRoom);
+                    TextView txtScanRoom = listAssetFragments.get(intPagePosition).getView().findViewById(R.id.txtScannedRoom);
+                    txtScanRoom.setText(strSelectedRoom);
 
-                TextView txtScanDate = listAssetFragments.get(intPagePosition).getView().findViewById(R.id.txtScannedDate);
-                txtScanDate.setText(listAssetFragments.get(intPagePosition).getScannedassetdata().getDate());
+                    TextView txtScanDate = listAssetFragments.get(intPagePosition).getView().findViewById(R.id.txtScannedDate);
+                    txtScanDate.setText(listAssetFragments.get(intPagePosition).getScannedassetdata().getDate());
 
-                //Toast.makeText(getBaseContext(), "Asset Marked", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getBaseContext(), "Asset Marked", Toast.LENGTH_SHORT).show();
 
                     ActivityLogger activityLogger = new ActivityLogger(mContext);
-                    activityLogger.createLog("manual_log",barcode,true,true,true,listAssetFragments.get(intPagePosition).getScannedassetdata().getScan_quantity());
+                    activityLogger.createLog("manual_log", barcode, true, true, true, listAssetFragments.get(intPagePosition).getScannedassetdata().getScan_quantity());
 
                     String sqlstring = "INSERT INTO pro_ar_scan (" +
                             meta.pro_ar_scan.InstNode_id + "," +
@@ -882,7 +1065,7 @@ public class PopulateRoomActivity extends AppCompatActivity {
                             scannedmanual.getScan_type_location() + "','" +
                             barcode + "','" +
                             "','" +
-                            "S" + "','" +
+                            "M" + "','" +
                             scannedmanual.getNotes() + "','" +
                             scannedmanual.getUser() + "','" +
                             scannedmanual.getCoordX() + "','" +
@@ -900,13 +1083,13 @@ public class PopulateRoomActivity extends AppCompatActivity {
                         sqliteDb.getWritableDatabase().execSQL(sqlstring);
                     } catch (Exception e) {
                         e.printStackTrace();
-                        Log.d("INSERT MANUAL","");
+                        Log.d("INSERT MANUAL", "");
                         Toast.makeText(getBaseContext(), "Insert failed, please try again", Toast.LENGTH_SHORT).show();
                     }
 
 
                     String sqlstringquantity = "select parm_value from pro_sys_parms where parm = 'manual_quantity'";
-                    Cursor curQuantity = sqliteDb.getReadableDatabase().rawQuery(sqlstringquantity,null);
+                    Cursor curQuantity = sqliteDb.getReadableDatabase().rawQuery(sqlstringquantity, null);
                     curQuantity.moveToFirst();
 
 
@@ -928,7 +1111,7 @@ public class PopulateRoomActivity extends AppCompatActivity {
 
                     curQuantity.close();
 
-                curCorrectScanCount.requery();
+                    curCorrectScanCount.requery();
                     curAssetsinroom.requery();
 
                     txtAssetTally.setText(curCorrectScanCount.getCount() + "/" + curAssetsinroom.getCount());
@@ -937,15 +1120,11 @@ public class PopulateRoomActivity extends AppCompatActivity {
 
                 }
 
-            }
-
-            else {
+            } else {
                 Toast.makeText(getBaseContext(), "Asset Unavailable for Editing", Toast.LENGTH_SHORT).show();
             }
 
-        }
-
-        else if (item.getTitle() == "Mark for Investigation") {
+        } else if (item.getTitle() == "Mark for Investigation") {
 
             SelectAsset.SaveInvestigationState saveInvestigateState = new SelectAsset.SaveInvestigationState();
             saveInvestigateState.setBarcode(data.getReg_barcode());
@@ -959,7 +1138,7 @@ public class PopulateRoomActivity extends AppCompatActivity {
                 saveInvestigateState.execute("1");
                 tempFragforInvest.getAssetdata().setReg_investigate(true);
                 txtCurrentItem = findViewById(R.id.txtCurrentItem);
-                lightcolour = lightColourChecking(tempFragforInvest.getAssetdata(),tempFragforInvest.getScannedassetdata());
+                lightcolour = lightColourChecking(tempFragforInvest.getAssetdata(), tempFragforInvest.getScannedassetdata());
                 txtCurrentItem.setBackgroundResource(lightcolour);
             }
 
@@ -972,94 +1151,73 @@ public class PopulateRoomActivity extends AppCompatActivity {
         return true;
     }
 
-////////////////////////////////////////////General////////////////////////////////////////////////////////////////////////////////////////////
-
-    public static boolean CompareOneDBValues(Cursor firstcursorname, String columnfirstname, String checkvalue) {  ////////DB Entry Comparison
-
-        String valueone;
-        try {
-            valueone = firstcursorname.getString(firstcursorname.getColumnIndex(columnfirstname));
-
-            return !valueone.equals(checkvalue);
-        } catch (NullPointerException e) {
-            return true;
-        } catch (CursorIndexOutOfBoundsException e) {
-            return false;
-        }
-    }
-
     @SuppressLint("SetTextI18n")
     @Override
     public void onBackPressed() {
 
-        Intent gotomainsummary = new Intent(PopulateRoomActivity.this,RoomMainSummary.class);
-        gotomainsummary.putExtra("ROOM SCAN",strCurrentroom);
-        gotomainsummary.putExtra(intentcodes.asset_activity.current_room,strCurrentroom);
+        Intent gotomainsummary = new Intent(PopulateRoomActivity.this, RoomMainSummary.class);
+        gotomainsummary.putExtra("ROOM SCAN", strCurrentroom);
+        gotomainsummary.putExtra(intentcodes.asset_activity.current_room, strCurrentroom);
         startActivity(gotomainsummary);
 
     }
 
+////////////////////////////////////////////Gallery////////////////////////////////////////////////////////////////////////////////////////////
+
     public int lightColourChecking(model_pro_ar_asset_rows assetdata, model_pro_ar_scanasset scannedassetdata) {
         int light;
         light = lightcolour;
-            if (assetdata.getManual()) {
-                if (!scannedassetdata.getScan_location().equals(assetdata.getReg_location_code())) {
-                    light = R.color.ManualScanned;
-                } else {
-                    light = R.drawable.room_item_manual_and_scanned;
-                }
-            } else if (!assetdata.getActive()) {
-                light = R.color.PreviouslyDisposed;
-            } else if (scannedassetdata.getScan_location_entry().equals("R0000")) {
-                light = R.color.NotScanned;
-            } else if (scannedassetdata.getScan_location().equals("not scanned")) {
-                light = R.color.not_yet_scanned;
-            } else if (!scannedassetdata.getScan_location().equals(assetdata.getReg_location_code())) {
-                if (strSelectedRoom.equals(strCurrentroom)) {
-                    light = R.color.OutOfLocation;
-                } else {
-                    light = R.color.NewScanned;
-                }
-            } else if (scannedassetdata.getScan_location_entry().equals(scannedassetdata.getScan_location())) {
-                light = R.color.AlreadyScanned;
+        if (assetdata.getReg_barcode().startsWith(getResources().getString(R.string.manual_tag))) {
+            if (!scannedassetdata.getScan_location().equals(assetdata.getReg_location_code())) {
+                light = R.color.ManualScanned;
+            } else {
+                light = R.drawable.room_item_manual_and_scanned;
             }
+        } else if (!assetdata.getActive()) {
+            light = R.color.PreviouslyDisposed;
+        } else if (scannedassetdata.getScan_location_entry().equals("R0000")) {
+            light = R.color.NotScanned;
+        } else if (scannedassetdata.getScan_location().equals("not scanned")) {
+            light = R.color.not_yet_scanned;
+        } else if (!scannedassetdata.getScan_location().equals(assetdata.getReg_location_code())) {
+            if (strSelectedRoom.equals(strCurrentroom)) {
+                light = R.color.OutOfLocation;
+            } else {
+                light = R.color.NewScanned;
+            }
+        } else if (scannedassetdata.getScan_location_entry().equals(scannedassetdata.getScan_location())) {
+            light = R.color.AlreadyScanned;
+        }
         return light;
-    }
-
-////////////////////////////////////////////Gallery////////////////////////////////////////////////////////////////////////////////////////////
-
-    public void GoToGallery(final String barcode) {
-
-        Intent gotogallery = new Intent(PopulateRoomActivity.this, GalleryActivity.class);
-        gotogallery.putExtra("PHOTO ID",barcode);
-        String sql = "SELECT scan_barcode, scan_lattitude, scan_longitude FROM pro_ar_scan WHERE scan_barcode = '"+barcode+"'";
-        gotogallery.putExtra(intentcodes.asset_activity.current_room,strCurrentroom);
-        gotogallery.putExtra("ROOM SCAN",strSelectedRoom +" : "+ barcode);
-        gotogallery.putExtra("PIC TEXT SQL STRING",sql);
-        gotogallery.putExtra("DETAIL1 TITLE",strDetailName2);
-        gotogallery.putExtra("DETAIL2 TITLE",strDetailName);
-        gotogallery.putExtra("PICTURE TYPE","A");
-        gotogallery.putExtra(intentcodes.asset_activity.asset_barcode,barcode);
-        startActivity(gotogallery);
     }
 
 ////////////////////////////////////////////Listeners////////////////////////////////////////////////////////////////////////////////////////////
 
-    View.OnClickListener listenerscan = v -> {
-        intentcode = 1;
-        gotonewaasetscanning();                       ///////Starts Instance of New Asset Scan In Current Room
-    };
+    public void GoToGallery(final String barcode) {
+
+        Intent gotogallery = new Intent(PopulateRoomActivity.this, GalleryActivity.class);
+        gotogallery.putExtra("PHOTO ID", barcode);
+        String sql = "SELECT scan_barcode, scan_lattitude, scan_longitude FROM pro_ar_scan WHERE scan_barcode = '" + barcode + "'";
+        gotogallery.putExtra(intentcodes.asset_activity.current_room, strCurrentroom);
+        gotogallery.putExtra("ROOM SCAN", strSelectedRoom + " : " + barcode);
+        gotogallery.putExtra("PIC TEXT SQL STRING", sql);
+        gotogallery.putExtra("DETAIL1 TITLE", strDetailName2);
+        gotogallery.putExtra("DETAIL2 TITLE", strDetailName);
+        gotogallery.putExtra("PICTURE TYPE", "A");
+        gotogallery.putExtra(intentcodes.asset_activity.asset_barcode, barcode);
+        startActivity(gotogallery);
+    }
 
     public void gotonewaasetscanning() {
-        Intent gotorooms = new Intent(PopulateRoomActivity.this,RoomMainSummary.class);                    ///////Starts Instance of New Asset Scan In Current Room
-        gotorooms.putExtra("came_from_expanded",TRUE);
-        gotorooms.putExtra("TO ROOMS",3);
-        gotorooms.putExtra("roomorasset",FALSE);
-        gotorooms.putExtra("ROOM SCAN",strSelectedRoom);
-        gotorooms.putExtra(intentcodes.asset_activity.current_room,strCurrentroom);
-        gotorooms.putExtra("carried barcode",barcode);
-        gotorooms.putExtra("LIGHT COLOUR",lightcolour);
-        gotorooms.putExtra("FROM POPULATE",TRUE);
+        Intent gotorooms = new Intent(PopulateRoomActivity.this, RoomMainSummary.class);                    ///////Starts Instance of New Asset Scan In Current Room
+        gotorooms.putExtra("came_from_expanded", TRUE);
+        gotorooms.putExtra("TO ROOMS", 3);
+        gotorooms.putExtra("roomorasset", FALSE);
+        gotorooms.putExtra("ROOM SCAN", strSelectedRoom);
+        gotorooms.putExtra(intentcodes.asset_activity.current_room, strCurrentroom);
+        gotorooms.putExtra("carried barcode", barcode);
+        gotorooms.putExtra("LIGHT COLOUR", lightcolour);
+        gotorooms.putExtra("FROM POPULATE", TRUE);
         gotorooms.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         mContext.startActivity(gotorooms);
     }

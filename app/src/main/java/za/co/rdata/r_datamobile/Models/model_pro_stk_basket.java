@@ -9,12 +9,23 @@ public class model_pro_stk_basket {
     private int basket_id;
     private int job_id;
     private String checkout_date;
+
+    public String getBasket_parts() {
+        return basket_parts;
+    }
+
+    public void setBasket_parts(String basket_parts) {
+        this.basket_parts = basket_parts;
+    }
+
+    private String basket_parts;
     private int basket_job_type;
 
-    public model_pro_stk_basket(String instNode_id, String mobnode_id, int basket_id, int job_id) {
+    public model_pro_stk_basket(String instNode_id, String mobnode_id, int basket_id, int job_id, String basket_parts) {
         InstNode_id = instNode_id;
         this.mobnode_id = mobnode_id;
         this.basket_id = basket_id;
+        this.basket_parts = basket_parts;
         this.job_id = job_id;
     }
 
@@ -66,6 +77,7 @@ public class model_pro_stk_basket {
         objectArrayList.add(mobnode_id);
         objectArrayList.add(basket_id);
         objectArrayList.add(job_id);
+        objectArrayList.add(basket_parts);
         objectArrayList.add(checkout_date);
         return objectArrayList;
     }

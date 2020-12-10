@@ -51,6 +51,17 @@ public class fragment_jobMeter extends Fragment {
     private TextView txtfragJobAddress;
     private TextView txtfragJobtype;
     private TextView txtfragJobStatus;
+
+    private TextView txtfragDetail1Label;
+    private TextView txtfragDetail1;
+
+    private TextView txtfragDetail2Label;
+    private TextView txtfragDetail2;
+
+    private TextView txtfragDetail3Label;
+    private TextView txtfragDetail3;
+
+
     private Button btnDeleteReading;
     private int GET_READING_REQUEST_CODE = 1;
     private int GET_NOTE_CODE = 2;
@@ -75,6 +86,16 @@ public class fragment_jobMeter extends Fragment {
         txtfragJobtype = viewFragment.findViewById(R.id.txtfragJobtype);
         txtfragJobStatus = viewFragment.findViewById(R.id.txtfragJobStatus);
         txtfragJobAddress = viewFragment.findViewById(R.id.txtfragJobAddress);
+
+        txtfragDetail1Label = viewFragment.findViewById(R.id.lblJobDetailLabel1);
+        txtfragDetail1 = viewFragment.findViewById(R.id.txtJobDetail1);
+
+        txtfragDetail2Label = viewFragment.findViewById(R.id.lblJobDetailLabel2);
+        txtfragDetail2 = viewFragment.findViewById(R.id.txtJobDetail2);
+
+        txtfragDetail3Label = viewFragment.findViewById(R.id.lblJobDetailLabel3);
+        txtfragDetail3 = viewFragment.findViewById(R.id.txtJobDetail3);
+
 //        Button btnDeleteNote = viewFragment.findViewById(R.id.btnDeleteNote);
 //        Button btnDeleteNoAccess = viewFragment.findViewById(R.id.btnDeleteNoAccess);
 //        btnDeleteReading = viewFragment.findViewById(R.id.F_Meter_Reading_B_DeleteReading);

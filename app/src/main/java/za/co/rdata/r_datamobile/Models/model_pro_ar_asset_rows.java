@@ -51,7 +51,7 @@ public class model_pro_ar_asset_rows {
     private int reg_qtyformanual;                   //19
     private int reg_seq;                            //20
 
-    public model_pro_ar_asset_rows(String instNode_id, String mobnode_id, String reg_barcode, String reg_asset_code, String reg_asset_desc, String reg_location_code, String reg_dept_code, String reg_condition_code, String reg_route_nr, String reg_asset_serial_nr, String reg_useful_life, String reg_useful_remainder, String reg_comments1, String reg_comments2, String reg_comments3, Boolean isActive, Boolean isManual, int reg_qtyformanual, int reg_seq) {
+    public model_pro_ar_asset_rows(String instNode_id, String mobnode_id, String reg_barcode, String reg_asset_code, String reg_asset_desc, String reg_location_code, String reg_dept_code, String reg_condition_code, String reg_route_nr, String reg_asset_serial_nr, String reg_useful_life, String reg_useful_remainder, String reg_comments1, String reg_comments2, String reg_comments3, Boolean isActive, int reg_qtyformanual, int reg_seq) {
         InstNode_id = instNode_id;
         this.mobnode_id = mobnode_id;
         this.reg_barcode = reg_barcode;
@@ -68,7 +68,7 @@ public class model_pro_ar_asset_rows {
         this.reg_comments2 = reg_comments2;
         this.reg_comments3 = reg_comments3;
         this.isActive = isActive;
-        this.isManual = isManual;
+        //this.isManual = isManual;
         //this.reg_investigate = reg_investigate;
         this.reg_qtyformanual = reg_qtyformanual;
         this.reg_seq = reg_seq;

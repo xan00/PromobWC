@@ -111,7 +111,7 @@ public class SelectBasket extends AppCompatActivity {
             while (!baskets.isAfterLast()) {
                 model_pro_stk_basket model_pro_stk_basket =
                         new model_pro_stk_basket(baskets.getString(0), baskets.getString(1), baskets.getInt(2),
-                        baskets.getInt(3));
+                        baskets.getInt(3), baskets.getString(4));
 
                 Cursor jobs = db.rawQuery("SELECT pro_fo_job_type FROM pro_fo_jobs WHERE mobnode_id = '"+mob+"' and pro_fo_job_no = "+model_pro_stk_basket.getJob_id(), null);
                 jobs.moveToFirst();
@@ -182,7 +182,8 @@ public class SelectBasket extends AppCompatActivity {
                                         basketitem.get(0).toString(),
                                         basketitem.get(1).toString(),
                                         basketitem.getInt(2),
-                                        basketitem.getInt(3)
+                                        basketitem.getInt(3),
+                                        basketitem.getString(4)
                                 );
                                     MainActivity.sqliteDbHelper.addStkBasket(model_pro_stk_basket);
                             }
@@ -266,7 +267,8 @@ public class SelectBasket extends AppCompatActivity {
                                         jobitem.getDouble(7),
                                         jobitem.getDouble(8),
                                         jobitem.getInt(9),
-                                        String.valueOf(jobitem.get(10))
+                                        String.valueOf(jobitem.get(10)),
+                                        String.valueOf(jobitem.get(11))
                                 );
                                 MainActivity.sqliteDbHelper.addFOJob(model_pro_fo_jobs);
                             }

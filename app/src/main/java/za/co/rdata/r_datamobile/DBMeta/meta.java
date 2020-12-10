@@ -312,6 +312,7 @@ public class meta {
         public static String pro_fo_longitude = "pro_fo_longitude";
         public static String pro_fo_latitude = "pro_fo_latitude";
         public static String stk_basket_id = "stk_basket_id";
+        public static String pro_fo_close_msg = "pro_fo_close_msg";
         public static String creation_date = "creation_date";
     }
 

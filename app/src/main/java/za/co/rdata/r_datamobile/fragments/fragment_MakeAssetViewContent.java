@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -45,6 +44,7 @@ public class fragment_MakeAssetViewContent extends Fragment {
      private TextView txtCondition;// = findViewById(R.id.txtCondition);
      private TextView txtComments;// = findViewById(R.id.txtComments);
      private TextView txtComments2;
+    private TextView txtComments3;
      private EditText txtAddRemaining;// = findViewById(R.id.txtAddontoremaining);
 
     private int GET_NOTE_CODE = 2;
@@ -79,6 +79,13 @@ public class fragment_MakeAssetViewContent extends Fragment {
         startActivityForResult(intent, GET_NOTE_CODE);      ///////Starts Instance Of Notes for Note Value in Registry
         return true;
     };
+    private View.OnLongClickListener listen_noteTextView3 = v -> {
+        PopulateRoomActivity.intentcode = 22;
+        SelectNoteActivity.tablename = meta.pro_ar_notes.TableName;
+        Intent intent = new Intent(getActivity(), SelectNoteActivity.class);
+        startActivityForResult(intent, GET_NOTE_CODE);      ///////Starts Instance Of Notes for Note Value in Registry
+        return true;
+    };
     private View.OnLongClickListener listen_condTextView = v -> {
         PopulateRoomActivity.intentcode = 3;
         Intent intent = new Intent(getActivity(), SelectCondition.class);
@@ -95,6 +102,9 @@ public class fragment_MakeAssetViewContent extends Fragment {
 
     private SQLiteDatabase db = MainActivity.sqliteDbHelper.getReadableDatabase();
 
+    public fragment_MakeAssetViewContent() {
+    }
+
     private void ScannedBoxColourChange(int light) {
 
         //txtScannedColour = new TextView(getContext());
@@ -103,18 +113,21 @@ public class fragment_MakeAssetViewContent extends Fragment {
         if (light == R.drawable.room_item_not_yet_scanned) {
             txtComments.setEnabled(false);
             txtComments2.setEnabled(false);
+            txtComments3.setEnabled(false);
             txtCondition.setEnabled(false);
             txtDescription.setEnabled(false);
             txtAddRemaining.setEnabled(false);
         } else if ((light == R.drawable.room_item_manually_added) | (light == R.drawable.room_item_notscanned)) {
             txtComments.setEnabled(true);
             txtComments2.setEnabled(true);
+            txtComments3.setEnabled(true);
             txtCondition.setEnabled(true);
             txtDescription.setEnabled(true);
             txtAddRemaining.setEnabled(true);
         } else {
             txtComments.setEnabled(true);
             txtComments2.setEnabled(true);
+            txtComments3.setEnabled(true);
             txtCondition.setEnabled(true);
             txtDescription.setEnabled(false);
             txtAddRemaining.setEnabled(true);
@@ -220,6 +233,9 @@ public class fragment_MakeAssetViewContent extends Fragment {
         txtComments2 = viewFragment.findViewById(R.id.txtComments2);
         txtComments2.setText(assetdata.getReg_comments2());
 
+        txtComments3 = viewFragment.findViewById(R.id.txtComments3);
+        txtComments3.setText(assetdata.getReg_comments3());
+
         // = findViewById(R.id.txtUsefulLife);
         TextView txtUseLife = viewFragment.findViewById(R.id.txtUsefulLife);
         txtUseLife.setText(assetdata.getReg_useful_life());
@@ -232,7 +248,7 @@ public class fragment_MakeAssetViewContent extends Fragment {
         txtAddRemaining.setText(scannedassetdata.getAdjremainder());
         txtAddRemaining.clearFocus();
 
-        TextView txtQtyforManual = viewFragment.findViewById(R.id.txtQtyfoManual);
+        TextView txtQtyforManual = viewFragment.findViewById(R.id.txtQtyforManual);
         TextView txtQtyLabel = viewFragment.findViewById(R.id.textView27);
 
         ConstraintLayout constraintLayout = viewFragment.findViewById(R.id.cslAssetCapture);
@@ -310,8 +326,17 @@ public class fragment_MakeAssetViewContent extends Fragment {
 
         curCurrentAssetComment2.close();
 
+        Cursor curCurrentAssetComment3 = db.rawQuery("SELECT reg_comments3 FROM pro_ar_register WHERE reg_barcode = '" + txtAssetCode.getText().toString() + "'", null);
+        curCurrentAssetComment3.moveToFirst();
+
+        if (!CompareOneDBValues(curCurrentAssetComment3, meta.pro_ar_register.reg_comments3, txtComments3.getText().toString())) {
+            txtComments3.setBackgroundResource(R.drawable.value_differs);
+        } else txtComments3.setBackgroundResource(R.drawable.textinput_shape);
+
+        curCurrentAssetComment3.close();
+
         if (!assetdata.getActive()) {
-        } else if (assetdata.getManual()) {
+        //} else if (assetdata.getManual()) {
         } else if (scannedassetdata.getScan_location_entry().equals("R0000")) {
         } else if (scannedassetdata.getScan_location().equals("not scanned")) {
         } else if (!locationname.contentEquals(txtLocation.getText())) {
@@ -329,6 +354,7 @@ public class fragment_MakeAssetViewContent extends Fragment {
         });
 
         txtComments2.setOnLongClickListener(listen_noteTextView2);
+        txtComments3.setOnLongClickListener(listen_noteTextView3);
         txtCondition.setOnLongClickListener(listen_condTextView);
         txtCondition.setOnTouchListener(new CustomTouchListener());
 
@@ -372,6 +398,14 @@ public class fragment_MakeAssetViewContent extends Fragment {
         return viewFragment;
     }
 
+    public TextView getTxtComments3() {
+        return txtComments3;
+    }
+
+    public void setTxtComments3(TextView txtComments3) {
+        this.txtComments3 = txtComments3;
+    }
+
     class CustomTouchListener implements View.OnTouchListener {
 
         public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -392,6 +426,8 @@ public class fragment_MakeAssetViewContent extends Fragment {
     public void onResume() {
         super.onResume();
         txtComments.setOnLongClickListener(listen_noteTextView);
+        txtComments2.setOnLongClickListener(listen_noteTextView2);
+        txtComments3.setOnLongClickListener(listen_noteTextView3);
         txtCondition.setOnLongClickListener(listen_condTextView);
         txtDescription.setOnLongClickListener(listen_descTextView);
         txtAddRemaining.setOnClickListener(addonclear);
@@ -403,7 +439,7 @@ public class fragment_MakeAssetViewContent extends Fragment {
         int light;
         if (!assetdata.getActive()) {
             light = R.drawable.room_item_previously_disposed;
-        } else if (assetdata.getManual()) {
+        } else if (assetdata.getReg_barcode().startsWith(this.getResources().getString(R.string.manual_tag))) {
             light = R.drawable.room_item_manually_added;
         } else if (scannedassetdata.getScan_location_entry().equals("R0000")) {
             light = R.drawable.room_item_notscanned;

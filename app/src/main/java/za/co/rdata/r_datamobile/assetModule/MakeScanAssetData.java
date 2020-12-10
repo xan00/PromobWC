@@ -106,7 +106,7 @@ public class MakeScanAssetData extends Activity {
                 GetComments()[1],
                 GetComments()[2],
                 GetIsActive(),
-                GetIsManual(),
+                //GetIsManual(),
                 //GetInvestigate(),
                 GetQtyforManual(),
                 GetAssetSeq()

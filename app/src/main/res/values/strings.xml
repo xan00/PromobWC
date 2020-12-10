@@ -240,5 +240,10 @@
     <string name="basket_summary">BASKET SUMMARY</string>
     <string name="save">Save</string>
     <string name="server_settings">SERVER SETTINGS</string>
+    <string name="job_details">Job Part Details</string>
+    <string name="detail_1">Detail 1</string>
+    <string name="detail_2">Detail 2</string>
+    <string name="detail_3">Detail 3</string>
+    <string name="comments3">Comment 3:</string>
 
 </resources>

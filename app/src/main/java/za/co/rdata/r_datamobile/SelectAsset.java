@@ -468,7 +468,7 @@ public class SelectAsset extends AppCompatActivity {
         Intent roomintent = new Intent(mContext, PopulateRoomActivity.class);
         roomintent.putExtra("ROOM SCAN", strscanContent);
         roomintent.putExtra("CYCLE", GetCycle());
-        roomintent.putExtra("LOCATION SCAN TYPE", "s");
+        roomintent.putExtra("LOCATION SCAN TYPE", "T");
         roomintent.putExtra("LOCATION NAME", GetLocationName(strscanContent));
         roomintent.putExtra("RESPONSIBLE PERSON", GetRespPerson(strscanContent));
         roomintent.putExtra("BARCODE",barcode);
@@ -507,7 +507,7 @@ public class SelectAsset extends AppCompatActivity {
         currentlayout = 1;
         intentcode = 1;
         inputtitle = "Please Input Barcode";
-        strBarcodescantype = "s";
+        strBarcodescantype = "S";
         savescan=true;
 
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(mContext);
@@ -522,7 +522,7 @@ public class SelectAsset extends AppCompatActivity {
 
         intentcode = 5;
         inputtitle = ("Input Room Barcode");
-        roomscantype = "s";
+        roomscantype = "S";
         strSelectedRoom=null;
 
         IntentIntegrator scanRoomintent = new IntentIntegrator(mActivity);
@@ -556,7 +556,7 @@ public class SelectAsset extends AppCompatActivity {
                 switch (state) {
                     case 0:
                         scanContent = input_value;
-                        roomscantype = "k";
+                        roomscantype = "K";
                         strSelectedRoom = input_value;
                         if (strSelectedRoom.startsWith("R") & (strSelectedRoom.length()==5)) {
                             Intent gotomainsummary = new Intent(SelectAsset.this,RoomMainSummary.class);
@@ -575,8 +575,8 @@ public class SelectAsset extends AppCompatActivity {
 
                             if (!scanContent.startsWith("R")) {
                                 intentcode = 1;
-                                strBarcodescantype = "k";
-                                strLocationscantype = "k";
+                                strBarcodescantype = "K";
+                                strLocationscantype = "K";
                                 //lightcolour = R.drawable.room_item_already_scanned;
                                 if (savescan) {
                                     ScanCheck(scanContent, strSelectedRoom);
@@ -584,7 +584,7 @@ public class SelectAsset extends AppCompatActivity {
                                 newRoomIntent(strSelectedRoom, scanContent,SelectAsset.this);
                             } else {
                                 intentcode = 5;
-                                roomscantype = "k";
+                                roomscantype = "K";
                                 Intent gotomainsummary = new Intent(SelectAsset.this,RoomMainSummary.class);
                                 gotomainsummary.putExtra("ROOM SCAN",strSelectedRoom);
                             }
@@ -951,7 +951,7 @@ public class SelectAsset extends AppCompatActivity {
             return null;
         }
     }
-/*
+
     public static class SaveComments3 extends AsyncTask<String, Integer, Long> {
 
         String barcode;
@@ -970,7 +970,7 @@ public class SelectAsset extends AppCompatActivity {
             return null;
         }
     }
-
+/*
     public static class SaveNotes extends AsyncTask<String, Integer, Long> {
 
         String barcode;

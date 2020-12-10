@@ -5,16 +5,18 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/roomcolour"
-    tools:context=".jobModule.Select_Job_card_holder">
+    tools:context=".jobModule.PopulateJobActivity">
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fltMoreOptions"
+        android:id="@+id/fltMoreJobOptions"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         android:clickable="true"
+        android:elevation="10dp"
         android:focusable="true"
+        android:foregroundGravity="top"
         app:backgroundTint="@color/new_input_box"
         app:borderWidth="0dp"
         app:elevation="0dp"
@@ -26,13 +28,29 @@
         android:id="@+id/pgJobCard"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="16dp"
         app:layout_constraintBottom_toTopOf="@+id/txtCurrentJobLabel"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
     </androidx.viewpager.widget.ViewPager>
+
+    <TextView
+        android:id="@+id/txtJobColour"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:fadingEdge="horizontal|vertical"
+        android:foregroundGravity="top"
+        android:paddingStart="15dp"
+        android:paddingEnd="24dp"
+        android:paddingBottom="15dp"
+        android:textAlignment="textEnd"
+        android:textColor="@color/default_back"
+        android:textSize="17sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/pgJobCard"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/txtCurrentJobLabel"

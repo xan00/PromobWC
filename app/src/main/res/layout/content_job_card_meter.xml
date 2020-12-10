@@ -1,498 +1,493 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/colorCompliment"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/constraintLayoutJobFragment"
-    android:layout_marginTop="4dp"
-    tools:context="za.co.rdata.r_datamobile.jobModule.Select_Job_card_holder">
+    android:fillViewport="true"
+    android:overScrollMode="never"
+    tools:context="za.co.rdata.r_datamobile.jobModule.PopulateJobActivity">
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="36dp"
-        android:layout_marginEnd="40dp"
-        android:text="@string/address"
-        android:textAlignment="viewEnd"
-        android:textColor="@color/black"
-        android:textSize="14sp"
-        app:layout_constraintBaseline_toBaselineOf="@+id/textViewAddress"
-        app:layout_constraintEnd_toStartOf="@+id/textViewAddress"
-        app:layout_constraintHorizontal_bias="0.49"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <TextView
-        android:id="@+id/textViewAddress"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:autoSizeTextType="uniform"
-        android:background="@drawable/textview_shape"
-        android:paddingStart="14dp"
-        android:paddingEnd="2dp"
-        android:paddingBottom="0dp"
-        android:text="@string/address"
-        android:textColor="@color/black"
-        android:textSize="14sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/textView"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:targetApi="o" />
-
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="36dp"
-        android:layout_marginTop="9dp"
-        android:text="@string/name"
-        android:textAlignment="viewEnd"
-        android:textColor="@color/black"
-        android:textSize="14sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />
-
-    <TextView
-        android:id="@+id/F_meter_reading_name"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="40dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:autoSizeTextType="uniform"
-        android:background="@drawable/textview_shape"
-        android:paddingStart="14dp"
-        android:paddingEnd="2dp"
-        android:paddingBottom="2dp"
-        android:text="@string/name"
-        android:textColor="@color/black"
-        android:textSize="14sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/textView"
-        app:layout_constraintTop_toBottomOf="@+id/textViewAddress"
-        tools:targetApi="o" />
-
-    <TextView
-        android:id="@+id/textView3"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="36dp"
-        android:layout_marginTop="9dp"
-        android:layout_weight="2"
-        android:text="@string/erf"
-        android:textAlignment="viewEnd"
-        android:textColor="@color/black"
-        android:textSize="14sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView2" />
-
-    <TextView
-        android:id="@+id/F_meter_reading_TV_erf_number"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="40dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_weight="1"
-        android:autoSizeTextType="uniform"
-        android:background="@drawable/textview_shape"
-        android:paddingStart="14dp"
-        android:paddingEnd="2dp"
-        android:paddingBottom="2dp"
-        android:text="@string/erf"
-        android:textColor="@color/black"
-        android:textSize="14sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/textView"
-        app:layout_constraintTop_toBottomOf="@+id/F_meter_reading_name"
-        tools:targetApi="o" />
-
-    <TextView
-        android:id="@+id/textView4"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_marginStart="36dp"
-        android:layout_marginTop="8dp"
-        android:layout_weight="2"
-        android:paddingBottom="2dp"
-        android:text="@string/description"
-        android:textAlignment="viewEnd"
-        android:textColor="@color/black"
-        android:textSize="14sp"
-        android:visibility="visible"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView3"
-        tools:ignore="Suspicious0dp" />
-
-    <TextView
-        android:id="@+id/F_meter_reading_TV_description"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="40dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_weight="1"
-        android:autoSizeTextType="uniform"
-        android:background="@drawable/textview_shape"
-        android:paddingStart="14dp"
-        android:paddingEnd="2dp"
-        android:paddingBottom="2dp"
-        android:text="@string/description"
-        android:textColor="@color/black"
-        android:textSize="14sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/textView"
-        app:layout_constraintTop_toBottomOf="@+id/F_meter_reading_TV_erf_number"
-        tools:ignore="Suspicious0dp"
-        tools:targetApi="o" />
-
-    <TextView
-        android:id="@+id/textView9"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:background="@color/roomcolour"
-        android:gravity="center"
-        android:text="@string/notes_amp_access"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textSize="15sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/lblJobDetailLabel3" />
-
-    <TextView
-        android:id="@+id/textView12"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="4dp"
-        android:text="@string/note"
-        android:textColor="@color/black"
-        android:textSize="15sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView9" />
-
-    <LinearLayout
-        android:id="@+id/linearLayout12"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayoutJobFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="2dp"
-        android:orientation="horizontal"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView12">
+        android:background="@color/default_back"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:orientation="vertical"
+        android:weightSum="1">
 
         <TextView
-            android:id="@+id/textViewNote"
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="36dp"
+            android:layout_marginEnd="40dp"
+            android:text="@string/address"
+            android:textAlignment="viewEnd"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            app:layout_constraintBaseline_toBaselineOf="@+id/textViewAddress"
+            app:layout_constraintEnd_toStartOf="@+id/textViewAddress"
+            app:layout_constraintHorizontal_bias="0.49"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/textViewAddress"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="8dp"
+            android:autoSizeTextType="uniform"
+            android:background="@drawable/textview_shape"
+            android:paddingStart="14dp"
+            android:paddingEnd="2dp"
+            android:paddingBottom="0dp"
+            android:text="@string/address"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/textView"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:targetApi="o" />
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="36dp"
+            android:layout_marginTop="9dp"
+            android:text="@string/name"
+            android:textAlignment="viewEnd"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+        <TextView
+            android:id="@+id/F_meter_reading_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="40dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:autoSizeTextType="uniform"
+            android:background="@drawable/textview_shape"
+            android:paddingStart="14dp"
+            android:paddingEnd="2dp"
+            android:paddingBottom="2dp"
+            android:text="@string/name"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/textView"
+            app:layout_constraintTop_toBottomOf="@+id/textViewAddress"
+            tools:targetApi="o" />
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="36dp"
+            android:layout_marginTop="9dp"
+            android:layout_weight="2"
+            android:text="@string/erf"
+            android:textAlignment="viewEnd"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView2" />
+
+        <TextView
+            android:id="@+id/F_meter_reading_TV_erf_number"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="40dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="1"
+            android:autoSizeTextType="uniform"
+            android:background="@drawable/textview_shape"
+            android:paddingStart="14dp"
+            android:paddingEnd="2dp"
+            android:paddingBottom="2dp"
+            android:text="@string/erf"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/textView"
+            app:layout_constraintTop_toBottomOf="@+id/F_meter_reading_name"
+            tools:targetApi="o" />
+
+        <TextView
+            android:id="@+id/textView4"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_marginStart="36dp"
+            android:layout_marginTop="8dp"
+            android:layout_weight="2"
+            android:paddingBottom="2dp"
+            android:text="@string/description"
+            android:textAlignment="viewEnd"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            android:visibility="visible"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView3"
+            tools:ignore="Suspicious0dp" />
+
+        <TextView
+            android:id="@+id/F_meter_reading_TV_description"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="40dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="1"
+            android:autoSizeTextType="uniform"
+            android:background="@drawable/textview_shape"
+            android:paddingStart="14dp"
+            android:paddingEnd="2dp"
+            android:paddingBottom="2dp"
+            android:text="@string/description"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/textView"
+            app:layout_constraintTop_toBottomOf="@+id/F_meter_reading_TV_erf_number"
+            tools:ignore="Suspicious0dp"
+            tools:targetApi="o" />
+
+        <TextView
+            android:id="@+id/textView9"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@drawable/textinput_shape"
-            android:paddingStart="8dp"
-            android:paddingTop="6dp"
-            android:paddingEnd="2dp"
-            android:paddingBottom="6dp"
+            android:layout_marginTop="16dp"
+            android:background="@color/roomcolour"
+            android:gravity="center"
+            android:text="@string/notes_amp_access"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textSize="15sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/lblJobDetailLabel3" />
+
+        <TextView
+            android:id="@+id/textView12"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="4dp"
             android:text="@string/note"
-            android:textColor="@color/colorTextLight"
-            android:textSize="18sp" />
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView9" />
 
-        <Button
-            android:id="@+id/btnDeleteNote"
-            android:layout_width="fill_parent"
-            android:layout_height="28dp"
-            android:layout_gravity="center"
-            android:layout_weight="5"
-            android:paddingTop="2dp"
-            android:paddingBottom="2dp"
-            android:text="@string/del"
-            android:textSize="8sp"
-            tools:ignore="SmallSp" />
-    </LinearLayout>
+        <LinearLayout
+            android:id="@+id/linearLayout12"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="2dp"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView12">
 
-    <TextView
-        android:id="@+id/textView10"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="4dp"
-        android:text="@string/no_access"
-        android:textColor="@color/black"
-        android:textSize="15sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout12" />
+            <TextView
+                android:id="@+id/textViewNote"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/textinput_shape"
+                android:paddingStart="8dp"
+                android:paddingTop="6dp"
+                android:paddingEnd="2dp"
+                android:paddingBottom="6dp"
+                android:text="@string/note"
+                android:textColor="@color/colorTextLight"
+                android:textSize="18sp" />
 
-    <LinearLayout
-        android:id="@+id/linearLayout13"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="2dp"
-        android:orientation="horizontal"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView10">
+            <Button
+                android:id="@+id/btnDeleteNote"
+                android:layout_width="fill_parent"
+                android:layout_height="28dp"
+                android:layout_gravity="center"
+                android:layout_weight="5"
+                android:paddingTop="2dp"
+                android:paddingBottom="2dp"
+                android:text="@string/del"
+                android:textSize="8sp"
+                tools:ignore="SmallSp" />
+        </LinearLayout>
 
         <TextView
-            android:id="@+id/textViewNoAccess"
+            android:id="@+id/textView10"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="4dp"
+            android:text="@string/no_access"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout12" />
+
+        <LinearLayout
+            android:id="@+id/linearLayout13"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="2dp"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView10">
+
+            <TextView
+                android:id="@+id/textViewNoAccess"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:layout_weight="1"
+                android:background="@drawable/textinput_shape"
+                android:clickable="false"
+                android:paddingStart="8dp"
+                android:paddingTop="6dp"
+                android:paddingEnd="2dp"
+                android:paddingBottom="6dp"
+                android:text="@string/no_access"
+                android:textColor="@color/colorTextLight"
+                android:textSize="18sp" />
+
+            <Button
+                android:id="@+id/btnDeleteNoAccess"
+                android:layout_width="fill_parent"
+                android:layout_height="28dp"
+                android:layout_gravity="center"
+                android:layout_weight="5"
+                android:paddingTop="2dp"
+                android:paddingBottom="2dp"
+                android:text="@string/del"
+                android:textSize="8sp"
+                tools:ignore="SmallSp" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/textView8"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:layout_weight="1"
-            android:background="@drawable/textinput_shape"
-            android:clickable="false"
-            android:paddingStart="8dp"
-            android:paddingTop="6dp"
-            android:paddingEnd="2dp"
-            android:paddingBottom="6dp"
-            android:text="@string/no_access"
+            android:background="@drawable/room_item"
+            android:gravity="center"
+            android:text="@string/meter_data"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textSize="15sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout13" />
+
+        <TextView
+            android:id="@+id/textView7"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/meter"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView8" />
+
+        <TextView
+            android:id="@+id/textViewMeterType"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp"
+            android:text="@string/e"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            app:layout_constraintBaseline_toBaselineOf="@+id/textView7"
+            app:layout_constraintStart_toEndOf="@+id/textView7" />
+
+        <TextView
+            android:id="@+id/textViewMeterNumber"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:autoSizeTextType="uniform"
+            android:background="@drawable/textview_shape"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:text="@string/_123456"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            app:layout_constraintBaseline_toBaselineOf="@+id/textView7"
+            app:layout_constraintStart_toEndOf="@+id/textViewMeterType"
+            tools:targetApi="o" />
+
+        <TextView
+            android:id="@+id/textView5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
+            android:text="@string/reading"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView7" />
+
+        <TextView
+            android:id="@+id/F_TV_LED"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/textview_shape"
+            android:gravity="end"
+            android:paddingStart="10dp"
+            android:paddingEnd="15dp"
             android:textColor="@color/colorTextLight"
-            android:textSize="18sp" />
+            android:textSize="18sp"
+            app:layout_constraintBaseline_toBaselineOf="@+id/textView5"
+            app:layout_constraintStart_toEndOf="@+id/textView5" />
+
+        <TextView
+            android:id="@+id/textViewReading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/textinput_shape"
+            android:paddingStart="25dp"
+            android:paddingTop="4dp"
+            android:paddingEnd="25dp"
+            android:paddingBottom="4dp"
+            android:text="@string/_12345"
+            android:textColor="@color/colorTextLight"
+            android:textSize="18sp"
+            app:layout_constraintBaseline_toBaselineOf="@+id/textView5"
+            app:layout_constraintStart_toEndOf="@+id/F_TV_LED" />
 
         <Button
-            android:id="@+id/btnDeleteNoAccess"
-            android:layout_width="fill_parent"
+            android:id="@+id/F_Meter_Reading_B_DeleteReading"
+            android:layout_width="50dp"
             android:layout_height="28dp"
-            android:layout_gravity="center"
-            android:layout_weight="5"
+            android:layout_marginStart="16dp"
             android:paddingTop="2dp"
             android:paddingBottom="2dp"
             android:text="@string/del"
             android:textSize="8sp"
+            app:layout_constraintBaseline_toBaselineOf="@+id/textView5"
+            app:layout_constraintStart_toEndOf="@+id/textViewReading"
             tools:ignore="SmallSp" />
 
-    </LinearLayout>
+        <TextView
+            android:id="@+id/textView70"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:background="@color/roomcolour"
+            android:text="@string/job_details"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:textSize="15sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView4" />
 
-    <TextView
-        android:id="@+id/textView8"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/room_item"
-        android:gravity="center"
-        android:text="@string/meter_data"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textSize="15sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout13" />
+        <TextView
+            android:id="@+id/lblJobDetailLabel1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="36dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/detail_1"
+            android:textColor="@color/black"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView70" />
 
-    <TextView
-        android:id="@+id/textView7"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:text="@string/meter"
-        android:textColor="@color/black"
-        android:textSize="14sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView8" />
+        <TextView
+            android:id="@+id/lblJobDetailLabel2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="36dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/detail_2"
+            android:textColor="@color/black"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/lblJobDetailLabel1" />
 
-    <TextView
-        android:id="@+id/textViewMeterType"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:paddingStart="5dp"
-        android:paddingEnd="5dp"
-        android:text="@string/e"
-        android:textColor="@color/black"
-        android:textSize="18sp"
-        app:layout_constraintBaseline_toBaselineOf="@+id/textView7"
-        app:layout_constraintStart_toEndOf="@+id/textView7" />
+        <TextView
+            android:id="@+id/lblJobDetailLabel3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="36dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/detail_3"
+            android:textColor="@color/black"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/lblJobDetailLabel2" />
 
-    <TextView
-        android:id="@+id/textViewMeterNumber"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:autoSizeTextType="uniform"
-        android:background="@drawable/textview_shape"
-        android:paddingStart="10dp"
-        android:paddingEnd="10dp"
-        android:text="@string/_123456"
-        android:textColor="@color/black"
-        android:textSize="14sp"
-        app:layout_constraintBaseline_toBaselineOf="@+id/textView7"
-        app:layout_constraintStart_toEndOf="@+id/textViewMeterType"
-        tools:targetApi="o" />
+        <TextView
+            android:id="@+id/txtJobDetail1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="40dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:autoSizeTextType="uniform"
+            android:background="@drawable/textview_shape"
+            android:paddingStart="14dp"
+            android:paddingEnd="2dp"
+            android:paddingBottom="0dp"
+            android:text="TextView"
+            android:textColor="@color/black"
+            app:layout_constraintBaseline_toBaselineOf="@+id/lblJobDetailLabel1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/textView" />
 
-    <TextView
-        android:id="@+id/textView5"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:paddingTop="4dp"
-        android:paddingBottom="4dp"
-        android:text="@string/reading"
-        android:textColor="@color/black"
-        android:textSize="18sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView7" />
+        <TextView
+            android:id="@+id/txtJobDetail2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="40dp"
+            android:layout_marginEnd="8dp"
+            android:autoSizeTextType="uniform"
+            android:background="@drawable/textview_shape"
+            android:paddingStart="14dp"
+            android:paddingEnd="2dp"
+            android:paddingBottom="0dp"
+            android:text="TextView"
+            android:textColor="@color/black"
+            app:layout_constraintBaseline_toBaselineOf="@+id/lblJobDetailLabel2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/textView" />
 
-    <TextView
-        android:id="@+id/F_TV_LED"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:background="@drawable/textview_shape"
-        android:gravity="end"
-        android:paddingStart="10dp"
-        android:paddingEnd="15dp"
-        android:textColor="@color/colorTextLight"
-        android:textSize="18sp"
-        app:layout_constraintBaseline_toBaselineOf="@+id/textView5"
-        app:layout_constraintStart_toEndOf="@+id/textView5" />
+        <TextView
+            android:id="@+id/txtJobDetail3"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="40dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:autoSizeTextType="uniform"
+            android:background="@drawable/textview_shape"
+            android:paddingStart="14dp"
+            android:paddingEnd="2dp"
+            android:paddingBottom="0dp"
+            android:text="TextView"
+            android:textColor="@color/black"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/textView"
+            app:layout_constraintTop_toBottomOf="@+id/txtJobDetail2" />
 
-    <TextView
-        android:id="@+id/textViewReading"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:background="@drawable/textinput_shape"
-        android:paddingStart="25dp"
-        android:paddingTop="4dp"
-        android:paddingEnd="25dp"
-        android:paddingBottom="4dp"
-        android:text="@string/_12345"
-        android:textColor="@color/colorTextLight"
-        android:textSize="18sp"
-        app:layout_constraintBaseline_toBaselineOf="@+id/textView5"
-        app:layout_constraintStart_toEndOf="@+id/F_TV_LED" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <Button
-        android:id="@+id/F_Meter_Reading_B_DeleteReading"
-        android:layout_width="50dp"
-        android:layout_height="28dp"
-        android:layout_marginStart="16dp"
-        android:paddingTop="2dp"
-        android:paddingBottom="2dp"
-        android:text="@string/del"
-        android:textSize="8sp"
-        app:layout_constraintBaseline_toBaselineOf="@+id/textView5"
-        app:layout_constraintStart_toEndOf="@+id/textViewReading"
-        tools:ignore="SmallSp" />
-
-    <TextView
-        android:id="@+id/txtJobColour"
-        android:layout_width="21dp"
-        android:layout_height="56dp"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="0dp" />
-
-    <TextView
-        android:id="@+id/textView70"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:background="@color/roomcolour"
-        android:text="Job Details"
-        android:textAlignment="center"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        android:textSize="15sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView4" />
-
-    <TextView
-        android:id="@+id/lblJobDetailLabel1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="36dp"
-        android:layout_marginTop="8dp"
-        android:text="Detail 1"
-        android:textColor="@color/black"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView77" />
-
-    <TextView
-        android:id="@+id/lblJobDetailLabel2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="36dp"
-        android:layout_marginTop="8dp"
-        android:text="Detail 2"
-        android:textColor="@color/black"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/lblJobDetailLabel1" />
-
-    <TextView
-        android:id="@+id/lblJobDetailLabel3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="36dp"
-        android:layout_marginTop="8dp"
-        android:text="Detail 3"
-        android:textColor="@color/black"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/lblJobDetailLabel2" />
-
-    <TextView
-        android:id="@+id/textView74"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="40dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:autoSizeTextType="uniform"
-        android:background="@drawable/textview_shape"
-        android:paddingStart="14dp"
-        android:paddingEnd="2dp"
-        android:paddingBottom="0dp"
-        android:text="TextView"
-        android:textColor="@color/black"
-        app:layout_constraintBaseline_toBaselineOf="@+id/lblJobDetailLabel1"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/textView" />
-
-    <TextView
-        android:id="@+id/textView75"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="40dp"
-        android:layout_marginEnd="8dp"
-        android:autoSizeTextType="uniform"
-        android:background="@drawable/textview_shape"
-        android:paddingStart="14dp"
-        android:paddingEnd="2dp"
-        android:paddingBottom="0dp"
-        android:text="TextView"
-        android:textColor="@color/black"
-        app:layout_constraintBaseline_toBaselineOf="@+id/lblJobDetailLabel2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/textView" />
-
-    <TextView
-        android:id="@+id/textView76"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="40dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:autoSizeTextType="uniform"
-        android:background="@drawable/textview_shape"
-        android:paddingStart="14dp"
-        android:paddingEnd="2dp"
-        android:paddingBottom="0dp"
-        android:text="TextView"
-        android:textColor="@color/black"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/textView"
-        app:layout_constraintTop_toBottomOf="@+id/textView75" />
-
-    <TextView
-        android:id="@+id/textView77"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="36dp"
-        android:layout_marginTop="8dp"
-        android:text="TextView"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView70" />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

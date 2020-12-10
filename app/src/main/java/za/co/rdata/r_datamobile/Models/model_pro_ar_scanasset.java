@@ -33,6 +33,7 @@ public class model_pro_ar_scanasset {
         this.coordY = coordY;
         this.comments1 = comments1;
         this.comments2 = comments2;
+        this.comments3 = comments3;
         this.scan_quantity = quantity;
         this.scan_quan_retries = retries;
         this.user = user;
@@ -58,6 +59,16 @@ public class model_pro_ar_scanasset {
     private double coordY;
     private String comments1;
     private String comments2;
+
+    public String getComments3() {
+        return comments3;
+    }
+
+    public void setComments3(String comments3) {
+        this.comments3 = comments3;
+    }
+
+    private String comments3;
     private int scan_quantity;
     private int scan_quan_retries;
     private String user;

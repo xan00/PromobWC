@@ -7,6 +7,7 @@ import androidx.fragment.app.FragmentStatePagerAdapter;
 
 import java.util.ArrayList;
 
+import za.co.rdata.r_datamobile.Models.model_pro_fo_jobs;
 import za.co.rdata.r_datamobile.fragments.fragment_jobMeter;
 
 /**
@@ -32,7 +33,7 @@ public class adapter_JobPager extends FragmentStatePagerAdapter {
         this.listFragments = listFragments;
     }
 
-//    public model_pro_jb_jobcard getFragment(Integer index) {
-//        return listFragments.get(index).get;
-//    }
+    //ublic model_pro_fo_jobs getFragment(Integer index) {
+    //    return listFragments.get(index).get;
+    //}
 }

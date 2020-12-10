@@ -301,6 +301,7 @@ public class DBScripts {
                 "\tpro_fo_longitude double default 0 null,\n" +
                 "\tpro_fo_latitude double default 0 null,\n" +
                 "\tstk_basket_id int not null,\n" +
+                "\tpro_fo_close_msg varchar(254),\n" +
                 "\tcreation_date datetime default CURRENT_TIMESTAMP null,\n" +
                 "\tconstraint pro_fo_jobs_InstNoasket_id_uindex\n" +
                 "\t\tunique (InstNode_id, mobnode_id, pro_fo_job_no, stk_basket_id)\n" +

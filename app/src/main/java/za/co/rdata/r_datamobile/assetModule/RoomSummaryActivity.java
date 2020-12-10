@@ -12,11 +12,14 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
 
+import javax.mail.Quota;
+
 import za.co.rdata.r_datamobile.DBHelpers.sqliteDBHelper;
 import za.co.rdata.r_datamobile.DBMeta.intentcodes;
 import za.co.rdata.r_datamobile.DBMeta.meta;
 import za.co.rdata.r_datamobile.MainActivity;
 import za.co.rdata.r_datamobile.Models.model_pro_ar_asset_headers;
+import za.co.rdata.r_datamobile.R;
 
 /**
  * Created by James de Scande on 26/10/2017 at 13:54.
@@ -223,7 +226,7 @@ public class RoomSummaryActivity extends AppCompatActivity {
     public ArrayList<model_pro_ar_asset_headers> GetManual() {
 
         Cursor manualassets;
-        manualassets = sqliteDb.getReadableDatabase().rawQuery("SELECT * FROM pro_ar_register WHERE reg_ismanual = 1 AND reg_location_code like '"+strCurrentRoom+"' order by pro_ar_register.reg_barcode" , null);
+        manualassets = sqliteDb.getReadableDatabase().rawQuery("SELECT * FROM pro_ar_register WHERE pro_ar_register.reg_barcode like '"+ mContext.getString(R.string.manual_tag) +"%' and reg_location_code like '"+strCurrentRoom+"' order by pro_ar_register.reg_barcode" , null);
 
         manualassets.moveToFirst();
 

@@ -90,7 +90,7 @@ public class SelectJob extends AppCompatActivity {
 
         //MainActivity.sqliteDbHelper.getWritableDatabase().execSQL(DBScripts.pro_fo_jobs.ddl);
 
-        getJobs();
+        //getJobs();
 
         //ArrayList<model_pro_jb_jobcard> arrtoshow = new ArrayList<>();
         arrtoshow = new ArrayList<>();
@@ -139,9 +139,9 @@ public class SelectJob extends AppCompatActivity {
         //recyclerView.addItemDecoration(new DividerItemDecoration(this,DividerItemDecoration.VERTICAL));
 
         DividerItemDecoration itemDecorator = new DividerItemDecoration(SelectJob.this, DividerItemDecoration.VERTICAL);
-        itemDecorator.setDrawable(ContextCompat.getDrawable(SelectJob.this, R.drawable.recycler_divider));
+        itemDecorator.setDrawable(ContextCompat.getDrawable(SelectJob.this, R.drawable.recycler_divider_xlarge));
         recyclerView.addItemDecoration(itemDecorator);
-        //recyclerView.setDrawable(new DividerItemDecoration(this,R.drawable.recycler_divider));
+
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -202,7 +202,8 @@ public class SelectJob extends AppCompatActivity {
                                         jobitem.getDouble(7),
                                         jobitem.getDouble(8),
                                         jobitem.getInt(9),
-                                        String.valueOf(jobitem.get(10))
+                                        String.valueOf(jobitem.get(10)),
+                                        String.valueOf(jobitem.get(11))
                                 );
                                 MainActivity.sqliteDbHelper.addFOJob(model_pro_fo_jobs);
                             }
