@@ -85,7 +85,7 @@ public class IntentIntegrator {
         this.activity = activity;
         activityLogger = new ActivityLogger(this.activity);
         preference_saving preferenceSaving = new preference_saving(this.activity, true);
-        //trackscans = preferenceSaving.getPreferenceBoolean("track_scans");
+        trackscans = preferenceSaving.getPreferenceBoolean("track_scans");
     }
 
     public Class<?> getCaptureActivity() {
