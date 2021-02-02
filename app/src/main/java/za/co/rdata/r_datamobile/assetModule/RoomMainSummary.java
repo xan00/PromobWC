@@ -371,8 +371,8 @@ public class RoomMainSummary extends AppCompatActivity {
             // Toast.makeText(getBaseContext(), "Input value was the incorrect length, please try again", Toast.LENGTH_SHORT).show();
             // Inputbox(state);
             // }
-            ActivityLogger activityLogger = new ActivityLogger(mContext);
-            activityLogger.createLog("input_log"+ MainActivity.USER,input_value,true,true,false);
+            //ActivityLogger activityLogger = new ActivityLogger(mContext);
+            //activityLogger.createLog("input_log"+ MainActivity.USER,input_value,true,true,false);
         });
         builder.setNegativeButton("Cancel", (dialog, which) -> {
             dialog.cancel();

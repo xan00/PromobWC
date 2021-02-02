@@ -319,7 +319,7 @@ public class IntentIntegrator {
                 String errorCorrectionLevel = intent.getStringExtra(Intents.Scan.RESULT_ERROR_CORRECTION_LEVEL);
                 String barcodeImagePath = intent.getStringExtra(Intents.Scan.RESULT_BARCODE_IMAGE_PATH);
 
-                if (trackscans) activityLogger.createLog("scan_log", contents, true, true,false);
+                //if (trackscans) activityLogger.createLog("scan_log", contents, true, true,false);
 
                 return new IntentResult(contents,
                         formatName,

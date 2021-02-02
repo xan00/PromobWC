@@ -769,8 +769,8 @@ public class PopulateRoomActivity extends AppCompatActivity {
                 Inputbox();
             }
 
-            ActivityLogger activityLogger = new ActivityLogger(mContext);
-            activityLogger.createLog("input_log" + MainActivity.USER, input_value, true, true, false);
+            ////ActivityLogger activityLogger = new ActivityLogger(mContext);
+            //activityLogger.createLog("input_log" + MainActivity.USER, input_value, true, true, false);
 
         });
         builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
@@ -1025,8 +1025,8 @@ public class PopulateRoomActivity extends AppCompatActivity {
 
                     //Toast.makeText(getBaseContext(), "Asset Marked", Toast.LENGTH_SHORT).show();
 
-                    ActivityLogger activityLogger = new ActivityLogger(mContext);
-                    activityLogger.createLog("manual_log", barcode, true, true, true, listAssetFragments.get(intPagePosition).getScannedassetdata().getScan_quantity());
+                    //ActivityLogger activityLogger = new ActivityLogger(mContext);
+                    //activityLogger.createLog("manual_log", barcode, true, true, true, listAssetFragments.get(intPagePosition).getScannedassetdata().getScan_quantity());
 
                     String sqlstring = "INSERT INTO pro_ar_scan (" +
                             meta.pro_ar_scan.InstNode_id + "," +
