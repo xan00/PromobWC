@@ -44,6 +44,7 @@ import za.co.rdata.r_datamobile.Models.model_pro_mr_route_rows;
 import za.co.rdata.r_datamobile.fileTools.ActivityLogger;
 import za.co.rdata.r_datamobile.fileTools.DBExport;
 //import za.co.rdata.r_datamobile.locationTools.DeviceLocationService;
+import za.co.rdata.r_datamobile.fileTools.DBImport;
 import za.co.rdata.r_datamobile.meterReadingModule.CloseRouteActivity;
 import za.co.rdata.r_datamobile.meterReadingModule.MeterReaderController;
 import za.co.rdata.r_datamobile.meterReadingModule.MeterReadingActivity;
@@ -106,6 +107,8 @@ public class SelectRoute extends AppCompatActivity {
             }
 
         });
+
+        registerForContextMenu(fabEmailroute);
 
         FloatingActionButton fltMoreOptionsRoutes = findViewById(R.id.fltMoreOptionsRoutes);
         fltMoreOptionsRoutes.setOnClickListener(view -> {
@@ -306,54 +309,65 @@ public class SelectRoute extends AppCompatActivity {
             for (int i = 0; i < menuItems.length; i++) {
                 menu.add(Menu.NONE, i, i, menuItems[i]);
             }
+        } else if (v.getId() == R.id.fabEmailRoutes) {
+            String[] menuItems = {"Import"};
+            for (int i = 0; i < menuItems.length; i++) {
+                menu.add(Menu.NONE, i, i, menuItems[i]);
+            }
         }
     }
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
-        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        ListView listView = findViewById(R.id.activity_select_route_listView);
-        //info.position - listView.getFirstVisiblePosition()
-        View view = listView.getChildAt(info.position - listView.getFirstVisiblePosition());
-        TextView textView_Route_Number = view.findViewById(R.id.route_list_item_Route_Number);
-        TextView textView_Inst_Node = view.findViewById(R.id.route_list_item_Inst_Node);
-        TextView textView_Mob_Node = view.findViewById(R.id.route_list_item_Mob_Node);
-        String route_number = (String) textView_Route_Number.getText();
-        Cursor status = MainActivity.sqliteDbHelper.getReadableDatabase().rawQuery("SELECT status from pro_mr_route_headers where route_number = '"+route_number+"'", null);
-        status.moveToFirst();
 
-        switch ((String) item.getTitle()) {
-            case "Close":
-                if (status.getInt(0)==2 | status.getInt(0)==5) {
-                    status.close();
-                    CloseRoute(view);
-                } else {
-                    status.close();
-                    Toast.makeText(getBaseContext(), "This route is already closed", Toast.LENGTH_LONG).show();
-                }
-                break;
-            case "Read":
-                if (status.getInt(0)==2 | status.getInt(0)==5) {
-                    status.close();
-                    ReadRoute(view);
-                } else {
-                    status.close();
-                    Toast.makeText(getBaseContext(), "This route is closed and cannot be read", Toast.LENGTH_LONG).show();
-                }
-                break;
-            case "Resend":
-                if (status.getInt(0)==3 | status.getInt(0)==8) {
-                    status.close();
-                    ResendRoute(view);
-                } else {
-                    status.close();
-                    Toast.makeText(getBaseContext(), "Route must be closed to resend", Toast.LENGTH_LONG).show();
-                }
-                break;
-            case "Summary":
-                SummaryRoute(route_number,textView_Inst_Node.getText().toString(),textView_Mob_Node.getText().toString());
+        if (item.getTitle().equals("Import")) {
+                DBImport importfile = new DBImport();
+                importfile.importDB(this,"test","");
+        } else {
+            AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+            ListView listView = findViewById(R.id.activity_select_route_listView);
+            //info.position - listView.getFirstVisiblePosition()
+            View view = listView.getChildAt(info.position - listView.getFirstVisiblePosition());
+            TextView textView_Route_Number = view.findViewById(R.id.route_list_item_Route_Number);
+            TextView textView_Inst_Node = view.findViewById(R.id.route_list_item_Inst_Node);
+            TextView textView_Mob_Node = view.findViewById(R.id.route_list_item_Mob_Node);
+            String route_number = (String) textView_Route_Number.getText();
+            Cursor status = MainActivity.sqliteDbHelper.getReadableDatabase().rawQuery("SELECT status from pro_mr_route_headers where route_number = '" + route_number + "'", null);
+            status.moveToFirst();
+
+            switch ((String) item.getTitle()) {
+                case "Close":
+                    if (status.getInt(0) == 2 | status.getInt(0) == 5) {
+                        status.close();
+                        CloseRoute(view);
+                    } else {
+                        status.close();
+                        Toast.makeText(getBaseContext(), "This route is already closed", Toast.LENGTH_LONG).show();
+                    }
+                    break;
+                case "Read":
+                    if (status.getInt(0) == 2 | status.getInt(0) == 5) {
+                        status.close();
+                        ReadRoute(view);
+                    } else {
+                        status.close();
+                        Toast.makeText(getBaseContext(), "This route is closed and cannot be read", Toast.LENGTH_LONG).show();
+                    }
+                    break;
+                case "Resend":
+                    if (status.getInt(0) == 3 | status.getInt(0) == 8) {
+                        status.close();
+                        ResendRoute(view);
+                    } else {
+                        status.close();
+                        Toast.makeText(getBaseContext(), "Route must be closed to resend", Toast.LENGTH_LONG).show();
+                    }
+                    break;
+                case "Summary":
+                    SummaryRoute(route_number, textView_Inst_Node.getText().toString(), textView_Mob_Node.getText().toString());
+
+            }
         }
-
         return true;
     }
 

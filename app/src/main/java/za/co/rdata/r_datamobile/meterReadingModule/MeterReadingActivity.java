@@ -477,7 +477,7 @@ public class MeterReadingActivity extends AppCompatActivity {
     private void setCurrentFragmentView(MeterReaderController.Keys key) {
         if (key != null) {
             adapter_MeterReading adapter = (adapter_MeterReading) viewPager.getAdapter();
-            assert adapter != null;
+            //assert adapter != null;
             Integer pos = adapter.getKeyPosition(key);
             if (pos != -1)
                 viewPager.setCurrentItem(pos, false);
