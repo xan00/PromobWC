@@ -33,6 +33,7 @@ import java.lang.reflect.Method;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -463,18 +464,15 @@ public class SelectRoute extends AppCompatActivity {
         TextView textView_Mob_Node = view.findViewById(R.id.route_list_item_Mob_Node);
         TextView textView_Cycle = view.findViewById(R.id.route_list_item_Cycle);
         TextView textView_Route_Number = view.findViewById(R.id.route_list_item_Route_Number);
+        TextView textView_Release = view.findViewById(R.id.route_list_item_ReleaseDate);
         String route_number = (String) textView_Route_Number.getText();
+        String release_date = (String) textView_Release.getText();
 
         if (route_number.equals("-1"))
             finish();
 
-        if (textView_Cycle.getText().equals("0"))
-        {
-            MainActivity.sqliteDbHelper.getWritableDatabase().execSQL("UPDATE pro_mr_route_headers SET cycle = '1' WHERE route_number = "+route_number);
-        } else
-        {
-            MainActivity.sqliteDbHelper.getWritableDatabase().execSQL("UPDATE pro_mr_route_headers SET cycle = '0' WHERE route_number = "+route_number);
-        }
+        MainActivity.sqliteDbHelper.getWritableDatabase().execSQL("UPDATE pro_mr_route_headers SET status = 5 WHERE route_number = "+route_number);
+        MainActivity.sqliteDbHelper.getWritableDatabase().execSQL("UPDATE pro_mr_route_headers SET status = 3 WHERE route_number = "+route_number);
 
         ArrayList<model_pro_mr_route_rows> route_rows;
         route_rows = DBHelper.pro_mr_route_rows.getRouteRows((String) textView_Inst_Node.getText(), (String) textView_Mob_Node.getText(), (String) textView_Cycle.getText(), (String) textView_Route_Number.getText());
@@ -488,8 +486,8 @@ public class SelectRoute extends AppCompatActivity {
             } else
             {
                 MainActivity.sqliteDbHelper.getWritableDatabase().execSQL("UPDATE pro_mr_route_rows SET status = 1 WHERE route_number = "+r.getRoute_number()+" " +
-                        "and walk_sequence = "+r.getWalk_sequence()+" " +
-                        "and meter_id = "+r.getMeter_id());
+                                                                            "and walk_sequence = "+r.getWalk_sequence()+" " +
+                                                                            "and meter_id = "+r.getMeter_id());
             }
         }
     }

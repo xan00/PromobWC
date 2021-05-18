@@ -1,16 +1,19 @@
 package za.co.rdata.r_datamobile;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.FileUriExposedException;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.TextView;
@@ -19,6 +22,7 @@ import android.widget.Toast;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.FileProvider;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -33,10 +37,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import za.co.rdata.r_datamobile.DBHelpers.DBHelper;
 import za.co.rdata.r_datamobile.DBHelpers.SymmetricDS_Helper;
@@ -105,15 +111,33 @@ public class StartUpActivity extends AppCompatActivity implements AsyncResponse 
                     == PackageManager.PERMISSION_GRANTED) {
                 final PackageManager pm = getPackageManager();
                 try {
-                    String fullPath = Environment.getExternalStorageDirectory() + "/filesync/Version/%.apk";
+                    String fullPath = Environment.getExternalStorageDirectory() + "/filesync/Version/promun.apk";
+
                     PackageInfo info = pm.getPackageArchiveInfo(fullPath, 0);
                     Toast.makeText(this, "VersionCode : " + info.versionCode + ", VersionName : " + info.versionName, Toast.LENGTH_LONG).show();
-                } catch (NullPointerException ignore) {
+
+                    //FileProvider.getUriForFile(this,"your_package.fileprovider",photoFile);
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+                    File f = new File(fullPath);
+                    Uri u = FileProvider.getUriForFile(Objects.requireNonNull(getApplicationContext()),
+                            BuildConfig.APPLICATION_ID + ".provider", f);
+
+                    intent.setDataAndType(u, "application/vnd.android.package-archive");
+                    startActivity(intent);
+
+                } catch (@SuppressLint({"NewApi", "LocalSuppress"}) NullPointerException | FileUriExposedException e) {
+                    e.printStackTrace();
                 }
-                File dir = new File(Environment.getExternalStorageDirectory() + "/filesync/Version/");
-                if (!dir.exists()) {
-                    dir.mkdirs();
-                }
+
+                //File dir = new File(Environment.getExternalStorageDirectory() + "/filesync/Version/");
+                //if (!dir.exists()) {
+                //    dir.mkdirs();
+                //}
+
+
             } else {
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
             }

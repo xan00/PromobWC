@@ -51,12 +51,13 @@ public class DBImport {
                     while ((sCurrentLine = br.readLine()) != null) {
                         System.out.println(sCurrentLine);
                         StringBuilder sqlprefix = new StringBuilder("Insert into " + tablename + " values (");
-                        String[] lineitem = sCurrentLine.split("|");
+                        String[] lineitem = sCurrentLine.split("\\|");
 
                         for (String s: lineitem
                              ) {
                             sqlprefix.append(s).append(",");
                         }
+                        sqlprefix.deleteCharAt(sqlprefix.length());
                         sqlprefix.append(");");
                         db.execSQL(sqlprefix.toString());
 
