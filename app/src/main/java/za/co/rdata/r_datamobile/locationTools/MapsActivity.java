@@ -202,6 +202,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         return mLocationRequest;
     }
+
     @Override
     public void onMapClick(LatLng latLng) {
         MarkerOptions options = new MarkerOptions().position( latLng );
@@ -211,6 +212,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             mMap.addMarker( options );
         }
     }
+
     @Override
     public void onMapLongClick(LatLng latLng) {
         displayCircleOnMap(latLng);
