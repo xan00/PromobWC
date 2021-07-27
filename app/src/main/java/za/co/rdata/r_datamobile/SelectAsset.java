@@ -306,7 +306,7 @@ public class SelectAsset extends AppCompatActivity {
                 filteredTitles.clear();
                 if (!s.toString().equals("")) {
                     for (int i = 0; i < arrRooms.size(); i++) {
-                        if (arrRooms.get(i).getRoomnumber().toUpperCase().contains(s.toString().toUpperCase()) || arrRooms.get(i).getRoomname().toUpperCase().contains(s.toString().toUpperCase())) {
+                        if (arrRooms.get(i).getRoomnumber().toUpperCase().contains(s.toString().toUpperCase().trim()) || arrRooms.get(i).getRoomname().toUpperCase().contains(s.toString().toUpperCase().trim())) {
                             filteredTitles.add(arrRooms.get(i));
                         }
                     }

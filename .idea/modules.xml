@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/PromobWC.iml" filepath="$PROJECT_DIR$/PromobWC.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/PromobWC.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/PromobWC.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/PromunMobile.iml" filepath="$PROJECT_DIR$/.idea/modules/PromunMobile.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/PromunMobile.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/PromunMobile.app.iml" />
     </modules>
   </component>
 </project>
