@@ -47,7 +47,7 @@ public class MaintainWebServerSettingsActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
 
-            serverURL = "http://"+(server_ip.getSelectedItem().toString())+":31415/sync/";
+            serverURL = "http://"+(server_ip.getSelectedItem().toString())+":18996/sync/";
             /*
             if (TextUtils.isEmpty(serverURL)) {
                 ET_serverURL.setError(getString(R.string.error_invalid_node_id));

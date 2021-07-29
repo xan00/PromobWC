@@ -7,6 +7,7 @@
     </string-array>
 
     <string-array name="ip_addresses">
+        <item>102.37.10.132</item>
         <item>196.41.123.51</item>
         <item>196.41.122.216</item>
     </string-array>
